@@ -1,2 +1,4 @@
 id: toy
 description: "Built-in toy dataset (no internet)."
+# Toy dataset is always synthetic - cannot use strict_data
+strict_data: false

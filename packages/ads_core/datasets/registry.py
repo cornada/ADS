@@ -61,20 +61,42 @@ DATASET_REGISTRY: Dict[str, Dict[str, Any]] = {
 }
 
 
+class StrictDataError(Exception):
+    """Raised when strict_data mode is enabled and processed data is missing.
+
+    This error indicates that a paper experiment is being run without properly
+    ingested data, which could lead to invalid results based on synthetic fixtures.
+    """
+
+    pass
+
+
 @dataclass
 class DatasetBundle:
-    """Container for a loaded dataset with artifacts and metadata."""
+    """Container for a loaded dataset with artifacts and metadata.
+
+    Attributes:
+        dataset_id: Identifier of the dataset (toy, mit, ucb, asu)
+        artifacts: List of loaded artifacts
+        outcomes: Optional DataFrame with career outcomes
+        fds_schema: Optional FDS survey schema
+        metadata: Additional metadata dict
+        is_synthetic: True if dataset is toy/fixture-based (not real ingested data)
+    """
 
     dataset_id: str
     artifacts: List[Artifact]
     outcomes: Optional[pd.DataFrame] = None
     fds_schema: Optional[Dict[str, Any]] = None
     metadata: Dict[str, Any] = field(default_factory=dict)
+    is_synthetic: bool = False
 
     def __post_init__(self):
         """Populate metadata after initialization."""
         if not self.metadata:
             self.metadata = self._compute_metadata()
+        # Always include is_synthetic in metadata for reports
+        self.metadata["is_synthetic"] = self.is_synthetic
 
     def _compute_metadata(self) -> Dict[str, Any]:
         """Compute dataset metadata from artifacts."""
@@ -152,7 +174,10 @@ def validate_artifact(artifact: Artifact) -> List[str]:
 
 
 def _load_toy_dataset() -> DatasetBundle:
-    """Load the built-in toy dataset."""
+    """Load the built-in toy dataset.
+
+    The toy dataset is always synthetic (generated programmatically).
+    """
     from ads_core.ingest.toy_dataset import build_toy_artifacts
 
     artifacts = build_toy_artifacts()
@@ -169,6 +194,7 @@ def _load_toy_dataset() -> DatasetBundle:
             "institution": "TOY",
             "description": "Built-in toy dataset for testing",
         },
+        is_synthetic=True,  # Toy dataset is always synthetic
     )
 
 
@@ -221,20 +247,25 @@ def _load_fds_schema(path: Path) -> Dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _ensure_dataset_processed(dataset_id: str, base_dir: Path) -> bool:
-    """Ensure dataset is processed, running ingestion if needed."""
+def _ensure_dataset_processed(dataset_id: str, base_dir: Path) -> tuple[bool, bool]:
+    """Ensure dataset is processed, running ingestion if needed.
+
+    Returns:
+        Tuple of (success, was_auto_generated) where was_auto_generated is True
+        if the dataset was created from fixtures during this call.
+    """
     info = DATASET_REGISTRY[dataset_id]
     artifacts_path = info.get("artifacts_path")
 
     if not artifacts_path:
-        return True  # No processing needed (e.g., toy)
+        return True, False  # No processing needed (e.g., toy)
 
     full_path = base_dir / artifacts_path
     if full_path.exists():
-        return True
+        return True, False  # Data already exists (not auto-generated now)
 
-    # Try to run ingestion
-    print(f"Dataset {dataset_id} not found at {full_path}, running ingestion...")
+    # Try to run ingestion from fixtures
+    print(f"Dataset {dataset_id} not found at {full_path}, running ingestion from fixtures...")
 
     try:
         if dataset_id == "mit":
@@ -260,30 +291,37 @@ def _ensure_dataset_processed(dataset_id: str, base_dir: Path) -> bool:
             manifest_path = base_dir / info["manifest_path"]
             output_dir = base_dir / "data" / "processed" / "asu"
             run_ingestion(manifest_path, output_dir, verbose=False)
-        return True
+        return True, True  # Success, was auto-generated from fixtures
     except Exception as e:
         print(f"Warning: Could not auto-generate dataset {dataset_id}: {e}")
-        return False
+        return False, False
 
 
 def load_dataset(
     dataset_id: str,
     data_dir: Optional[Path] = None,
     auto_generate: bool = True,
+    strict_data: bool = False,
 ) -> DatasetBundle:
     """Load a dataset by ID.
 
     Args:
         dataset_id: Dataset identifier (toy, mit, ucb, asu)
         data_dir: Base data directory (defaults to project root)
-        auto_generate: If True, run ingestion if artifacts not found
+        auto_generate: If True, run ingestion from fixtures if artifacts not found
+        strict_data: If True, fail when processed data is missing instead of
+            auto-generating from fixtures. Use this for paper experiments to
+            ensure you're using real ingested data, not synthetic fixtures.
 
     Returns:
-        DatasetBundle with artifacts and optional outcomes
+        DatasetBundle with artifacts and optional outcomes. The `is_synthetic`
+        field indicates whether the data is from fixtures (True) or real
+        ingestion (False).
 
     Raises:
         ValueError: If dataset_id is unknown
         FileNotFoundError: If dataset files not found and auto_generate fails
+        StrictDataError: If strict_data=True and processed data is missing
     """
     if dataset_id not in DATASET_REGISTRY:
         raise ValueError(f"Unknown dataset: {dataset_id}. Available: {list_datasets()}")
@@ -297,14 +335,34 @@ def load_dataset(
 
     # Special case for toy dataset
     if info["loader"] == "toy":
+        if strict_data:
+            raise StrictDataError(
+                f"Dataset '{dataset_id}' is synthetic (toy dataset). "
+                "Cannot use strict_data mode with toy dataset. "
+                "Use a real dataset (mit, ucb, asu) with proper ingestion for paper experiments."
+            )
         return _load_toy_dataset()
 
-    # Ensure dataset is processed
-    if auto_generate:
-        _ensure_dataset_processed(dataset_id, data_dir)
+    # Check if processed data exists before potentially auto-generating
+    artifacts_path = data_dir / info["artifacts_path"]
+    data_existed_before = artifacts_path.exists()
+
+    # In strict mode, fail immediately if data doesn't exist
+    if strict_data and not data_existed_before:
+        raise StrictDataError(
+            f"Dataset '{dataset_id}' processed data not found at {artifacts_path}. "
+            f"strict_data=True requires pre-ingested data. "
+            f"Run the ingestion first: python -m ads_core.ingest.{dataset_id} "
+            f"or set strict_data=False to use fixtures (not recommended for papers)."
+        )
+
+    # Track if data was auto-generated from fixtures
+    is_synthetic = False
+    if auto_generate and not data_existed_before:
+        success, was_auto_generated = _ensure_dataset_processed(dataset_id, data_dir)
+        is_synthetic = was_auto_generated
 
     # Load artifacts
-    artifacts_path = data_dir / info["artifacts_path"]
     if not artifacts_path.exists():
         raise FileNotFoundError(
             f"Dataset artifacts not found: {artifacts_path}. "
@@ -346,6 +404,7 @@ def load_dataset(
             "description": info["description"],
             "artifacts_path": str(artifacts_path),
         },
+        is_synthetic=is_synthetic,
     )
 
 

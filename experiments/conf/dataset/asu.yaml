@@ -4,3 +4,5 @@ manifest_path: "data/manifests/asu_sources.yaml"
 artifacts_path: "data/processed/asu/artifacts.jsonl"
 # Uses pre-generated fixtures by default for reproducibility
 # Run `python -m ads_core.ingest.asu` to regenerate
+# Set strict_data: true for paper experiments to require real ingested data
+strict_data: false

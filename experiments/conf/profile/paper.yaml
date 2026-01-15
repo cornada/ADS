@@ -1,0 +1,22 @@
+# Paper profile - strict settings for reproducible paper experiments
+#
+# Use this profile when running experiments intended for publication.
+# It enforces strict data mode to prevent accidentally running on synthetic
+# fixtures instead of real ingested data.
+#
+# Usage:
+#   python -m experiments.run +profile=paper dataset=mit embedding=sbert_allminilm
+#
+# Requirements:
+#   1. Run data ingestion first: python -m ads_core.ingest.mit
+#   2. Verify processed data exists in data/processed/<dataset>/
+#
+# This profile will FAIL if processed data is missing, rather than
+# silently falling back to synthetic fixtures.
+
+# Override dataset settings to require real data
+dataset:
+  strict_data: true
+
+# Use deterministic seed for reproducibility
+seed: 42

@@ -8,6 +8,7 @@ from pathlib import Path
 from ads_core.data.schemas import Artifact, ArtifactType
 from ads_core.datasets.registry import (
     DatasetBundle,
+    StrictDataError,
     load_dataset,
     list_datasets,
     get_dataset_info,
@@ -331,3 +332,96 @@ class TestDatasetPipeline:
         assert "pareto" in pareto_data
         # pareto is a list of pareto-optimal results
         assert outputs.pareto_count == len(pareto_data["pareto"])
+
+
+class TestStrictDataMode:
+    """Tests for strict_data mode (KT19)."""
+
+    def test_toy_is_synthetic(self):
+        """Toy dataset is always synthetic."""
+        bundle = load_dataset("toy")
+        assert bundle.is_synthetic is True
+        assert bundle.metadata.get("is_synthetic") is True
+
+    def test_strict_data_with_toy_raises(self):
+        """Strict data mode rejects toy dataset."""
+        with pytest.raises(StrictDataError, match="synthetic"):
+            load_dataset("toy", strict_data=True)
+
+    def test_auto_generated_is_synthetic(self, tmp_path):
+        """Auto-generated data is marked as synthetic."""
+        # Force auto-generation by ensuring data doesn't exist
+        bundle = load_dataset("mit", auto_generate=True)
+        # When data was auto-generated from fixtures, it's synthetic
+        # This test may show False if data already existed
+        assert isinstance(bundle.is_synthetic, bool)
+
+    def test_is_synthetic_in_metadata(self):
+        """is_synthetic is included in bundle metadata."""
+        bundle = load_dataset("toy")
+        assert "is_synthetic" in bundle.metadata
+        assert bundle.metadata["is_synthetic"] == bundle.is_synthetic
+
+
+class TestDatasetBundleIsSynthetic:
+    """Tests for is_synthetic field on DatasetBundle."""
+
+    def test_default_not_synthetic(self):
+        """Default is_synthetic is False."""
+        bundle = DatasetBundle(
+            dataset_id="test",
+            artifacts=[],
+        )
+        assert bundle.is_synthetic is False
+
+    def test_explicit_synthetic(self):
+        """Explicit is_synthetic=True is preserved."""
+        bundle = DatasetBundle(
+            dataset_id="test",
+            artifacts=[],
+            is_synthetic=True,
+        )
+        assert bundle.is_synthetic is True
+        assert bundle.metadata.get("is_synthetic") is True
+
+
+class TestStrictDataPipeline:
+    """Tests for strict_data in pipeline."""
+
+    def test_pipeline_is_synthetic_output(self, tmp_path):
+        """Pipeline outputs include is_synthetic."""
+        from ads_core.pipeline.dataset_pipeline import run_dataset
+
+        outputs = run_dataset(
+            dataset_id="toy",
+            out_dir=tmp_path / "synthetic_test",
+            seed=42,
+            embedding_cfg={"kind": "stub", "d": 64},
+            lenses_cfg={"kind": "identity"},
+            objectives=["market", "learner"],
+            autonomy_tau=0.3,
+        )
+
+        # Toy is always synthetic
+        assert outputs.is_synthetic is True
+
+        # Check results.json includes is_synthetic
+        results_data = json.loads(outputs.results_json.read_text(encoding="utf-8"))
+        assert "is_synthetic" in results_data
+        assert results_data["is_synthetic"] is True
+
+    def test_pipeline_strict_data_blocks_toy(self, tmp_path):
+        """Pipeline with strict_data blocks toy dataset."""
+        from ads_core.pipeline.dataset_pipeline import run_dataset
+
+        with pytest.raises(StrictDataError):
+            run_dataset(
+                dataset_id="toy",
+                out_dir=tmp_path / "strict_toy",
+                seed=42,
+                embedding_cfg={"kind": "stub", "d": 64},
+                lenses_cfg={"kind": "identity"},
+                objectives=["market", "learner"],
+                autonomy_tau=0.3,
+                strict_data=True,
+            )

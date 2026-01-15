@@ -35,6 +35,7 @@ class DatasetRunOutputs:
     pareto_json: Path
     artifact_count: int
     pareto_count: int
+    is_synthetic: bool = False  # True if data came from fixtures
 
 
 def _select_encoder(embedding_cfg: dict):
@@ -117,6 +118,7 @@ def run_dataset(
     objectives: List[str],
     autonomy_tau: float,
     data_dir: Optional[Path] = None,
+    strict_data: bool = False,
 ) -> DatasetRunOutputs:
     """Run evaluation pipeline on a dataset.
 
@@ -129,6 +131,8 @@ def run_dataset(
         objectives: List of objectives to optimize
         autonomy_tau: Autonomy drift threshold
         data_dir: Base data directory (defaults to project root)
+        strict_data: If True, fail when processed data is missing instead
+            of auto-generating from fixtures. Use for paper experiments.
 
     Returns:
         DatasetRunOutputs with paths to results
@@ -137,8 +141,9 @@ def run_dataset(
     np.random.seed(seed)
 
     # 1) Load dataset
-    bundle = load_dataset(dataset_id, data_dir)
+    bundle = load_dataset(dataset_id, data_dir, strict_data=strict_data)
     artifacts = bundle.artifacts
+    is_synthetic = bundle.is_synthetic
 
     # Store artifacts
     store = LocalArtifactStore(root=out_dir / "store")
@@ -151,6 +156,7 @@ def run_dataset(
         "dataset": dataset_id,
         "seed": seed,
         "artifact_count": len(artifacts),
+        "is_synthetic": is_synthetic,
     })
 
     # 2) Compute embeddings
@@ -247,6 +253,7 @@ def run_dataset(
         "encoder": enc.model_id,
         "objectives": objective_keys,
         "autonomy_tau": autonomy_tau,
+        "is_synthetic": is_synthetic,
         "results": results,
     }, indent=2), encoding="utf-8")
 
@@ -262,4 +269,5 @@ def run_dataset(
         pareto_json=pareto_json,
         artifact_count=len(artifacts),
         pareto_count=len(pareto_result.indices),
+        is_synthetic=is_synthetic,
     )
