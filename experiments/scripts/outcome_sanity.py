@@ -45,6 +45,9 @@ from ads_core.analysis.outcome_sanity import (
     compute_keyword_baseline,
     aggregate_sanity_results,
     UnitSanityResult,
+    build_unit_vectors_curriculum_text,
+    build_unit_vectors_from_names,
+    CURRICULUM_DESCRIPTIONS,
 )
 from ads_core.embed.encoder import StubEncoder
 from ads_core.embed.cache import DiskEmbeddingCache
@@ -77,19 +80,13 @@ def build_unit_vectors_from_outcomes(
 
     Returns:
         Dict mapping unit to embedding vector
+
+    Note:
+        This is now a wrapper around build_unit_vectors_from_names for
+        backward compatibility. Use build_unit_vectors_from_names or
+        build_unit_vectors_curriculum_text directly for new code.
     """
-    # Get unique units
-    units = {}
-    for o in outcomes:
-        if o.unit not in units:
-            units[o.unit] = o.unit_name
-
-    # Embed all unit names
-    unit_ids = list(units.keys())
-    unit_names = list(units.values())
-    embeddings = encoder_fn(unit_names)
-
-    return {uid: embeddings[i] for i, uid in enumerate(unit_ids)}
+    return build_unit_vectors_from_names(outcomes, encoder_fn)
 
 
 def run_sanity_check(
@@ -147,33 +144,67 @@ def run_sanity_check(
             outcomes = load_normalized_outcomes(dataset_id)
             print(f"  Loaded {len(outcomes)} outcome records")
 
-            # Build unit vectors (embed unit names)
-            unit_vectors = build_unit_vectors_from_outcomes(outcomes, encode_with_cache)
-            print(f"  Built vectors for {len(unit_vectors)} units")
+            # Check curriculum description coverage
+            n_with_curriculum = sum(
+                1 for o in outcomes
+                if dataset_id in CURRICULUM_DESCRIPTIONS
+                and o.unit in CURRICULUM_DESCRIPTIONS[dataset_id]
+            )
+            print(f"  Curriculum descriptions available: {n_with_curriculum}/{len(set(o.unit for o in outcomes))}")
 
-            # Compute sanity check with embeddings
-            result = compute_outcome_sanity(
+            # Method 1: Unit name embeddings (baseline)
+            unit_vectors_name = build_unit_vectors_from_names(outcomes, encode_with_cache)
+            print(f"  Built name-based vectors for {len(unit_vectors_name)} units")
+
+            result_name = compute_outcome_sanity(
                 dataset_id=dataset_id,
                 outcomes=outcomes,
-                unit_vectors=unit_vectors,
+                unit_vectors=unit_vectors_name,
                 market_vectors=market_vectors,
-                method=f"embedding_{embedding_kind}",
+                method=f"unit_name_{embedding_kind}",
             )
-            all_results.append(result)
+            all_results.append(result_name)
 
-            print(f"  Embedding method:")
-            print(f"    Coverage: {result.coverage:.1%}")
-            print(f"    Spearman (employment): {result.spearman_employment}")
-            print(f"    Spearman (salary): {result.spearman_salary}")
+            print(f"  Unit-name embedding method:")
+            print(f"    Coverage: {result_name.coverage:.1%}")
+            print(f"    Spearman (employment): {result_name.spearman_employment}")
+            print(f"    Spearman (salary): {result_name.spearman_salary}")
 
-            # Collect unit results for export
-            for ur in result.unit_results:
+            for ur in result_name.unit_results:
                 row = ur.to_dict()
-                row["method"] = f"embedding_{embedding_kind}"
+                row["method"] = f"unit_name_{embedding_kind}"
                 row["dataset_id"] = dataset_id
                 all_unit_results.append(row)
 
-            # Compute keyword baseline
+            # Method 2: Curriculum-text centroid embeddings
+            unit_vectors_curriculum = build_unit_vectors_curriculum_text(
+                dataset_id=dataset_id,
+                outcomes=outcomes,
+                encoder_fn=encode_with_cache,
+            )
+            print(f"  Built curriculum-text vectors for {len(unit_vectors_curriculum)} units")
+
+            result_curriculum = compute_outcome_sanity(
+                dataset_id=dataset_id,
+                outcomes=outcomes,
+                unit_vectors=unit_vectors_curriculum,
+                market_vectors=market_vectors,
+                method=f"curriculum_text_{embedding_kind}",
+            )
+            all_results.append(result_curriculum)
+
+            print(f"  Curriculum-text embedding method:")
+            print(f"    Coverage: {result_curriculum.coverage:.1%}")
+            print(f"    Spearman (employment): {result_curriculum.spearman_employment}")
+            print(f"    Spearman (salary): {result_curriculum.spearman_salary}")
+
+            for ur in result_curriculum.unit_results:
+                row = ur.to_dict()
+                row["method"] = f"curriculum_text_{embedding_kind}"
+                row["dataset_id"] = dataset_id
+                all_unit_results.append(row)
+
+            # Method 3: Keyword baseline (no embeddings)
             baseline_result = compute_keyword_baseline(
                 dataset_id=dataset_id,
                 outcomes=outcomes,
