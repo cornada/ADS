@@ -19,7 +19,13 @@
       "Bash(python -m ads_core.ingest.asu:*)",
       "Bash(cd:*)",
       "Bash(python -m experiments.compare_datasets:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(git rm:*)",
+      "Bash(git config:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nchore: initial repository commit \\(KT0-KT1.5 complete\\)\n\nIncludes:\n- ADS core packages: embed, eval, lenses, plan, pipeline\n- Dataset ingest: MIT, UCB, ASU with unified schema\n- Outcome sanity checking: market targets, normalization\n- Experiment infrastructure: Hydra configs, toy dataset\n- API skeleton with dashboard routes\n- Tests: 244 passing\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit:*)",
+      "Bash(git add:*)",
+      "Bash(ls:*)"
     ]
   }
 }
