@@ -385,6 +385,60 @@ class TestDatasetBundleIsSynthetic:
         assert bundle.metadata.get("is_synthetic") is True
 
 
+class TestManifestFixtureDetection:
+    """Tests for manifest_snapshot.yaml fixture detection (P0.4)."""
+
+    def test_check_manifest_uses_fixtures(self, tmp_path):
+        """_check_manifest_uses_fixtures detects use_fixtures flag."""
+        from ads_core.datasets.registry import _check_manifest_uses_fixtures
+
+        # Create manifest with use_fixtures=true
+        manifest_content = """
+settings:
+  use_fixtures: true
+  cache_dir: data/cache/test
+version: "1.0"
+"""
+        manifest_path = tmp_path / "manifest_snapshot.yaml"
+        manifest_path.write_text(manifest_content, encoding="utf-8")
+
+        assert _check_manifest_uses_fixtures(tmp_path) is True
+
+    def test_check_manifest_no_fixtures(self, tmp_path):
+        """_check_manifest_uses_fixtures returns False when use_fixtures=false."""
+        from ads_core.datasets.registry import _check_manifest_uses_fixtures
+
+        manifest_content = """
+settings:
+  use_fixtures: false
+  cache_dir: data/cache/test
+version: "1.0"
+"""
+        manifest_path = tmp_path / "manifest_snapshot.yaml"
+        manifest_path.write_text(manifest_content, encoding="utf-8")
+
+        assert _check_manifest_uses_fixtures(tmp_path) is False
+
+    def test_check_manifest_no_file(self, tmp_path):
+        """_check_manifest_uses_fixtures returns False when no manifest."""
+        from ads_core.datasets.registry import _check_manifest_uses_fixtures
+
+        assert _check_manifest_uses_fixtures(tmp_path) is False
+
+    def test_ucb_detected_as_synthetic(self):
+        """UCB fixture data is detected as synthetic via manifest."""
+        # UCB has use_fixtures=true in manifest
+        bundle = load_dataset("ucb", auto_generate=True)
+        # This should be True because manifest_snapshot.yaml has use_fixtures=true
+        assert bundle.is_synthetic is True
+
+    def test_strict_data_rejects_fixture_data(self):
+        """strict_data mode rejects datasets generated from fixtures."""
+        # UCB was generated with use_fixtures=true
+        with pytest.raises(StrictDataError, match="fixtures"):
+            load_dataset("ucb", strict_data=True)
+
+
 class TestStrictDataPipeline:
     """Tests for strict_data in pipeline."""
 

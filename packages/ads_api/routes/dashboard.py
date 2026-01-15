@@ -256,8 +256,16 @@ def explain_option(req: ExplainRequest):
         target_centroids["learner"] = learner_v / (np.linalg.norm(learner_v) + 1e-8)
         target_artifacts["learner"] = [(a.artifact_id, a.text, id2vec[a.artifact_id]) for a in learner_arts]
 
-    # Build lenses
-    lenses = {k: IdentityLens(lens_id=f"identity:{k}") for k in target_centroids}
+    # Build lenses (matching the lens_mode from dashboard data)
+    if req.config.lens_mode == "identity":
+        lenses = {k: IdentityLens(lens_id=f"identity:{k}") for k in target_centroids}
+    elif req.config.lens_mode == "diagonal":
+        d = next(iter(id2vec.values())).shape[0]
+        w = np.ones((d,), dtype=np.float32)
+        lenses = {k: DiagonalLens(lens_id=f"diag:{k}", weights=w) for k in target_centroids}
+    else:
+        # Default to identity
+        lenses = {k: IdentityLens(lens_id=f"identity:{k}") for k in target_centroids}
 
     # Get courses
     courses = [a for a in artifacts if a.type == ArtifactType.COURSE]

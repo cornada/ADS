@@ -247,6 +247,33 @@ def _load_fds_schema(path: Path) -> Dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _check_manifest_uses_fixtures(processed_dir: Path) -> bool:
+    """Check if the manifest_snapshot indicates fixture-based data.
+
+    This is critical for detecting whether "processed" data is actually from
+    fixtures (synthetic) or from real ingested data. Even if artifacts.jsonl
+    exists, if it was created with use_fixtures=true, it's synthetic.
+
+    Args:
+        processed_dir: Directory containing the processed data
+
+    Returns:
+        True if manifest indicates use_fixtures=true, False otherwise
+    """
+    manifest_path = processed_dir / "manifest_snapshot.yaml"
+    if not manifest_path.exists():
+        return False  # No manifest, assume not from fixtures
+
+    try:
+        import yaml
+        manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+        settings = manifest.get("settings", {})
+        return settings.get("use_fixtures", False)
+    except Exception:
+        # If we can't read the manifest, assume not from fixtures
+        return False
+
+
 def _ensure_dataset_processed(dataset_id: str, base_dir: Path) -> tuple[bool, bool]:
     """Ensure dataset is processed, running ingestion if needed.
 
@@ -361,6 +388,22 @@ def load_dataset(
     if auto_generate and not data_existed_before:
         success, was_auto_generated = _ensure_dataset_processed(dataset_id, data_dir)
         is_synthetic = was_auto_generated
+
+    # Even if data existed before, check manifest_snapshot for use_fixtures flag
+    # This catches cases where someone ran fixtures ingestion manually before
+    if not is_synthetic:
+        processed_dir = artifacts_path.parent
+        if _check_manifest_uses_fixtures(processed_dir):
+            is_synthetic = True
+
+    # In strict mode, also fail if data is from fixtures (even if it exists)
+    if strict_data and is_synthetic:
+        raise StrictDataError(
+            f"Dataset '{dataset_id}' was generated from fixtures (use_fixtures=true in manifest). "
+            f"strict_data=True requires real ingested data. "
+            f"Re-run ingestion with real data sources, or set strict_data=False "
+            f"(not recommended for paper experiments)."
+        )
 
     # Load artifacts
     if not artifacts_path.exists():
