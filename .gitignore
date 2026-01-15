@@ -1,7 +1,83 @@
+# Python
 __pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
 .venv/
-data/
-experiments/reports/
-*.pyc
+venv/
+ENV/
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
 .DS_Store
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Testing / Coverage
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+.nox/
+.pytest_cache/
+.mypy_cache/
+
+# Hydra outputs (local experiment runs)
+outputs/
+multirun/
+
+# Data directories (large files, local only)
+/data/raw/
+/data/processed/
+/data/telemetry/
+
+# Keep manifests and fixtures tracked
+!/data/manifests/
+!/data/fixtures/
+
+# Experiment reports (generated, not tracked)
+experiments/reports/
+
+# Build artifacts in packages
+packages/*.egg-info/
+packages/ads.egg-info/
+
+# Temporary files
 tmpclaude-*
+*.tmp
+*.temp
+*.bak
+
+# Logs
+*.log
+
+# Environment files with secrets
+.env
+.env.local
+.env.*.local
+
+# OS files
+Thumbs.db

@@ -17,11 +17,14 @@ This template is designed to be **handoff‑ready** for a colleague implementing
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate   # On Windows: .venv\Scripts\activate
 pip install -U pip
 
 # Install core + API + experiment extras
 pip install -e ".[dev,exp]"
+
+# Run tests
+./scripts/test.sh           # On Windows: .\scripts\test.ps1
 
 # Run API
 uvicorn ads_api.main:app --reload
@@ -29,6 +32,19 @@ uvicorn ads_api.main:app --reload
 
 Open:
 - API docs: http://localhost:8000/docs
+
+### Run tests
+
+```bash
+# Linux/macOS
+./scripts/test.sh
+
+# Windows PowerShell
+.\scripts\test.ps1
+
+# Or directly with PYTHONPATH
+PYTHONPATH=packages pytest -q
+```
 
 ### Run a single experiment (toy dataset)
 ```bash
