@@ -18,11 +18,15 @@ Design principles:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 import numpy as np
 
 from ads_core.eval.distances import cosine_similarity
+from ads_core.eval.pareto import dominates as pareto_dominates
 from ads_core.lenses.base import Lens
+
+# Default evidence threshold - can be overridden via constructor
+DEFAULT_EVIDENCE_THRESHOLD = 0.5
 
 
 @dataclass
@@ -179,6 +183,7 @@ class Explainer:
         all_objectives: Dict[str, Dict[str, float]],  # option_id -> {obj: score}
         pareto_ids: set,
         autonomy_tau: float = 0.25,
+        evidence_threshold: Optional[float] = None,
     ):
         """Initialize explainer.
 
@@ -191,6 +196,8 @@ class Explainer:
             all_objectives: Dict of option_id -> objectives dict
             pareto_ids: Set of option IDs on Pareto front
             autonomy_tau: Threshold for autonomy drift constraint
+            evidence_threshold: Similarity threshold for evidence contribution
+                (default: 0.5, or computed as median if set to None after calibration)
         """
         self.option_embeddings = option_embeddings
         self.option_texts = option_texts
@@ -200,9 +207,13 @@ class Explainer:
         self.all_objectives = all_objectives
         self.pareto_ids = pareto_ids
         self.autonomy_tau = autonomy_tau
+        self.evidence_threshold = evidence_threshold if evidence_threshold is not None else DEFAULT_EVIDENCE_THRESHOLD
 
         # Precompute rankings
         self._rankings = self._compute_rankings()
+
+        # Cache objective keys for dominance checks
+        self._objective_keys: List[str] = list(target_centroids.keys())
 
     def _compute_rankings(self) -> Dict[str, List[Tuple[str, float]]]:
         """Compute rankings per objective."""
@@ -250,7 +261,7 @@ class Explainer:
                 art_transformed = art_vec
 
             sim = cosine_similarity(option_transformed, art_transformed)
-            contribution = "supports" if sim > 0.5 else "weakens"
+            contribution = "supports" if sim > self.evidence_threshold else "weakens"
             evidence.append(Evidence(
                 artifact_id=art_id,
                 text=art_text,
@@ -308,7 +319,14 @@ class Explainer:
         )
 
     def _explain_pareto_status(self, option_id: str, objectives: Dict[str, float]) -> Tuple[str, str]:
-        """Explain why option is/isn't on Pareto front."""
+        """Explain why option is/isn't on Pareto front.
+
+        Uses the canonical `dominates()` function from pareto module to ensure
+        consistency between explanations and Pareto engine output.
+
+        Returns:
+            Tuple of (status, reason) where status is 'pareto', 'dominated', or 'infeasible'
+        """
         if option_id in self.pareto_ids:
             # Find what objectives it excels at
             best_objs = []
@@ -328,19 +346,27 @@ class Explainer:
         if drift and not drift.within_threshold:
             return "infeasible", f"Excluded: autonomy drift ({drift.total_drift:.3f}) exceeds threshold ({self.autonomy_tau})."
 
-        # Find dominating option
+        # Find dominating option using canonical dominates() function
+        # Use only objectives that are present in the current option
+        keys = list(objectives.keys())
+
         for other_id, other_objs in self.all_objectives.items():
             if other_id == option_id:
                 continue
-            dominates = True
-            for obj in objectives:
-                if other_objs.get(obj, 0) < objectives.get(obj, 0):
-                    dominates = False
-                    break
-            if dominates:
-                return "dominated", f"Dominated by {other_id} which scores higher on all objectives."
 
-        return "dominated", "Dominated by another option with better or equal scores on all objectives."
+            # Check if other dominates this option using the Pareto module
+            if pareto_dominates(other_objs, objectives, keys):
+                # Find which objectives the dominator is strictly better on
+                better_objs = [
+                    obj for obj in keys
+                    if other_objs.get(obj, 0) > objectives.get(obj, 0)
+                ]
+                if better_objs:
+                    return "dominated", f"Dominated by {other_id} (strictly better on: {', '.join(better_objs)})."
+                else:
+                    return "dominated", f"Dominated by {other_id} which scores at least as well on all objectives."
+
+        return "dominated", "Dominated by another option with better scores on some objectives."
 
     def explain(self, option_id: str) -> Explanation:
         """Generate complete explanation for an option.
