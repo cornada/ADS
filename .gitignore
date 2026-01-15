@@ -4,3 +4,4 @@ data/
 experiments/reports/
 *.pyc
 .DS_Store
+tmpclaude-*
