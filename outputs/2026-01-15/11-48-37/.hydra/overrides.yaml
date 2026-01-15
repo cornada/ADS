@@ -1,0 +1,5 @@
+- dataset=toy
+- embedding=stub
+- lenses=identity
+- +stability.n_runs=10
+- outputs.run_id=kt6_stability

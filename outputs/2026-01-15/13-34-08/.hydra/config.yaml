@@ -1,0 +1,24 @@
+dataset:
+  id: toy
+  description: Built-in toy dataset (no internet).
+embedding:
+  kind: stub
+  d: 64
+lenses:
+  mode: identity
+objectives:
+  enabled:
+  - market
+  - mission
+  - university
+  - learner
+constraints:
+  enable_ethics: true
+  autonomy_drift_tau: 0.25
+planning:
+  depth: 2
+  topk: 5
+outputs:
+  base_dir: experiments/reports
+  run_id: smoke_kt13
+seed: 42

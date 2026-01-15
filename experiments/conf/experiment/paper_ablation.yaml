@@ -1,0 +1,50 @@
+# Paper experiment matrix configuration
+# Defines ablation experiments A1-A3 and baseline B1
+
+# A1: Lens ablation (identity vs diagonal vs learned)
+# A2: Embedding ablation (stub vs sbert)
+# A3: Constraint ablation (tau values)
+# B1: Baseline comparison
+
+experiment_id: paper_ablation
+description: "Full ablation study for IJCAI paper"
+
+# Experiment groups
+groups:
+  A1_lens:
+    name: "Lens Ablation"
+    description: "Compare identity, diagonal, and learned lenses"
+    varied: lenses
+    fixed:
+      dataset: toy
+      embedding: stub
+      constraints.autonomy_drift_tau: 0.25
+
+  A2_embedding:
+    name: "Embedding Ablation"
+    description: "Compare stub vs SBERT embeddings"
+    varied: embedding
+    fixed:
+      dataset: toy
+      lenses: identity
+      constraints.autonomy_drift_tau: 0.25
+
+  A3_constraint:
+    name: "Constraint Sensitivity"
+    description: "Vary autonomy drift threshold"
+    varied: constraints.autonomy_drift_tau
+    values: [0.1, 0.25, 0.5, 1.0]
+    fixed:
+      dataset: toy
+      embedding: stub
+      lenses: identity
+
+  B1_baseline:
+    name: "Baseline"
+    description: "Single-objective baseline (learner only)"
+    fixed:
+      dataset: toy
+      embedding: stub
+      lenses: identity
+      objectives.enabled: [learner]
+      constraints.autonomy_drift_tau: 1.0

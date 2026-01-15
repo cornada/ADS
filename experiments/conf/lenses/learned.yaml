@@ -1,0 +1,2 @@
+mode: learned
+# Learns diagonal weights via one-vs-rest logistic regression on stakeholder-labeled corpora.

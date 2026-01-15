@@ -1,0 +1,11 @@
+defaults:
+  - dataset: toy
+  - embedding: stub
+  - lenses: identity
+  - objectives: core
+  - constraints: ethics_on
+  - planning: depth2
+  - outputs: local
+  - _self_
+
+seed: 42

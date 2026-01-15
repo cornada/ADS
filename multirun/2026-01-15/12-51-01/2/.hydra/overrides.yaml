@@ -1,0 +1,4 @@
+- dataset=toy
+- embedding=stub
+- lenses=learned
+- outputs.run_id=kt9_sweep

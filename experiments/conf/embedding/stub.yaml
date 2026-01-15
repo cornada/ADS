@@ -1,0 +1,4 @@
+kind: stub
+d: 64
+# model_id is auto-generated as "stub-encoder-v0"
+# This encoder is for CI/testing only - produces deterministic but meaningless embeddings

@@ -1,0 +1,4 @@
+claim_id,claim_text,required_evidence,produced_by,artifact_path,status,risks
+C1,"Vector-valued evaluation reveals trade-offs hidden by scalar scoring","Pareto plot + ablation vs scalar baseline","experiments/scripts/pareto_demo.py","experiments/reports/paper/paper_figures/pareto_frontier_example.png",todo,"need convincing baseline"
+C2,"Market-fit derived from curriculum text correlates with aggregated outcomes better than major-name baseline","Outcome sanity-check table + scatter plot","experiments/scripts/outcome_sanity.py","experiments/reports/paper/paper_tables/cross_dataset_outcome_sanity.csv",todo,"dashboard snapshot reproducibility"
+C3,"Stability suite shows Pareto solutions robust to reasonable perturbations","Stability summary table + figure","experiments/scripts/stability_eval.py","experiments/reports/paper/paper_tables/stability_summary.csv",todo,"multi-seed required"

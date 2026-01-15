@@ -1,0 +1,6 @@
+- embedding=stub
+- lenses=identity
+- constraints.autonomy_drift_tau=1.0
+- seed=42
+- outputs.run_id=paper_B1_baseline_learner_only_stub_identity_tau1.0_learner
+- objectives.enabled=[learner]

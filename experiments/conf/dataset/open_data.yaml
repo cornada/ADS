@@ -1,0 +1,7 @@
+id: open_data
+description: "Open data from O*NET occupations and MIT OCW courses."
+sources:
+  - onet
+  - ocw
+# Path to processed artifacts (relative to repo root)
+artifacts_path: data/processed/store/artifacts.jsonl

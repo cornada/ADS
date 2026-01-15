@@ -1,0 +1,6 @@
+id: asu
+description: "ASU First Destination Survey + career outcomes dataset."
+manifest_path: "data/manifests/asu_sources.yaml"
+artifacts_path: "data/processed/asu/artifacts.jsonl"
+# Uses pre-generated fixtures by default for reproducibility
+# Run `python -m ads_core.ingest.asu` to regenerate

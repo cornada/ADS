@@ -1,0 +1,26 @@
+dataset:
+  id: mit
+  description: MIT curriculum dataset (Course 6 EECS + OCW courses).
+  manifest_path: data/manifests/mit_sources.yaml
+  artifacts_path: data/processed/mit/artifacts.jsonl
+embedding:
+  kind: stub
+  d: 64
+lenses:
+  mode: identity
+objectives:
+  enabled:
+  - market
+  - mission
+  - university
+  - learner
+constraints:
+  enable_ethics: true
+  autonomy_drift_tau: 0.25
+planning:
+  depth: 2
+  topk: 5
+outputs:
+  base_dir: experiments/reports
+  run_id: auto
+seed: 42

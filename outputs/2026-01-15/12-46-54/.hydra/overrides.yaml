@@ -1,0 +1,5 @@
+- embedding=stub
+- lenses=diagonal
+- constraints.autonomy_drift_tau=0.25
+- seed=42
+- outputs.run_id=paper_A1_lens_diagonal_stub_diagonal_tau0.25_learner_market_mission_university

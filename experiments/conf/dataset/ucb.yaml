@@ -1,0 +1,7 @@
+id: ucb
+description: "UC Berkeley career outcomes dataset (First Destination Survey)."
+manifest_path: "data/manifests/ucb_sources.yaml"
+artifacts_path: "data/processed/ucb/artifacts.jsonl"
+outcomes_csv_path: "data/processed/ucb/outcomes_major_level.csv"
+# Uses pre-generated fixtures by default for reproducibility
+# Run `python -m ads_core.ingest.ucb` to regenerate

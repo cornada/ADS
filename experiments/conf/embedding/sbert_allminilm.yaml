@@ -1,0 +1,6 @@
+kind: sbert
+model_name: sentence-transformers/all-MiniLM-L6-v2
+device: null  # auto-detect (cpu/cuda)
+# model_id is auto-generated as "sbert:sentence-transformers/all-MiniLM-L6-v2"
+# Fast encoder with 384-dimensional embeddings
+# Install dependency: pip install -e ".[embed]"

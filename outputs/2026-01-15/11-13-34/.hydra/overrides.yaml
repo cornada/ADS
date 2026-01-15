@@ -1,0 +1,4 @@
+- dataset=toy
+- embedding=stub
+- lenses=diagonal
+- outputs.run_id=sweep_diagonal

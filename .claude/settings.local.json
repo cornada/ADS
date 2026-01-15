@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install:*)",
+      "Bash(python -m pip:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(python -m experiments.run:*)",
+      "Bash(python -c:*)",
+      "Bash(python -m experiments.ingest:*)",
+      "Bash(dir /b /o-d experimentsreports)",
+      "Bash(python -m experiments.sweep_compare:*)",
+      "Bash(python scripts/demo_explain.py:*)",
+      "Bash(ruff check:*)",
+      "Bash(python -m ruff check:*)",
+      "Bash(timeout 10 python:*)",
+      "Bash(python -m experiments.paper_experiments:*)",
+      "Bash(python -m ads_core.ingest.mit:*)",
+      "Bash(python -m ads_core.ingest.ucb:*)",
+      "Bash(python -m ads_core.ingest.asu:*)",
+      "Bash(cd:*)",
+      "Bash(python -m experiments.compare_datasets:*)",
+      "Bash(python:*)"
+    ]
+  }
+}

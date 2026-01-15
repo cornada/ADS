@@ -1,0 +1,3 @@
+- dataset=toy
+- embedding=sbert_allminilm
+- lenses=identity

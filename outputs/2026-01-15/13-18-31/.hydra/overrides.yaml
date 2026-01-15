@@ -1,0 +1,4 @@
+- dataset=toy
+- embedding=stub
+- lenses=identity
+- outputs.run_id=smoke_kt12

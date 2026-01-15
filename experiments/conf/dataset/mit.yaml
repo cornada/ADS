@@ -1,0 +1,6 @@
+id: mit
+description: "MIT curriculum dataset (Course 6 EECS + OCW courses)."
+manifest_path: "data/manifests/mit_sources.yaml"
+artifacts_path: "data/processed/mit/artifacts.jsonl"
+# Uses pre-generated fixtures by default for reproducibility
+# Run `python -m ads_core.ingest.mit` to regenerate

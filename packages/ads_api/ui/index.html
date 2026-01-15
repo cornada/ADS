@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADS Dashboard - Pareto Visualization</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #16a34a;
+            --warning: #ca8a04;
+            --danger: #dc2626;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 20px;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        header p {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            padding: 16px;
+        }
+
+        .card h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .control-group {
+            margin-bottom: 16px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+        }
+
+        .range-value {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            text-align: right;
+        }
+
+        select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: var(--primary-dark);
+        }
+
+        button:disabled {
+            background: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        #pareto-chart {
+            height: 400px;
+        }
+
+        .options-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        .options-table th,
+        .options-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .options-table th {
+            font-weight: 600;
+            background: var(--bg);
+        }
+
+        .options-table tr:hover {
+            background: var(--bg);
+        }
+
+        .options-table tr.pareto {
+            background: #f0fdf4;
+        }
+
+        .options-table tr.infeasible {
+            background: #fef2f2;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-pareto {
+            background: #dcfce7;
+            color: var(--success);
+        }
+
+        .badge-infeasible {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .score {
+            font-family: monospace;
+        }
+
+        .score-high {
+            color: var(--success);
+        }
+
+        .score-low {
+            color: var(--danger);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .stat-card {
+            background: var(--bg);
+            padding: 12px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-light);
+        }
+
+        .explain-panel {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .explain-panel.active {
+            display: block;
+        }
+
+        .explain-content {
+            font-size: 0.875rem;
+        }
+
+        .explain-section {
+            margin-bottom: 16px;
+        }
+
+        .explain-section h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .recourse-item {
+            background: var(--bg);
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .session-info {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>ADS Dashboard</h1>
+            <p>Multi-objective Pareto visualization with stakeholder toggles</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="grid">
+            <!-- Controls Panel -->
+            <div class="card">
+                <h2>Configuration</h2>
+
+                <div class="control-group">
+                    <label>Objectives</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="obj-market" checked>
+                            <label for="obj-market">Market</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="obj-mission" checked>
+                            <label for="obj-mission">Mission</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="obj-university" checked>
+                            <label for="obj-university">University</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="obj-learner" checked>
+                            <label for="obj-learner">Learner</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="tau-slider">Autonomy Threshold (tau)</label>
+                    <input type="range" id="tau-slider" min="0" max="1" step="0.05" value="0.25">
+                    <div class="range-value" id="tau-value">0.25</div>
+                </div>
+
+                <div class="control-group">
+                    <label for="lens-select">Lens Mode</label>
+                    <select id="lens-select">
+                        <option value="identity">Identity</option>
+                        <option value="diagonal">Diagonal</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="embedding-select">Embedding</label>
+                    <select id="embedding-select">
+                        <option value="stub">Stub (fast)</option>
+                        <option value="sbert">SBERT</option>
+                    </select>
+                </div>
+
+                <button id="refresh-btn">Refresh Pareto</button>
+
+                <div class="session-info">
+                    <strong>Session:</strong> <span id="session-id"></span><br>
+                    <strong>Events:</strong> <span id="event-count">0</span>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Stats -->
+                <div class="card">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="stat-total">-</div>
+                            <div class="stat-label">Total Options</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="stat-pareto">-</div>
+                            <div class="stat-label">Pareto Optimal</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="stat-feasible">-</div>
+                            <div class="stat-label">Feasible</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="stat-infeasible">-</div>
+                            <div class="stat-label">Infeasible</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pareto Chart -->
+                <div class="card">
+                    <h2>Pareto Front</h2>
+                    <div id="pareto-chart">
+                        <div class="loading">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- Options Table -->
+                <div class="card">
+                    <h2>Options</h2>
+                    <table class="options-table" id="options-table">
+                        <thead>
+                            <tr>
+                                <th>Option</th>
+                                <th>Status</th>
+                                <th>Market</th>
+                                <th>Mission</th>
+                                <th>University</th>
+                                <th>Learner</th>
+                                <th>Drift</th>
+                            </tr>
+                        </thead>
+                        <tbody id="options-tbody">
+                            <tr><td colspan="7" class="loading">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Explanation Panel -->
+                <div class="card explain-panel" id="explain-panel">
+                    <h2>Explanation: <span id="explain-option-id"></span></h2>
+                    <div class="explain-content" id="explain-content">
+                        Select an option to see its explanation.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Session management
+        const sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        document.getElementById('session-id').textContent = sessionId.substring(0, 20) + '...';
+
+        let eventCount = 0;
+        let currentData = null;
+
+        // Telemetry logging
+        async function logEvent(eventType, payload = {}) {
+            eventCount++;
+            document.getElementById('event-count').textContent = eventCount;
+
+            try {
+                await fetch('/telemetry/event', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        session_id: sessionId,
+                        event_type: eventType,
+                        payload: payload
+                    })
+                });
+            } catch (e) {
+                console.error('Telemetry error:', e);
+            }
+        }
+
+        // Get current configuration
+        function getConfig() {
+            const objectives = [];
+            if (document.getElementById('obj-market').checked) objectives.push('market');
+            if (document.getElementById('obj-mission').checked) objectives.push('mission');
+            if (document.getElementById('obj-university').checked) objectives.push('university');
+            if (document.getElementById('obj-learner').checked) objectives.push('learner');
+
+            return {
+                objectives: objectives,
+                autonomy_tau: parseFloat(document.getElementById('tau-slider').value),
+                lens_mode: document.getElementById('lens-select').value,
+                embedding_kind: document.getElementById('embedding-select').value,
+                topk: 10
+            };
+        }
+
+        // Format score with color
+        function formatScore(score) {
+            if (score === undefined || score === null) return '-';
+            const cls = score > 0.5 ? 'score-high' : score < 0.2 ? 'score-low' : '';
+            return `<span class="score ${cls}">${score.toFixed(3)}</span>`;
+        }
+
+        // Load dashboard data
+        async function loadData() {
+            const config = getConfig();
+
+            if (config.objectives.length === 0) {
+                alert('Please select at least one objective');
+                return;
+            }
+
+            document.getElementById('refresh-btn').disabled = true;
+            document.getElementById('refresh-btn').textContent = 'Loading...';
+
+            try {
+                const response = await fetch('/dashboard/data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(config)
+                });
+
+                if (!response.ok) throw new Error('API error');
+
+                currentData = await response.json();
+                updateStats(currentData.stats);
+                updateChart(currentData);
+                updateTable(currentData);
+
+                logEvent('pareto_refresh', { config: config, stats: currentData.stats });
+
+            } catch (e) {
+                console.error('Load error:', e);
+                alert('Failed to load data: ' + e.message);
+            } finally {
+                document.getElementById('refresh-btn').disabled = false;
+                document.getElementById('refresh-btn').textContent = 'Refresh Pareto';
+            }
+        }
+
+        // Update stats display
+        function updateStats(stats) {
+            document.getElementById('stat-total').textContent = stats.total_options;
+            document.getElementById('stat-pareto').textContent = stats.pareto_count;
+            document.getElementById('stat-feasible').textContent = stats.feasible_count;
+            document.getElementById('stat-infeasible').textContent = stats.infeasible_count;
+        }
+
+        // Update Pareto chart
+        function updateChart(data) {
+            const keys = data.objective_keys;
+            if (keys.length < 2) {
+                document.getElementById('pareto-chart').innerHTML = '<div class="loading">Need at least 2 objectives for scatter plot</div>';
+                return;
+            }
+
+            const xKey = keys[0];
+            const yKey = keys[1];
+
+            // Separate Pareto and non-Pareto points
+            const paretoOptions = data.options.filter(o => o.is_pareto);
+            const otherOptions = data.options.filter(o => !o.is_pareto);
+
+            const traces = [
+                {
+                    x: otherOptions.map(o => o.objectives[xKey] || 0),
+                    y: otherOptions.map(o => o.objectives[yKey] || 0),
+                    text: otherOptions.map(o => `${o.option_id}<br>Drift: ${o.autonomy_drift.toFixed(3)}`),
+                    mode: 'markers',
+                    type: 'scatter',
+                    name: 'Other',
+                    marker: {
+                        size: 10,
+                        color: otherOptions.map(o => o.feasible ? '#94a3b8' : '#f87171'),
+                        line: { width: 1, color: '#64748b' }
+                    },
+                    hovertemplate: '%{text}<br>' + xKey + ': %{x:.3f}<br>' + yKey + ': %{y:.3f}<extra></extra>'
+                },
+                {
+                    x: paretoOptions.map(o => o.objectives[xKey] || 0),
+                    y: paretoOptions.map(o => o.objectives[yKey] || 0),
+                    text: paretoOptions.map(o => `${o.option_id}<br>Drift: ${o.autonomy_drift.toFixed(3)}`),
+                    mode: 'markers',
+                    type: 'scatter',
+                    name: 'Pareto',
+                    marker: {
+                        size: 14,
+                        color: paretoOptions.map(o => o.feasible ? '#22c55e' : '#eab308'),
+                        symbol: 'star',
+                        line: { width: 2, color: '#166534' }
+                    },
+                    hovertemplate: '%{text}<br>' + xKey + ': %{x:.3f}<br>' + yKey + ': %{y:.3f}<extra></extra>'
+                }
+            ];
+
+            const layout = {
+                xaxis: { title: xKey + ' (higher is better)', zeroline: false },
+                yaxis: { title: yKey + ' (higher is better)', zeroline: false },
+                hovermode: 'closest',
+                showlegend: true,
+                legend: { x: 0, y: 1.1, orientation: 'h' },
+                margin: { t: 40, r: 20, b: 50, l: 60 }
+            };
+
+            Plotly.newPlot('pareto-chart', traces, layout, { responsive: true });
+        }
+
+        // Update options table
+        function updateTable(data) {
+            const tbody = document.getElementById('options-tbody');
+            const keys = data.objective_keys;
+
+            // Update header
+            const thead = document.querySelector('.options-table thead tr');
+            thead.innerHTML = `
+                <th>Option</th>
+                <th>Status</th>
+                ${keys.map(k => `<th>${k.charAt(0).toUpperCase() + k.slice(1)}</th>`).join('')}
+                <th>Drift</th>
+            `;
+
+            // Sort: Pareto first, then by first objective
+            const sorted = [...data.options].sort((a, b) => {
+                if (a.is_pareto !== b.is_pareto) return b.is_pareto - a.is_pareto;
+                return (b.objectives[keys[0]] || 0) - (a.objectives[keys[0]] || 0);
+            });
+
+            tbody.innerHTML = sorted.map(opt => {
+                const rowClass = opt.is_pareto ? 'pareto' : (opt.feasible ? '' : 'infeasible');
+                const badge = opt.is_pareto
+                    ? '<span class="badge badge-pareto">Pareto</span>'
+                    : (opt.feasible ? '' : '<span class="badge badge-infeasible">Infeasible</span>');
+
+                return `
+                    <tr class="${rowClass}" data-option-id="${opt.option_id}" onclick="showExplanation('${opt.option_id}')">
+                        <td>${opt.option_id.replace('course:', '')}</td>
+                        <td>${badge}</td>
+                        ${keys.map(k => `<td>${formatScore(opt.objectives[k])}</td>`).join('')}
+                        <td>${formatScore(opt.autonomy_drift)}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Show explanation for an option
+        async function showExplanation(optionId) {
+            logEvent('option_select', { option_id: optionId });
+
+            const panel = document.getElementById('explain-panel');
+            const content = document.getElementById('explain-content');
+
+            panel.classList.add('active');
+            document.getElementById('explain-option-id').textContent = optionId;
+            content.innerHTML = '<div class="loading">Loading explanation...</div>';
+
+            try {
+                const response = await fetch('/dashboard/explain', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        option_id: optionId,
+                        config: getConfig()
+                    })
+                });
+
+                if (!response.ok) throw new Error('API error');
+
+                const data = await response.json();
+                renderExplanation(data);
+
+                logEvent('explain_view', { option_id: optionId });
+
+            } catch (e) {
+                content.innerHTML = '<div class="loading">Failed to load explanation</div>';
+            }
+        }
+
+        // Render explanation content
+        function renderExplanation(data) {
+            const exp = data.explanation;
+            const content = document.getElementById('explain-content');
+
+            let html = `
+                <div class="explain-section">
+                    <h4>Summary</h4>
+                    <p>${exp.overall_summary}</p>
+                    <p><strong>Status:</strong> ${exp.pareto_status.toUpperCase()}</p>
+                    <p><strong>Reason:</strong> ${exp.pareto_reason}</p>
+                </div>
+            `;
+
+            if (exp.drift) {
+                html += `
+                    <div class="explain-section">
+                        <h4>Autonomy Drift</h4>
+                        <p>${exp.drift.interpretation}</p>
+                        <p>Total: ${exp.drift.total_drift.toFixed(3)} |
+                           Market: ${exp.drift.market_drift.toFixed(3)} |
+                           University: ${exp.drift.university_drift.toFixed(3)}</p>
+                        <p>Within threshold (${exp.drift.threshold}): ${exp.drift.within_threshold ? 'Yes' : 'No'}</p>
+                    </div>
+                `;
+            }
+
+            if (data.recourse && data.recourse.alternatives && data.recourse.alternatives.length > 0) {
+                html += `
+                    <div class="explain-section">
+                        <h4>Recourse Suggestions</h4>
+                        <p>${data.recourse.summary}</p>
+                        ${data.recourse.alternatives.slice(0, 3).map(alt => `
+                            <div class="recourse-item">
+                                <strong>${alt.option_id}</strong>:
+                                +${alt.improvement.toFixed(3)} improvement on ${alt.target_objective}
+                                <br><small>${alt.recommendation}</small>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            content.innerHTML = html;
+        }
+
+        // Event listeners
+        document.getElementById('tau-slider').addEventListener('input', function() {
+            document.getElementById('tau-value').textContent = this.value;
+        });
+
+        document.getElementById('tau-slider').addEventListener('change', function() {
+            logEvent('tau_change', { tau: parseFloat(this.value) });
+        });
+
+        ['obj-market', 'obj-mission', 'obj-university', 'obj-learner'].forEach(id => {
+            document.getElementById(id).addEventListener('change', function() {
+                logEvent('objective_toggle', {
+                    objective: id.replace('obj-', ''),
+                    enabled: this.checked
+                });
+            });
+        });
+
+        document.getElementById('lens-select').addEventListener('change', function() {
+            logEvent('lens_change', { lens: this.value });
+        });
+
+        document.getElementById('refresh-btn').addEventListener('click', loadData);
+
+        // Initial load
+        logEvent('session_start', { user_agent: navigator.userAgent });
+        loadData();
+    </script>
+</body>
+</html>

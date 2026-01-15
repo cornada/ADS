@@ -1,0 +1,5 @@
+- dataset=toy
+- embedding=stub
+- lenses=identity
+- constraints.autonomy_drift_tau=0.1
+- outputs.run_id=tau_strict

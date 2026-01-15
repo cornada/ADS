@@ -1,0 +1,2 @@
+paper_id,citation_key,venue_year,track,setting,multi_agent,multi_objective,human_in_loop,data,evaluation,key_novelty_vs_ads,overlap_risk,cite_status
+P1,CITEKEY_TODO,"IJCAI 2025",HAI,education,Y,N,Y,real,"user study","ADS adds vector-valued Pareto + contestability + stability",med,needs_check

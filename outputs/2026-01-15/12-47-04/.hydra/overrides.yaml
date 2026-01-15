@@ -1,0 +1,5 @@
+- embedding=stub
+- lenses=learned
+- constraints.autonomy_drift_tau=0.25
+- seed=42
+- outputs.run_id=paper_A1_lens_learned_stub_learned_tau0.25_learner_market_mission_university

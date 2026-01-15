@@ -1,0 +1,2 @@
+mode: diagonal
+# For real runs you can replace uniform weights with learned weights trained on stakeholder corpora.

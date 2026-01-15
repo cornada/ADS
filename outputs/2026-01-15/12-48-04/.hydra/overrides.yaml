@@ -1,0 +1,5 @@
+- embedding=stub
+- lenses=identity
+- constraints.autonomy_drift_tau=1.0
+- seed=42
+- outputs.run_id=paper_A3_constraint_tau1.0_stub_identity_tau1.0_learner_market_mission_university

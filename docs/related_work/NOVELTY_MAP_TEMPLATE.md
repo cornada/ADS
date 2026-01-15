@@ -1,0 +1,19 @@
+# NOVELTY MAP (Template)
+
+## Closest neighbors (system papers in education / HAI)
+- Paper: ...
+  - They: ...
+  - We: ...
+  - Key difference: ...
+
+## MORL / multi-objective decision support
+- ...
+
+## Contestable AI / recourse / explanations
+- ...
+
+## What ADS uniquely contributes (bullet form)
+- Vector-valued (multi-objective) pathway evaluation as a first-class object
+- Stakeholder lenses + explicit toggles (contestability)
+- Normative constraints + stability under perturbations ("reviewer shield")
+- Open-data, reproducible evaluation slices (MIT/UCB/ASU + market)

@@ -1,0 +1,2 @@
+enable_ethics: true
+autonomy_drift_tau: 0.25

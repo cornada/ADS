@@ -1,0 +1,27 @@
+dataset:
+  id: ucb
+  description: UC Berkeley career outcomes dataset (First Destination Survey).
+  manifest_path: data/manifests/ucb_sources.yaml
+  artifacts_path: data/processed/ucb/artifacts.jsonl
+  outcomes_csv_path: data/processed/ucb/outcomes_major_level.csv
+embedding:
+  kind: stub
+  d: 64
+lenses:
+  mode: identity
+objectives:
+  enabled:
+  - market
+  - mission
+  - university
+  - learner
+constraints:
+  enable_ethics: true
+  autonomy_drift_tau: 0.25
+planning:
+  depth: 2
+  topk: 5
+outputs:
+  base_dir: experiments/reports
+  run_id: auto
+seed: 42
