@@ -1,0 +1,30 @@
+{
+  "name": "unified_v4",
+  "description": "Extended dataset with international universities (KTH Sweden, Edinburgh UK)",
+  "created_at": "2026-02-05T22:40:01.721393+00:00",
+  "sources": {
+    "unified_v3": "data/processed/unified_v3/courses.csv",
+    "kth": "data/raw/kth/courses.csv",
+    "edinburgh": "data/raw/edinburgh/courses.csv"
+  },
+  "universities": [
+    "MIT",
+    "UC Berkeley",
+    "Stanford",
+    "UIUC",
+    "Cornell",
+    "KTH",
+    "Edinburgh"
+  ],
+  "university_counts": {
+    "MIT": 6944,
+    "UC Berkeley": 11113,
+    "Stanford": 2663,
+    "UIUC": 860,
+    "Cornell": 842,
+    "KTH": 4768,
+    "Edinburgh": 446
+  },
+  "total_courses": 27636,
+  "content_hash": "7ba08cee1b0d1515c4ff4b08ba602b0d1a79a80d79aa0acd9da6178176d1dfb1"
+}

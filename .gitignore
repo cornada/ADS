@@ -1,7 +1,113 @@
+# Python
 __pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
 .venv/
-data/
-experiments/reports/
-*.pyc
+venv/
+ENV/
+
+# IDE / Editor
+.idea/
+.vscode/
+.cursor/
+*.swp
+*.swo
+*~
+
+# macOS
 .DS_Store
-tmpclaude-*
+.AppleDouble
+.LSOverride
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Testing / Coverage
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+.nox/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Hydra outputs (local experiment runs)
+outputs/
+multirun/
+
+# Data directories (large files, local only)
+data/raw/
+data/processed/
+data/derived/
+data/telemetry/
+data/policies/
+data/store/
+data/career_tracks/
+data/career_tracks_cs15/
+data/ADS_ONET_TimeTravel_Pack/
+data/manifest/
+
+# Keep fixtures tracked (test data)
+!data/fixtures/
+
+# Experiment reports (generated, not tracked)
+experiments/reports/
+
+# Build artifacts
+*.egg-info/
+
+# Temporary files
+tmpclaude*
+*.tmp
+*.temp
+*.bak
+nul
+
+# Logs
+*.log
+
+# Environment files with secrets
+.env
+.env.local
+.env.*.local
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# Paper artifacts (generated, large)
+paper_artifacts/
+
+# Paper drafts and KDD submission materials
+paper/
+KDD_Agent_Didactic_Spaces/
+
+# Internal issue tracking
+issues/
+docs/issues/
+
+# SQLite databases
+*.sqlite

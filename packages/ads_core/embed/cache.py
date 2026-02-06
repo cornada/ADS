@@ -11,14 +11,56 @@ This ensures:
 """
 from __future__ import annotations
 
+import contextlib
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, Generator, List, Optional
 import json
+import time
 import numpy as np
 
 from ads_core.utils.hashing import sha256_text
+
+
+@contextlib.contextmanager
+def file_lock(lock_path: Path, timeout: float = 30.0) -> Generator[None, None, None]:
+    """Simple file-based lock to prevent race conditions.
+
+    Uses atomic file creation to acquire lock.
+    Falls back to no-op if lock acquisition fails after timeout.
+    """
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    start_time = time.time()
+    acquired = False
+
+    while time.time() - start_time < timeout:
+        try:
+            # O_CREAT | O_EXCL ensures atomic creation
+            fd = lock_path.open("x")
+            fd.write(str(time.time()))
+            fd.close()
+            acquired = True
+            break
+        except FileExistsError:
+            # Lock held by another process, check if stale (>60s)
+            try:
+                lock_time = float(lock_path.read_text())
+                if time.time() - lock_time > 60.0:
+                    # Stale lock, remove and retry
+                    lock_path.unlink(missing_ok=True)
+            except (ValueError, OSError):
+                pass
+            time.sleep(0.1)
+
+    try:
+        yield
+    finally:
+        if acquired:
+            try:
+                lock_path.unlink(missing_ok=True)
+            except OSError:
+                pass
 
 
 @dataclass
@@ -69,6 +111,9 @@ class DiskEmbeddingCache:
 
     def _meta_path(self) -> Path:
         return self._cache_dir() / "meta.json"
+
+    def _lock_path(self) -> Path:
+        return self._cache_dir() / ".lock"
 
     def _safe_model_id(self) -> str:
         """Convert model_id to filesystem-safe string."""
@@ -146,59 +191,61 @@ class DiskEmbeddingCache:
         Returns:
             np.ndarray of shape [len(texts), d]
         """
-        index = self.load_index()
-        vecs = self.load_vecs()
+        # Pre-compute all hashes once outside the lock (avoid double/triple hashing)
+        text_hashes = [sha256_text(t) for t in texts]
 
-        needed = []
-        needed_keys = []
-        hit_indices: List[int] = []  # indices into texts that are cache hits
+        # Use file lock to prevent race conditions in concurrent processes
+        with file_lock(self._lock_path()):
+            index = self.load_index()
+            vecs = self.load_vecs()
 
-        # Identify cache hits and misses
-        for i, t in enumerate(texts):
-            k = sha256_text(t)
-            if k in index and vecs is not None:
-                hit_indices.append(i)
-            else:
-                needed.append(t)
-                needed_keys.append(k)
+            needed = []
+            needed_keys = []
+            needed_indices: List[int] = []  # indices into texts that need computation
+            hit_count = 0
 
-        # Record stats
-        stats = CacheStats(
-            hits=len(hit_indices),
-            misses=len(needed),
-            total=len(texts),
-        )
-        self._last_stats = stats
+            # Identify cache hits and misses using pre-computed hashes
+            for i, k in enumerate(text_hashes):
+                if k in index and vecs is not None:
+                    hit_count += 1
+                else:
+                    needed.append(texts[i])
+                    needed_keys.append(k)
+                    needed_indices.append(i)
 
-        if verbose:
-            print(f"[cache] model={self.model_id} hits={stats.hits} misses={stats.misses} rate={stats.hit_rate:.1%}")
+            # Record stats
+            stats = CacheStats(
+                hits=hit_count,
+                misses=len(needed),
+                total=len(texts),
+            )
+            self._last_stats = stats
 
-        # Compute new embeddings if needed
-        if needed:
-            new_vecs = encode_fn(needed)
+            if verbose:
+                print(f"[cache] model={self.model_id} hits={stats.hits} misses={stats.misses} rate={stats.hit_rate:.1%}")
 
-            if vecs is None:
-                vecs = new_vecs
-                start = 0
-            else:
-                start = vecs.shape[0]
-                vecs = np.concatenate([vecs, new_vecs], axis=0)
+            # Compute new embeddings if needed
+            if needed:
+                new_vecs = encode_fn(needed)
 
-            # Update index with new entries
-            for i, k in enumerate(needed_keys):
-                index[k] = start + i
+                if vecs is None:
+                    vecs = new_vecs
+                    start = 0
+                else:
+                    start = vecs.shape[0]
+                    vecs = np.concatenate([vecs, new_vecs], axis=0)
 
-            # Persist to disk
-            self.save(index, vecs)
+                # Update index with new entries
+                for i, k in enumerate(needed_keys):
+                    index[k] = start + i
 
-        # Build output in original order
-        out = []
-        for t in texts:
-            k = sha256_text(t)
-            row_idx = index[k]
-            out.append(vecs[row_idx])
+                # Persist to disk
+                self.save(index, vecs)
 
-        return np.stack(out, axis=0) if out else np.zeros((0, 0), dtype=np.float32)
+            # Build output in original order using pre-computed hashes
+            out = [vecs[index[k]] for k in text_hashes]
+
+            return np.stack(out, axis=0) if out else np.zeros((0, 0), dtype=np.float32)
 
     def clear(self) -> None:
         """Remove all cached data for this model."""
