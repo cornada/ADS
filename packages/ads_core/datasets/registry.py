@@ -58,6 +58,20 @@ DATASET_REGISTRY: Dict[str, Dict[str, Any]] = {
         "fixture_path": "data/fixtures/asu",
         "manifest_path": "data/manifests/asu_sources.yaml",
     },
+    "unified_v3": {
+        "name": "Unified V3 (5 US Universities)",
+        "institution": "MULTI",
+        "description": "MIT, UC Berkeley, Stanford, UIUC, Cornell courses + O*NET",
+        "loader": "jsonl",
+        "artifacts_path": "data/processed/unified_v3/artifacts.jsonl",
+    },
+    "unified_v4": {
+        "name": "Unified V4 (7 International Universities)",
+        "institution": "MULTI",
+        "description": "7 universities across 3 countries (US, Sweden, UK) + O*NET + College Scorecard",
+        "loader": "jsonl",
+        "artifacts_path": "data/processed/unified_v4/artifacts.jsonl",
+    },
 }
 
 
