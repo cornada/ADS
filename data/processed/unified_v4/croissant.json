@@ -1,0 +1,136 @@
+{
+  "@context": {
+    "@vocab": "https://schema.org/",
+    "ml": "http://mlcommons.org/croissant/",
+    "sc": "https://schema.org/"
+  },
+  "@type": "sc:Dataset",
+  "name": "ADS-Unified-v4",
+  "description": "Agent-Didactic Spaces (ADS) benchmark dataset for multi-stakeholder curriculum evaluation. Contains 27,636 courses from 7 universities (MIT, UC Berkeley, Stanford, UIUC, Cornell, KTH Sweden, Edinburgh UK) across 3 countries, with 1,016 O*NET occupations and 56 institutional mission statements.",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "url": "https://github.com/ads-research/ads-unified-v4",
+  "version": "4.0.0",
+  "datePublished": "2026-02-06",
+  "creator": [
+    {
+      "@type": "sc:Organization",
+      "name": "ADS Research Team"
+    }
+  ],
+  "keywords": [
+    "education",
+    "curriculum",
+    "multi-objective optimization",
+    "Pareto",
+    "benchmark",
+    "courses",
+    "universities"
+  ],
+  "distribution": [
+    {
+      "@type": "sc:FileObject",
+      "@id": "courses.csv",
+      "name": "courses.csv",
+      "description": "Course records with descriptions, learning outcomes, and university metadata",
+      "contentUrl": "courses.csv",
+      "encodingFormat": "text/csv",
+      "sha256": "7ba08cee1b0d1515c4ff4b08ba602b0d1a79a80d79aa0acd9da6178176d1dfb1"
+    },
+    {
+      "@type": "sc:FileObject",
+      "@id": "artifacts.jsonl",
+      "name": "artifacts.jsonl",
+      "description": "All artifacts including courses, missions, O*NET occupations, and Scorecard programs",
+      "contentUrl": "artifacts.jsonl",
+      "encodingFormat": "application/jsonl"
+    },
+    {
+      "@type": "sc:FileObject",
+      "@id": "programs.csv",
+      "name": "programs.csv",
+      "description": "Academic programs and degree information",
+      "contentUrl": "programs.csv",
+      "encodingFormat": "text/csv"
+    }
+  ],
+  "ml:recordSet": [
+    {
+      "@type": "ml:RecordSet",
+      "name": "courses",
+      "description": "Course records from 7 universities across 3 countries",
+      "key": "course_id",
+      "ml:field": [
+        {
+          "@type": "ml:Field",
+          "name": "course_id",
+          "description": "Unique course identifier (format: course:{university}:{code})",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "ml:Field",
+          "name": "title",
+          "description": "Course title",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "ml:Field",
+          "name": "description",
+          "description": "Course description and learning outcomes",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "ml:Field",
+          "name": "university",
+          "description": "University name",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "ml:Field",
+          "name": "country",
+          "description": "Country (USA, Sweden, UK)",
+          "dataType": "sc:Text"
+        }
+      ]
+    },
+    {
+      "@type": "ml:RecordSet",
+      "name": "artifacts",
+      "description": "All artifacts including courses, missions, occupations",
+      "key": "artifact_id",
+      "ml:field": [
+        {
+          "@type": "ml:Field",
+          "name": "artifact_id",
+          "description": "Unique artifact identifier",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "ml:Field",
+          "name": "type",
+          "description": "Artifact type (COURSE, MISSION, JOB_ROLE, OUTCOME_MAJOR, etc.)",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "ml:Field",
+          "name": "text",
+          "description": "Full text content of the artifact",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "ml:Field",
+          "name": "source_url",
+          "description": "Original source URL",
+          "dataType": "sc:URL"
+        }
+      ]
+    }
+  ],
+  "ml:datasetStats": {
+    "numCourses": 27636,
+    "numUniversities": 7,
+    "numCountries": 3,
+    "numOccupations": 1016,
+    "numMissions": 56,
+    "numArtifactsTotal": 28046
+  }
+}

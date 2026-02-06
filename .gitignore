@@ -28,10 +28,15 @@ ENV/
 # IDE / Editor
 .idea/
 .vscode/
+.cursor/
 *.swp
 *.swo
 *~
+
+# macOS
 .DS_Store
+.AppleDouble
+.LSOverride
 
 # Jupyter
 .ipynb_checkpoints/
@@ -44,32 +49,39 @@ htmlcov/
 .nox/
 .pytest_cache/
 .mypy_cache/
+.ruff_cache/
 
 # Hydra outputs (local experiment runs)
 outputs/
 multirun/
 
 # Data directories (large files, local only)
-/data/raw/
-/data/processed/
-/data/telemetry/
+data/raw/
+data/processed/
+data/derived/
+data/telemetry/
+data/policies/
+data/store/
+data/career_tracks/
+data/career_tracks_cs15/
+data/ADS_ONET_TimeTravel_Pack/
+data/manifest/
 
-# Keep manifests and fixtures tracked
-!/data/manifests/
-!/data/fixtures/
+# Keep fixtures tracked (test data)
+!data/fixtures/
 
 # Experiment reports (generated, not tracked)
 experiments/reports/
 
-# Build artifacts in packages
-packages/*.egg-info/
-packages/ads.egg-info/
+# Build artifacts
+*.egg-info/
 
 # Temporary files
-tmpclaude-*
+tmpclaude*
 *.tmp
 *.temp
 *.bak
+nul
 
 # Logs
 *.log
@@ -79,5 +91,23 @@ tmpclaude-*
 .env.local
 .env.*.local
 
+# Claude Code local settings
+.claude/settings.local.json
+
 # OS files
 Thumbs.db
+Desktop.ini
+
+# Paper artifacts (generated, large)
+paper_artifacts/
+
+# Paper drafts and KDD submission materials
+paper/
+KDD_Agent_Didactic_Spaces/
+
+# Internal issue tracking
+issues/
+docs/issues/
+
+# SQLite databases
+*.sqlite
