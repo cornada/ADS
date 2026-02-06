@@ -12,6 +12,20 @@ matplotlib.use('Agg')
 
 # Style settings
 plt.style.use('seaborn-v0_8-whitegrid')
+
+# Global settings: 400 DPI and bold fonts
+DPI = 400
+plt.rcParams['font.weight'] = 'bold'
+plt.rcParams['font.size'] = 11
+plt.rcParams['axes.labelweight'] = 'bold'
+plt.rcParams['axes.titleweight'] = 'bold'
+plt.rcParams['figure.titleweight'] = 'bold'
+plt.rcParams['legend.fontsize'] = 10
+plt.rcParams['xtick.labelsize'] = 11
+plt.rcParams['ytick.labelsize'] = 11
+
+# Legend font properties (bold)
+LEGEND_PROP = {'weight': 'bold', 'size': 10}
 COLORS = {
     'MIT': '#E41A1C',
     'UC Berkeley': '#377EB8',
@@ -67,22 +81,22 @@ def generate_f1_scatter_v4(output_dir):
     # Mark extremes with annotations
     ax.annotate('Max Market\n(Cornell)',
                 xy=(max_market['objectives']['market'], max_market['objectives']['mission']),
-                xytext=(0.52, 0.35), fontsize=9,
+                xytext=(0.52, 0.35), fontsize=9, fontweight='bold',
                 arrowprops=dict(arrowstyle='->', color='gray', lw=1.5))
 
     ax.annotate('Max Mission\n(Stanford)',
                 xy=(max_mission['objectives']['market'], max_mission['objectives']['mission']),
-                xytext=(0.25, 0.62), fontsize=9,
+                xytext=(0.25, 0.62), fontsize=9, fontweight='bold',
                 arrowprops=dict(arrowstyle='->', color='gray', lw=1.5))
 
-    ax.set_xlabel('Market Alignment Score', fontsize=12)
-    ax.set_ylabel('Mission Alignment Score', fontsize=12)
-    ax.set_title('ADS-2D: Market vs Mission Pareto Frontier\n(7 Universities, 3 Countries)', fontsize=14)
-    ax.legend(loc='lower left', fontsize=9)
+    ax.set_xlabel('Market Alignment Score', fontsize=12, fontweight='bold')
+    ax.set_ylabel('Mission Alignment Score', fontsize=12, fontweight='bold')
+    ax.set_title('ADS-2D: Market vs Mission Pareto Frontier\n(7 Universities, 3 Countries)', fontsize=14, fontweight='bold')
+    ax.legend(loc='lower left', prop=LEGEND_PROP)
     ax.grid(True, alpha=0.3)
 
     plt.tight_layout()
-    plt.savefig(output_dir / 'F1_scatter_market_mission_edge_cases.png', dpi=150)
+    plt.savefig(output_dir / 'F1_scatter_market_mission_edge_cases.png', dpi=DPI)
     plt.close()
     print(f"  Saved: {output_dir / 'F1_scatter_market_mission_edge_cases.png'}")
 
@@ -104,19 +118,19 @@ def generate_f2_tau_sweep_v4(output_dir):
     ax.axvline(x=0.25, color='green', linestyle='--', alpha=0.7, label='Default τ=0.25')
     ax.scatter([0.25], [158], c='green', s=200, zorder=5, marker='D', edgecolors='black')
 
-    ax.set_xlabel('Autonomy Constraint (τ)', fontsize=12)
-    ax.set_ylabel('Feasible Pareto Set Size', fontsize=12)
-    ax.set_title('Effect of Governance Constraint on Pareto Options\n(unified_v4: 32,728 courses)', fontsize=14)
+    ax.set_xlabel('Autonomy Constraint (τ)', fontsize=12, fontweight='bold')
+    ax.set_ylabel('Feasible Pareto Set Size', fontsize=12, fontweight='bold')
+    ax.set_title('Effect of Governance Constraint on Pareto Options\n(unified_v4: 32,728 courses)', fontsize=14, fontweight='bold')
 
     ax.set_xticks([0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.50, 0.6])
     ax.set_xticklabels(['0.05', '0.10', '0.15', '0.20', '0.25', '0.30', '0.50', '∞'])
 
-    ax.legend(fontsize=11)
+    ax.legend(prop=LEGEND_PROP)
     ax.grid(True, alpha=0.3)
     ax.set_ylim(0, 200)
 
     plt.tight_layout()
-    plt.savefig(output_dir / 'F2_tau_sweep_curve.png', dpi=150)
+    plt.savefig(output_dir / 'F2_tau_sweep_curve.png', dpi=DPI)
     plt.close()
     print(f"  Saved: {output_dir / 'F2_tau_sweep_curve.png'}")
 
@@ -138,17 +152,17 @@ def generate_f3_scalarization_bar_v4(output_dir):
         ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 3,
                 str(val), ha='center', va='bottom', fontsize=14, fontweight='bold')
 
-    ax.set_ylabel('Number of Unique Solutions', fontsize=12)
-    ax.set_title('Multi-Objective Methods Comparison\n(unified_v4: 32,728 courses, 4 objectives)', fontsize=14)
+    ax.set_ylabel('Number of Unique Solutions', fontsize=12, fontweight='bold')
+    ax.set_title('Multi-Objective Methods Comparison\n(unified_v4: 32,728 courses, 4 objectives)', fontsize=14, fontweight='bold')
     ax.set_ylim(0, 180)
 
     # Add ratio annotation
     ax.annotate('10.5× more options\nthan baselines', xy=(0, 158), xytext=(1.5, 140),
-                fontsize=11, ha='center',
+                fontsize=11, fontweight='bold', ha='center',
                 arrowprops=dict(arrowstyle='->', color='green', lw=2))
 
     plt.tight_layout()
-    plt.savefig(output_dir / 'F3_scalarization_vs_pareto_bar.png', dpi=150)
+    plt.savefig(output_dir / 'F3_scalarization_vs_pareto_bar.png', dpi=DPI)
     plt.close()
     print(f"  Saved: {output_dir / 'F3_scalarization_vs_pareto_bar.png'}")
 
@@ -168,20 +182,20 @@ def generate_f4_stability_v4(output_dir):
                 fmt='o-', linewidth=2.5, markersize=12, capsize=6, color='#3498db',
                 ecolor='#2980b9', capthick=2)
 
-    ax.set_xlabel('Perturbation Epsilon (ε)', fontsize=12)
-    ax.set_ylabel('Jaccard Similarity with Base Pareto', fontsize=12)
-    ax.set_title('Pareto Set Stability Under Score Perturbation\n(unified_v4: 158 Pareto options)', fontsize=14)
+    ax.set_xlabel('Perturbation Epsilon (ε)', fontsize=12, fontweight='bold')
+    ax.set_ylabel('Jaccard Similarity with Base Pareto', fontsize=12, fontweight='bold')
+    ax.set_title('Pareto Set Stability Under Score Perturbation\n(unified_v4: 158 Pareto options)', fontsize=14, fontweight='bold')
     ax.set_xscale('log')
     ax.grid(True, alpha=0.3)
 
     # Add seed stability annotation
     ax.axhline(y=1.0, color='green', linestyle='--', alpha=0.7, linewidth=2)
-    ax.text(0.02, 0.95, 'Seed stability: Jaccard = 1.0', fontsize=10, color='green')
+    ax.text(0.02, 0.95, 'Seed stability: Jaccard = 1.0', fontsize=10, fontweight='bold', color='green')
 
     ax.set_ylim(0, 1.1)
 
     plt.tight_layout()
-    plt.savefig(output_dir / 'F4_stability_jaccard_vs_eps.png', dpi=150)
+    plt.savefig(output_dir / 'F4_stability_jaccard_vs_eps.png', dpi=DPI)
     plt.close()
     print(f"  Saved: {output_dir / 'F4_stability_jaccard_vs_eps.png'}")
 
@@ -215,16 +229,16 @@ def generate_f5_cross_university_v4(output_dir):
 
     # Add country labels
     ax.axvline(x=4.5, color='gray', linestyle=':', alpha=0.7)
-    ax.text(2, -8, 'US (5 universities)', ha='center', fontsize=10, style='italic')
-    ax.text(5.5, -8, 'International', ha='center', fontsize=10, style='italic')
+    ax.text(2, -8, 'US (5 universities)', ha='center', fontsize=10, fontweight='bold', style='italic')
+    ax.text(5.5, -8, 'International', ha='center', fontsize=10, fontweight='bold', style='italic')
 
-    ax.set_ylabel('Pareto Contribution', fontsize=12)
-    ax.set_title('Cross-University Pareto Contribution\n(unified_v4: 158 Pareto options from 7 universities)', fontsize=14)
+    ax.set_ylabel('Pareto Contribution', fontsize=12, fontweight='bold')
+    ax.set_title('Cross-University Pareto Contribution\n(unified_v4: 158 Pareto options from 7 universities)', fontsize=14, fontweight='bold')
     ax.set_ylim(0, 65)
     ax.grid(True, alpha=0.3, axis='y')
 
     plt.tight_layout()
-    plt.savefig(output_dir / 'F5_cross_university_overlap.png', dpi=150)
+    plt.savefig(output_dir / 'F5_cross_university_overlap.png', dpi=DPI)
     plt.close()
     print(f"  Saved: {output_dir / 'F5_cross_university_overlap.png'}")
 
@@ -252,23 +266,23 @@ def generate_f6_scaling_v4(output_dir):
     ax.scatter(extrap_n, extrap_t, c='orange', s=150, marker='X', zorder=5,
                label='Extrapolated', edgecolors='black')
 
-    ax.set_xlabel('Number of Options (n)', fontsize=12)
-    ax.set_ylabel('Time (seconds)', fontsize=12)
-    ax.set_title('Computational Scaling Analysis\n(with cached embeddings)', fontsize=14)
+    ax.set_xlabel('Number of Options (n)', fontsize=12, fontweight='bold')
+    ax.set_ylabel('Time (seconds)', fontsize=12, fontweight='bold')
+    ax.set_title('Computational Scaling Analysis\n(with cached embeddings)', fontsize=14, fontweight='bold')
     ax.set_xscale('log')
     ax.set_yscale('log')
-    ax.legend(fontsize=11)
+    ax.legend(prop=LEGEND_PROP)
     ax.grid(True, alpha=0.3)
 
     # Annotation
     ax.annotate(f'unified_v4:\n33K courses\n18 seconds',
                 xy=(33000, 18), xytext=(15000, 35),
-                fontsize=10, ha='center',
+                fontsize=10, fontweight='bold', ha='center',
                 arrowprops=dict(arrowstyle='->', color='blue', lw=1.5),
                 bbox=dict(boxstyle='round', facecolor='lightblue', alpha=0.8))
 
     plt.tight_layout()
-    plt.savefig(output_dir / 'F6_scaling_curve.png', dpi=150)
+    plt.savefig(output_dir / 'F6_scaling_curve.png', dpi=DPI)
     plt.close()
     print(f"  Saved: {output_dir / 'F6_scaling_curve.png'}")
 
@@ -310,14 +324,14 @@ def generate_f7_objective_specialization(output_dir):
     ax.fill(angles, intl_means, alpha=0.25, color=COLORS['International'])
 
     ax.set_xticks(angles[:-1])
-    ax.set_xticklabels(['Market', 'Mission', 'University', 'Learner'], fontsize=12)
+    ax.set_xticklabels(['Market', 'Mission', 'University', 'Learner'], fontsize=12, fontweight='bold')
     ax.set_ylim(0, 0.7)
 
-    ax.set_title('Objective Specialization by Region\n(Pareto-optimal courses only)', fontsize=14, pad=20)
-    ax.legend(loc='upper right', bbox_to_anchor=(1.3, 1.0), fontsize=11)
+    ax.set_title('Objective Specialization by Region\n(Pareto-optimal courses only)', fontsize=14, fontweight='bold', pad=20)
+    ax.legend(loc='upper right', bbox_to_anchor=(1.3, 1.0), prop=LEGEND_PROP)
 
     plt.tight_layout()
-    plt.savefig(output_dir / 'F7_objective_specialization_radar.png', dpi=150)
+    plt.savefig(output_dir / 'F7_objective_specialization_radar.png', dpi=DPI)
     plt.close()
     print(f"  Saved: {output_dir / 'F7_objective_specialization_radar.png'}")
 
