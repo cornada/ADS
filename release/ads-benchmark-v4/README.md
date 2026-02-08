@@ -199,6 +199,7 @@ The `onet/time_travel/` directory contains O\*NET occupation snapshots from 4 re
   author    = {{ADS Research Team}},
   booktitle = {Proceedings of the 32nd ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD)},
   year      = {2026},
+  doi       = {10.5281/zenodo.18522759},
   note      = {Datasets \& Benchmarks Track}
 }
 ```
