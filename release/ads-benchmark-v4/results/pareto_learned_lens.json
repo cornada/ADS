@@ -1,0 +1,2309 @@
+{
+  "keys": [
+    "market",
+    "mission",
+    "university",
+    "learner"
+  ],
+  "pareto": [
+    {
+      "option_id": "course:MIT:6f56e265c2d5",
+      "objectives": {
+        "market": 0.38606521487236023,
+        "mission": 0.38607507944107056,
+        "university": 0.5412031412124634,
+        "learner": 0.44927486777305603
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:65d7c3111472",
+      "objectives": {
+        "market": 0.45814597606658936,
+        "mission": 0.2776854336261749,
+        "university": 0.5971531271934509,
+        "learner": 0.30791035294532776
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:5ac3b33d047e",
+      "objectives": {
+        "market": 0.129512757062912,
+        "mission": 0.4283566176891327,
+        "university": 0.661388099193573,
+        "learner": 0.4750986695289612
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:80e8113d2fbf",
+      "objectives": {
+        "market": 0.457135409116745,
+        "mission": 0.494440495967865,
+        "university": 0.5298223495483398,
+        "learner": 0.4874785840511322
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:80e8113d2fbf",
+      "objectives": {
+        "market": 0.457135409116745,
+        "mission": 0.494440495967865,
+        "university": 0.5298223495483398,
+        "learner": 0.4874785840511322
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:938ee3543aa6",
+      "objectives": {
+        "market": 0.5272698402404785,
+        "mission": 0.39008769392967224,
+        "university": 0.408803254365921,
+        "learner": 0.3622097074985504
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:9fb2595831a3",
+      "objectives": {
+        "market": 0.36805692315101624,
+        "mission": 0.39479637145996094,
+        "university": 0.6239970922470093,
+        "learner": 0.443816214799881
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:fe821ee68e15",
+      "objectives": {
+        "market": 0.47015073895454407,
+        "mission": 0.418014794588089,
+        "university": 0.539065420627594,
+        "learner": 0.39788052439689636
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:64f790f9df92",
+      "objectives": {
+        "market": 0.482649564743042,
+        "mission": 0.45882317423820496,
+        "university": 0.4302886128425598,
+        "learner": 0.377727210521698
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:e9e87df014be",
+      "objectives": {
+        "market": 0.57109534740448,
+        "mission": 0.3895193338394165,
+        "university": 0.3616575598716736,
+        "learner": 0.448743999004364
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:d54c08ae7d94",
+      "objectives": {
+        "market": 0.47063153982162476,
+        "mission": 0.49955326318740845,
+        "university": 0.3238997459411621,
+        "learner": 0.3361724317073822
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:80e8113d2fbf",
+      "objectives": {
+        "market": 0.457135409116745,
+        "mission": 0.494440495967865,
+        "university": 0.5298223495483398,
+        "learner": 0.4874785840511322
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:80e8113d2fbf",
+      "objectives": {
+        "market": 0.457135409116745,
+        "mission": 0.494440495967865,
+        "university": 0.5298223495483398,
+        "learner": 0.4874785840511322
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:f95d0a22059b",
+      "objectives": {
+        "market": 0.30495139956474304,
+        "mission": 0.2616487145423889,
+        "university": 0.6984031200408936,
+        "learner": 0.3917272388935089
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:f95d0a22059b",
+      "objectives": {
+        "market": 0.30495139956474304,
+        "mission": 0.2616487145423889,
+        "university": 0.6984031200408936,
+        "learner": 0.3917272388935089
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:7db70fe0e9a3",
+      "objectives": {
+        "market": 0.19764256477355957,
+        "mission": 0.21924716234207153,
+        "university": 0.7200227379798889,
+        "learner": 0.39116454124450684
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:7db70fe0e9a3",
+      "objectives": {
+        "market": 0.19764256477355957,
+        "mission": 0.21924716234207153,
+        "university": 0.7200227379798889,
+        "learner": 0.39116454124450684
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:3261d6430a2a",
+      "objectives": {
+        "market": 0.38132166862487793,
+        "mission": 0.21609801054000854,
+        "university": 0.6317651271820068,
+        "learner": 0.3864763379096985
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:5ac3b33d047e",
+      "objectives": {
+        "market": 0.129512757062912,
+        "mission": 0.4283566176891327,
+        "university": 0.661388099193573,
+        "learner": 0.4750986695289612
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:9967cf71ccea",
+      "objectives": {
+        "market": 0.5637921690940857,
+        "mission": 0.0884980857372284,
+        "university": 0.3870534300804138,
+        "learner": 0.4240291714668274
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:80e8113d2fbf",
+      "objectives": {
+        "market": 0.457135409116745,
+        "mission": 0.494440495967865,
+        "university": 0.5298223495483398,
+        "learner": 0.4874785840511322
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:6f53237c948c",
+      "objectives": {
+        "market": 0.20823125541210175,
+        "mission": 0.27689820528030396,
+        "university": 0.7060739994049072,
+        "learner": 0.3797055184841156
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:6f53237c948c",
+      "objectives": {
+        "market": 0.20823125541210175,
+        "mission": 0.27689820528030396,
+        "university": 0.7060739994049072,
+        "learner": 0.3797055184841156
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:6f53237c948c",
+      "objectives": {
+        "market": 0.20823125541210175,
+        "mission": 0.27689820528030396,
+        "university": 0.7060739994049072,
+        "learner": 0.3797055184841156
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:23f84e166478",
+      "objectives": {
+        "market": 0.22792276740074158,
+        "mission": 0.31720614433288574,
+        "university": 0.707366943359375,
+        "learner": 0.3711412847042084
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:cfd06b0e43c0",
+      "objectives": {
+        "market": 0.3263077139854431,
+        "mission": 0.25802335143089294,
+        "university": 0.6877993941307068,
+        "learner": 0.3794407546520233
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:6f53237c948c",
+      "objectives": {
+        "market": 0.20823125541210175,
+        "mission": 0.27689820528030396,
+        "university": 0.7060739994049072,
+        "learner": 0.3797055184841156
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:6f53237c948c",
+      "objectives": {
+        "market": 0.20823125541210175,
+        "mission": 0.27689820528030396,
+        "university": 0.7060739994049072,
+        "learner": 0.3797055184841156
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:52b6059f3421",
+      "objectives": {
+        "market": 0.3575047552585602,
+        "mission": 0.23513418436050415,
+        "university": 0.6585916876792908,
+        "learner": 0.47099271416664124
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:80e8113d2fbf",
+      "objectives": {
+        "market": 0.457135409116745,
+        "mission": 0.494440495967865,
+        "university": 0.5298223495483398,
+        "learner": 0.4874785840511322
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:48d8b6d781b0",
+      "objectives": {
+        "market": 0.1586957573890686,
+        "mission": 0.5573340058326721,
+        "university": 0.48707085847854614,
+        "learner": 0.42026975750923157
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:9eaf1b0f9a0a",
+      "objectives": {
+        "market": 0.31803619861602783,
+        "mission": 0.3647579252719879,
+        "university": 0.5415288805961609,
+        "learner": 0.48321661353111267
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:80e8113d2fbf",
+      "objectives": {
+        "market": 0.457135409116745,
+        "mission": 0.494440495967865,
+        "university": 0.5298223495483398,
+        "learner": 0.4874785840511322
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:08e0dfdc1b94",
+      "objectives": {
+        "market": 0.4215361475944519,
+        "mission": 0.1773451268672943,
+        "university": 0.5943099856376648,
+        "learner": 0.3791891038417816
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:80e8113d2fbf",
+      "objectives": {
+        "market": 0.457135409116745,
+        "mission": 0.494440495967865,
+        "university": 0.5298223495483398,
+        "learner": 0.4874785840511322
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:76989e6776cb",
+      "objectives": {
+        "market": 0.3842485845088959,
+        "mission": 0.21016590297222137,
+        "university": 0.6352150440216064,
+        "learner": 0.4245810806751251
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:1de08a181ef8",
+      "objectives": {
+        "market": 0.2602102756500244,
+        "mission": 0.3259512484073639,
+        "university": 0.6647940278053284,
+        "learner": 0.46723678708076477
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:5ac3b33d047e",
+      "objectives": {
+        "market": 0.129512757062912,
+        "mission": 0.4283566176891327,
+        "university": 0.661388099193573,
+        "learner": 0.4750986695289612
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:7edf114bdd4c",
+      "objectives": {
+        "market": 0.37597787380218506,
+        "mission": 0.3156679570674896,
+        "university": 0.6113274693489075,
+        "learner": 0.47135812044143677
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:9967cf71ccea",
+      "objectives": {
+        "market": 0.5637921690940857,
+        "mission": 0.0884980857372284,
+        "university": 0.3870534300804138,
+        "learner": 0.4240291714668274
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:fa38f0f89540",
+      "objectives": {
+        "market": 0.2952488958835602,
+        "mission": 0.5594164729118347,
+        "university": 0.537823498249054,
+        "learner": 0.40994223952293396
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:80e8113d2fbf",
+      "objectives": {
+        "market": 0.457135409116745,
+        "mission": 0.494440495967865,
+        "university": 0.5298223495483398,
+        "learner": 0.4874785840511322
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:5ac3b33d047e",
+      "objectives": {
+        "market": 0.129512757062912,
+        "mission": 0.4283566176891327,
+        "university": 0.661388099193573,
+        "learner": 0.4750986695289612
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:52b6059f3421",
+      "objectives": {
+        "market": 0.3575047552585602,
+        "mission": 0.23513418436050415,
+        "university": 0.6585916876792908,
+        "learner": 0.47099271416664124
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:5ac3b33d047e",
+      "objectives": {
+        "market": 0.129512757062912,
+        "mission": 0.4283566176891327,
+        "university": 0.661388099193573,
+        "learner": 0.4750986695289612
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:15d9940c789c",
+      "objectives": {
+        "market": 0.3117709159851074,
+        "mission": 0.5492321252822876,
+        "university": 0.5368589758872986,
+        "learner": 0.4334196448326111
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:80e8113d2fbf",
+      "objectives": {
+        "market": 0.457135409116745,
+        "mission": 0.494440495967865,
+        "university": 0.5298223495483398,
+        "learner": 0.4874785840511322
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:b72deeadb983",
+      "objectives": {
+        "market": 0.2706702947616577,
+        "mission": 0.3040837347507477,
+        "university": 0.5581812858581543,
+        "learner": 0.5466592907905579
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:321e585cd35b",
+      "objectives": {
+        "market": 0.3166786730289459,
+        "mission": 0.3504461348056793,
+        "university": 0.5221157670021057,
+        "learner": 0.5547425746917725
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:cebcb8a749df",
+      "objectives": {
+        "market": 0.28969067335128784,
+        "mission": 0.28664448857307434,
+        "university": 0.6507852077484131,
+        "learner": 0.45106130838394165
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:cebcb8a749df",
+      "objectives": {
+        "market": 0.28969067335128784,
+        "mission": 0.28664448857307434,
+        "university": 0.6507852077484131,
+        "learner": 0.45106130838394165
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:b72deeadb983",
+      "objectives": {
+        "market": 0.2706702947616577,
+        "mission": 0.3040837347507477,
+        "university": 0.5581812858581543,
+        "learner": 0.5466592907905579
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:321e585cd35b",
+      "objectives": {
+        "market": 0.3166786730289459,
+        "mission": 0.3504461348056793,
+        "university": 0.5221157670021057,
+        "learner": 0.5547425746917725
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:52b6059f3421",
+      "objectives": {
+        "market": 0.3575047552585602,
+        "mission": 0.23513418436050415,
+        "university": 0.6585916876792908,
+        "learner": 0.47099271416664124
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:315773b492ec",
+      "objectives": {
+        "market": 0.22555774450302124,
+        "mission": 0.5334990620613098,
+        "university": 0.6043431162834167,
+        "learner": 0.39695531129837036
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:315773b492ec",
+      "objectives": {
+        "market": 0.22555774450302124,
+        "mission": 0.5334990620613098,
+        "university": 0.6043431162834167,
+        "learner": 0.39695531129837036
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:315773b492ec",
+      "objectives": {
+        "market": 0.22555774450302124,
+        "mission": 0.5334990620613098,
+        "university": 0.6043431162834167,
+        "learner": 0.39695531129837036
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:9967cf71ccea",
+      "objectives": {
+        "market": 0.5637921690940857,
+        "mission": 0.0884980857372284,
+        "university": 0.3870534300804138,
+        "learner": 0.4240291714668274
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:9c51b8e3dc0c",
+      "objectives": {
+        "market": 0.29627060890197754,
+        "mission": 0.6598923802375793,
+        "university": 0.3524061143398285,
+        "learner": 0.2738046944141388
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:3c89cba42e46",
+      "objectives": {
+        "market": 0.1871933937072754,
+        "mission": 0.515082836151123,
+        "university": 0.6631834506988525,
+        "learner": 0.413783460855484
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:7ce75ea16302",
+      "objectives": {
+        "market": 0.12956447899341583,
+        "mission": 0.6216240525245667,
+        "university": 0.6572791337966919,
+        "learner": 0.4082803428173065
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:7ce75ea16302",
+      "objectives": {
+        "market": 0.12956447899341583,
+        "mission": 0.6216240525245667,
+        "university": 0.6572791337966919,
+        "learner": 0.4082803428173065
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:3c89cba42e46",
+      "objectives": {
+        "market": 0.1871933937072754,
+        "mission": 0.515082836151123,
+        "university": 0.6631834506988525,
+        "learner": 0.413783460855484
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:a4e9da7deafd",
+      "objectives": {
+        "market": 0.19715005159378052,
+        "mission": 0.6104707717895508,
+        "university": 0.6081646680831909,
+        "learner": 0.4127783477306366
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:a4e9da7deafd",
+      "objectives": {
+        "market": 0.19715005159378052,
+        "mission": 0.6104707717895508,
+        "university": 0.6081646680831909,
+        "learner": 0.4127783477306366
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:a4e9da7deafd",
+      "objectives": {
+        "market": 0.19715005159378052,
+        "mission": 0.6104707717895508,
+        "university": 0.6081646680831909,
+        "learner": 0.4127783477306366
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:a4e9da7deafd",
+      "objectives": {
+        "market": 0.19715005159378052,
+        "mission": 0.6104707717895508,
+        "university": 0.6081646680831909,
+        "learner": 0.4127783477306366
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:a4e9da7deafd",
+      "objectives": {
+        "market": 0.19715005159378052,
+        "mission": 0.6104707717895508,
+        "university": 0.6081646680831909,
+        "learner": 0.4127783477306366
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:48d6e733000d",
+      "objectives": {
+        "market": 0.25945964455604553,
+        "mission": 0.5065698623657227,
+        "university": 0.6046423316001892,
+        "learner": 0.41072842478752136
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:5b3cb742b3e8",
+      "objectives": {
+        "market": 0.22420184314250946,
+        "mission": 0.6013424396514893,
+        "university": 0.5941298604011536,
+        "learner": 0.39738667011260986
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:5b3cb742b3e8",
+      "objectives": {
+        "market": 0.22420184314250946,
+        "mission": 0.6013424396514893,
+        "university": 0.5941298604011536,
+        "learner": 0.39738667011260986
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:e2f22a5952d4",
+      "objectives": {
+        "market": 0.4984569847583771,
+        "mission": 0.4541087746620178,
+        "university": 0.21831625699996948,
+        "learner": 0.15914379060268402
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:6b1ea39d227e",
+      "objectives": {
+        "market": 0.01861863024532795,
+        "mission": 0.5971397161483765,
+        "university": 0.6120931506156921,
+        "learner": 0.40883588790893555
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:f84adb56691c",
+      "objectives": {
+        "market": 0.15126514434814453,
+        "mission": 0.6116765737533569,
+        "university": 0.5428020358085632,
+        "learner": 0.3680509328842163
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:88ac18b4c50e",
+      "objectives": {
+        "market": 0.3468073308467865,
+        "mission": 0.4049317240715027,
+        "university": 0.6287986636161804,
+        "learner": 0.47683659195899963
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:1700e6f00449",
+      "objectives": {
+        "market": 0.3227728307247162,
+        "mission": 0.5974600315093994,
+        "university": 0.475501149892807,
+        "learner": 0.48930495977401733
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:ee248871c37e",
+      "objectives": {
+        "market": 0.07775892317295074,
+        "mission": 0.48373910784721375,
+        "university": 0.6883565783500671,
+        "learner": 0.446351021528244
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:ee1d51a0da3f",
+      "objectives": {
+        "market": 0.298480361700058,
+        "mission": 0.3329036831855774,
+        "university": 0.7038492560386658,
+        "learner": 0.40774014592170715
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:31fbaf72e4f8",
+      "objectives": {
+        "market": 0.25430211424827576,
+        "mission": 0.40056899189949036,
+        "university": 0.6336609721183777,
+        "learner": 0.46350905299186707
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:31fbaf72e4f8",
+      "objectives": {
+        "market": 0.25430211424827576,
+        "mission": 0.40056899189949036,
+        "university": 0.6336609721183777,
+        "learner": 0.46350905299186707
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:bf4b9121b358",
+      "objectives": {
+        "market": 0.25430211424827576,
+        "mission": 0.40056899189949036,
+        "university": 0.6336609721183777,
+        "learner": 0.46350905299186707
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:bf4b9121b358",
+      "objectives": {
+        "market": 0.25430211424827576,
+        "mission": 0.40056899189949036,
+        "university": 0.6336609721183777,
+        "learner": 0.46350905299186707
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:6f02f8988aa6",
+      "objectives": {
+        "market": 0.2497873306274414,
+        "mission": 0.4068986177444458,
+        "university": 0.6297641396522522,
+        "learner": 0.4481481909751892
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:558362493bb3",
+      "objectives": {
+        "market": 0.2329787015914917,
+        "mission": 0.34192633628845215,
+        "university": 0.6538441181182861,
+        "learner": 0.4685303866863251
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:31fbaf72e4f8",
+      "objectives": {
+        "market": 0.25430211424827576,
+        "mission": 0.40056899189949036,
+        "university": 0.6336609721183777,
+        "learner": 0.46350905299186707
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:4b27d044c440",
+      "objectives": {
+        "market": 0.359526127576828,
+        "mission": 0.5187752842903137,
+        "university": 0.4835415482521057,
+        "learner": 0.34459635615348816
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:MIT:3688b1ca3075",
+      "objectives": {
+        "market": 0.38296806812286377,
+        "mission": 0.5004635453224182,
+        "university": 0.5188842415809631,
+        "learner": 0.5845023989677429
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:e0484771cc66",
+      "objectives": {
+        "market": 0.031020285561680794,
+        "mission": 0.30224156379699707,
+        "university": 0.7114017605781555,
+        "learner": 0.3680950701236725
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:61eedfb56b22",
+      "objectives": {
+        "market": 0.37004315853118896,
+        "mission": 0.04319070652127266,
+        "university": 0.6437325477600098,
+        "learner": 0.3785640299320221
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:d7c7bd8b79e2",
+      "objectives": {
+        "market": 0.39604610204696655,
+        "mission": 0.1691163331270218,
+        "university": 0.6280595064163208,
+        "learner": 0.47052088379859924
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:ccb0868417ee",
+      "objectives": {
+        "market": 0.3418683409690857,
+        "mission": 0.396864116191864,
+        "university": 0.6849055290222168,
+        "learner": 0.4407561123371124
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:1e68c2f6b38f",
+      "objectives": {
+        "market": 0.3243699073791504,
+        "mission": 0.06823579221963882,
+        "university": 0.7035669088363647,
+        "learner": 0.3490176200866699
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:1e68c2f6b38f",
+      "objectives": {
+        "market": 0.3243699073791504,
+        "mission": 0.06823579221963882,
+        "university": 0.7035669088363647,
+        "learner": 0.3490176200866699
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:b118cc878b02",
+      "objectives": {
+        "market": 0.23265448212623596,
+        "mission": 0.36498236656188965,
+        "university": 0.6160554885864258,
+        "learner": 0.48278477787971497
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:8092c9114ab8",
+      "objectives": {
+        "market": 0.3290289044380188,
+        "mission": 0.3677572011947632,
+        "university": 0.512711763381958,
+        "learner": 0.6005174517631531
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:9cc326a6a132",
+      "objectives": {
+        "market": 0.40720251202583313,
+        "mission": 0.24432821571826935,
+        "university": 0.6019346714019775,
+        "learner": 0.34550178050994873
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:a1b7fa951b37",
+      "objectives": {
+        "market": 0.2489800602197647,
+        "mission": 0.3084217607975006,
+        "university": 0.666496753692627,
+        "learner": 0.47485002875328064
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:95a8773cbedc",
+      "objectives": {
+        "market": 0.35354453325271606,
+        "mission": 0.2941063940525055,
+        "university": 0.6338412165641785,
+        "learner": 0.42806848883628845
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:95a8773cbedc",
+      "objectives": {
+        "market": 0.35354453325271606,
+        "mission": 0.2941063940525055,
+        "university": 0.6338412165641785,
+        "learner": 0.42806848883628845
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:ea3830100c7a",
+      "objectives": {
+        "market": -0.015025440603494644,
+        "mission": 0.3992672860622406,
+        "university": 0.6829847097396851,
+        "learner": 0.5027908682823181
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:8a5c04e7af2e",
+      "objectives": {
+        "market": 0.2547568380832672,
+        "mission": 0.5105640888214111,
+        "university": 0.5666900873184204,
+        "learner": 0.44542282819747925
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:061e3436a3c5",
+      "objectives": {
+        "market": 0.1969728320837021,
+        "mission": 0.6121302843093872,
+        "university": 0.5418340563774109,
+        "learner": 0.3692264258861542
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:569d55cab5a3",
+      "objectives": {
+        "market": 0.04893641173839569,
+        "mission": 0.30860409140586853,
+        "university": 0.6771546602249146,
+        "learner": 0.46364733576774597
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:e9514fd46364",
+      "objectives": {
+        "market": 0.19697286188602448,
+        "mission": 0.6121302247047424,
+        "university": 0.5418339967727661,
+        "learner": 0.3692263066768646
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:f77abc61d90d",
+      "objectives": {
+        "market": 0.2133328765630722,
+        "mission": 0.3755432367324829,
+        "university": 0.6923152208328247,
+        "learner": 0.4061260223388672
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:e2c376e5a71d",
+      "objectives": {
+        "market": 0.35061293840408325,
+        "mission": 0.23477762937545776,
+        "university": 0.6750349998474121,
+        "learner": 0.34047454595565796
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:a24770bbbe8d",
+      "objectives": {
+        "market": 0.5540590286254883,
+        "mission": 0.4394386112689972,
+        "university": 0.3519352376461029,
+        "learner": 0.42458420991897583
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:b1590b0ba492",
+      "objectives": {
+        "market": 0.12172559648752213,
+        "mission": 0.4227203130722046,
+        "university": 0.699442982673645,
+        "learner": 0.3239322900772095
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:00408258b8f9",
+      "objectives": {
+        "market": 0.4703853130340576,
+        "mission": 0.5208828449249268,
+        "university": 0.45788994431495667,
+        "learner": 0.3619846999645233
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:3a15ff516afd",
+      "objectives": {
+        "market": 0.22941793501377106,
+        "mission": 0.4622395634651184,
+        "university": 0.6654443144798279,
+        "learner": 0.4274027943611145
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:e3a60682aac2",
+      "objectives": {
+        "market": 0.1352614313364029,
+        "mission": 0.3770875334739685,
+        "university": 0.5938056111335754,
+        "learner": 0.575502336025238
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:a9bb2bce8c66",
+      "objectives": {
+        "market": 0.23896609246730804,
+        "mission": 0.5471855998039246,
+        "university": 0.5681523084640503,
+        "learner": 0.5324183106422424
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:3634f4170969",
+      "objectives": {
+        "market": 0.15487779676914215,
+        "mission": 0.5988796353340149,
+        "university": 0.5824182033538818,
+        "learner": 0.46420687437057495
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:1b709d4b2622",
+      "objectives": {
+        "market": 0.3237327039241791,
+        "mission": 0.5767568349838257,
+        "university": 0.5172222256660461,
+        "learner": 0.30203530192375183
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:39d356ad403d",
+      "objectives": {
+        "market": 0.5534066557884216,
+        "mission": 0.3727167546749115,
+        "university": 0.4054204523563385,
+        "learner": 0.32981255650520325
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:dc867e2b2737",
+      "objectives": {
+        "market": 0.20184741914272308,
+        "mission": 0.5130242705345154,
+        "university": 0.6119892597198486,
+        "learner": 0.5425873398780823
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:5376f5e0077e",
+      "objectives": {
+        "market": 0.24455654621124268,
+        "mission": 0.42973628640174866,
+        "university": 0.6401635408401489,
+        "learner": 0.34383049607276917
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:3173d333833c",
+      "objectives": {
+        "market": 0.5275798439979553,
+        "mission": 0.26083609461784363,
+        "university": 0.5120039582252502,
+        "learner": 0.33317574858665466
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:27f34b61c04c",
+      "objectives": {
+        "market": 0.08197814226150513,
+        "mission": 0.28278931975364685,
+        "university": 0.7111783027648926,
+        "learner": 0.382465660572052
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:5defc37de1a8",
+      "objectives": {
+        "market": 0.22558215260505676,
+        "mission": 0.5596927404403687,
+        "university": 0.49139803647994995,
+        "learner": 0.3793841600418091
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:313fc83d39a9",
+      "objectives": {
+        "market": 0.22118782997131348,
+        "mission": 0.3335497975349426,
+        "university": 0.7032313942909241,
+        "learner": 0.40148624777793884
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:5518969d4e32",
+      "objectives": {
+        "market": 0.40116170048713684,
+        "mission": 0.29168492555618286,
+        "university": 0.5840275287628174,
+        "learner": 0.4124346077442169
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:77fac5d7d8cd",
+      "objectives": {
+        "market": 0.28065401315689087,
+        "mission": 0.41026222705841064,
+        "university": 0.6417759656906128,
+        "learner": 0.3779556155204773
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:8c517c2a7b28",
+      "objectives": {
+        "market": 0.5171070694923401,
+        "mission": 0.11136526614427567,
+        "university": 0.5523000359535217,
+        "learner": 0.2994033694267273
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:8e216c3730a5",
+      "objectives": {
+        "market": 0.40139639377593994,
+        "mission": 0.3231443762779236,
+        "university": 0.5600350499153137,
+        "learner": 0.33596155047416687
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:c334f1680ca4",
+      "objectives": {
+        "market": 0.05649585649371147,
+        "mission": 0.6306657791137695,
+        "university": 0.5499961376190186,
+        "learner": 0.3539412021636963
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:c334f1680ca4",
+      "objectives": {
+        "market": 0.05649585649371147,
+        "mission": 0.6306657791137695,
+        "university": 0.5499961376190186,
+        "learner": 0.3539412021636963
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:1e68c2f6b38f",
+      "objectives": {
+        "market": 0.3243699073791504,
+        "mission": 0.06823579221963882,
+        "university": 0.7035669088363647,
+        "learner": 0.3490176200866699
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:3173d333833c",
+      "objectives": {
+        "market": 0.5275798439979553,
+        "mission": 0.26083609461784363,
+        "university": 0.5120039582252502,
+        "learner": 0.33317574858665466
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:79d4f8e7cab0",
+      "objectives": {
+        "market": 0.2867330312728882,
+        "mission": 0.4109243154525757,
+        "university": 0.6245019435882568,
+        "learner": 0.4396774470806122
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:aa078238de7f",
+      "objectives": {
+        "market": 0.18578380346298218,
+        "mission": 0.35347190499305725,
+        "university": 0.6960556507110596,
+        "learner": 0.2972222864627838
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:ce85fd3840a9",
+      "objectives": {
+        "market": 0.15972617268562317,
+        "mission": 0.0689987987279892,
+        "university": 0.7266902923583984,
+        "learner": 0.38216572999954224
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:b05035d4d753",
+      "objectives": {
+        "market": 0.332576185464859,
+        "mission": 0.29673126339912415,
+        "university": 0.5584756731987,
+        "learner": 0.5252335667610168
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:ced319e1a018",
+      "objectives": {
+        "market": 0.1243123933672905,
+        "mission": 0.4365789294242859,
+        "university": 0.6720885634422302,
+        "learner": 0.38510850071907043
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:5376f5e0077e",
+      "objectives": {
+        "market": 0.24455654621124268,
+        "mission": 0.42973628640174866,
+        "university": 0.6401635408401489,
+        "learner": 0.34383049607276917
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:abd07812f3ba",
+      "objectives": {
+        "market": 0.36745592951774597,
+        "mission": 0.18841418623924255,
+        "university": 0.639807939529419,
+        "learner": 0.26790133118629456
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:bc6898593148",
+      "objectives": {
+        "market": 0.15550458431243896,
+        "mission": 0.5814891457557678,
+        "university": 0.6186460852622986,
+        "learner": 0.29780247807502747
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:ec9c8bd5ffa5",
+      "objectives": {
+        "market": 0.2149597704410553,
+        "mission": 0.3403913080692291,
+        "university": 0.7008213996887207,
+        "learner": 0.4387558400630951
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:c14a1d3a53e1",
+      "objectives": {
+        "market": 0.12539465725421906,
+        "mission": 0.19221743941307068,
+        "university": 0.7489039301872253,
+        "learner": 0.4421650469303131
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:ab6cdc44b096",
+      "objectives": {
+        "market": 0.1786474883556366,
+        "mission": 0.22689387202262878,
+        "university": 0.7166191935539246,
+        "learner": 0.474683940410614
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:54acc5b89173",
+      "objectives": {
+        "market": 0.027146639302372932,
+        "mission": 0.376051127910614,
+        "university": 0.6474171876907349,
+        "learner": 0.48734384775161743
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:c334f1680ca4",
+      "objectives": {
+        "market": 0.05649585649371147,
+        "mission": 0.6306657791137695,
+        "university": 0.5499961376190186,
+        "learner": 0.3539412021636963
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:c334f1680ca4",
+      "objectives": {
+        "market": 0.05649585649371147,
+        "mission": 0.6306657791137695,
+        "university": 0.5499961376190186,
+        "learner": 0.3539412021636963
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:bd6eeca80945",
+      "objectives": {
+        "market": 0.037105854600667953,
+        "mission": 0.6662479043006897,
+        "university": 0.5485156774520874,
+        "learner": 0.3048500120639801
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:UC Berkeley:95af0d9a7060",
+      "objectives": {
+        "market": 0.16729488968849182,
+        "mission": 0.43546342849731445,
+        "university": 0.6409421563148499,
+        "learner": 0.45733481645584106
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:9abeff19fee4",
+      "objectives": {
+        "market": 0.35350456833839417,
+        "mission": 0.592579185962677,
+        "university": 0.3424430787563324,
+        "learner": 0.4702198803424835
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:943581b30a49",
+      "objectives": {
+        "market": 0.16673187911510468,
+        "mission": 0.29945603013038635,
+        "university": 0.6425999402999878,
+        "learner": 0.4854543209075928
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:114f8d7931a8",
+      "objectives": {
+        "market": 0.2188013643026352,
+        "mission": 0.2593267261981964,
+        "university": 0.6802055239677429,
+        "learner": 0.5270755290985107
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:8ffa2c012d50",
+      "objectives": {
+        "market": 0.4389817416667938,
+        "mission": 0.29742756485939026,
+        "university": 0.5221819877624512,
+        "learner": 0.5484663248062134
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:390b33508d19",
+      "objectives": {
+        "market": 0.13395708799362183,
+        "mission": 0.5124783515930176,
+        "university": 0.6342926621437073,
+        "learner": 0.45175549387931824
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:4e898e671060",
+      "objectives": {
+        "market": 0.2156330794095993,
+        "mission": 0.6052005290985107,
+        "university": 0.4629277288913727,
+        "learner": 0.33316323161125183
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:c25d905ad6df",
+      "objectives": {
+        "market": 0.15159861743450165,
+        "mission": 0.4708055853843689,
+        "university": 0.6297620534896851,
+        "learner": 0.45509329438209534
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:298d0d109ca3",
+      "objectives": {
+        "market": 0.20492935180664062,
+        "mission": 0.4149474501609802,
+        "university": 0.5784314870834351,
+        "learner": 0.49726659059524536
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:960deaf1dc2a",
+      "objectives": {
+        "market": 0.3946761190891266,
+        "mission": 0.2784595787525177,
+        "university": 0.6117678880691528,
+        "learner": 0.49215081334114075
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:2ca0e47bb52c",
+      "objectives": {
+        "market": 0.40066859126091003,
+        "mission": 0.3396271765232086,
+        "university": 0.6316746473312378,
+        "learner": 0.3790839910507202
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:163eed1dca7f",
+      "objectives": {
+        "market": -0.04998606815934181,
+        "mission": 0.6503602266311646,
+        "university": 0.5780208706855774,
+        "learner": 0.3037145733833313
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:12b3f28d1a98",
+      "objectives": {
+        "market": 0.1369008719921112,
+        "mission": 0.43917885422706604,
+        "university": 0.6751065850257874,
+        "learner": 0.3367157578468323
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:506605bd3d52",
+      "objectives": {
+        "market": 0.2730271816253662,
+        "mission": 0.479749470949173,
+        "university": 0.538338303565979,
+        "learner": 0.3992050886154175
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:1d395c0bbf01",
+      "objectives": {
+        "market": 0.14024381339550018,
+        "mission": 0.44120699167251587,
+        "university": 0.6760770678520203,
+        "learner": 0.3340774178504944
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:d27f114fbbe6",
+      "objectives": {
+        "market": -0.04263758286833763,
+        "mission": 0.5106555819511414,
+        "university": 0.6153597235679626,
+        "learner": 0.5386592149734497
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:e14cbcbf0146",
+      "objectives": {
+        "market": 0.2970268428325653,
+        "mission": 0.4840869605541229,
+        "university": 0.6122789978981018,
+        "learner": 0.3905300199985504
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:05c7c54f7b27",
+      "objectives": {
+        "market": 0.14175784587860107,
+        "mission": 0.6808618903160095,
+        "university": 0.5478438138961792,
+        "learner": 0.39155957102775574
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:06ac6380fba8",
+      "objectives": {
+        "market": 0.39402833580970764,
+        "mission": 0.46967315673828125,
+        "university": 0.5985323190689087,
+        "learner": 0.421347051858902
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:c34a47b39767",
+      "objectives": {
+        "market": -0.019635865464806557,
+        "mission": 0.6135697364807129,
+        "university": 0.5730124115943909,
+        "learner": 0.4154696762561798
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:87618de813c3",
+      "objectives": {
+        "market": 0.22317108511924744,
+        "mission": 0.5778788328170776,
+        "university": 0.48608362674713135,
+        "learner": 0.49471354484558105
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:0d418b432b9e",
+      "objectives": {
+        "market": 0.21818336844444275,
+        "mission": 0.3961932063102722,
+        "university": 0.5565751194953918,
+        "learner": 0.5462824106216431
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:6e880ad1bcd4",
+      "objectives": {
+        "market": 0.17394544184207916,
+        "mission": 0.6482487916946411,
+        "university": 0.3492726981639862,
+        "learner": 0.30013495683670044
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:b387eb3b5608",
+      "objectives": {
+        "market": 0.3808336853981018,
+        "mission": 0.5235907435417175,
+        "university": 0.47336581349372864,
+        "learner": 0.5181991457939148
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:7e390f810b03",
+      "objectives": {
+        "market": 0.21267075836658478,
+        "mission": 0.3834940791130066,
+        "university": 0.6575480103492737,
+        "learner": 0.4726620018482208
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:5b770fe37bf0",
+      "objectives": {
+        "market": 0.4594380855560303,
+        "mission": 0.25546184182167053,
+        "university": 0.5899860858917236,
+        "learner": 0.48306766152381897
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:7f988598c98f",
+      "objectives": {
+        "market": 0.29904788732528687,
+        "mission": 0.2784971594810486,
+        "university": 0.5598024725914001,
+        "learner": 0.4941340386867523
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:67ca40886e18",
+      "objectives": {
+        "market": 0.10715404152870178,
+        "mission": 0.460295706987381,
+        "university": 0.6284974813461304,
+        "learner": 0.4969346225261688
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:d701edc3025a",
+      "objectives": {
+        "market": 0.435530424118042,
+        "mission": 0.5683044195175171,
+        "university": 0.3935498297214508,
+        "learner": 0.31897756457328796
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:649dbe0d9803",
+      "objectives": {
+        "market": 0.603083074092865,
+        "mission": 0.3349069058895111,
+        "university": 0.38010480999946594,
+        "learner": 0.3550942838191986
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:847556aba7ee",
+      "objectives": {
+        "market": -0.126615971326828,
+        "mission": 0.7146483659744263,
+        "university": 0.49097245931625366,
+        "learner": 0.3228346109390259
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:68b1cc3af30f",
+      "objectives": {
+        "market": 0.16644532978534698,
+        "mission": 0.3695004880428314,
+        "university": 0.6694666743278503,
+        "learner": 0.4823509752750397
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:ea1ba0c87b4c",
+      "objectives": {
+        "market": 0.188818097114563,
+        "mission": 0.6310562491416931,
+        "university": 0.381702184677124,
+        "learner": 0.39873310923576355
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:bc4aa46a9582",
+      "objectives": {
+        "market": 0.19474105536937714,
+        "mission": 0.4254656434059143,
+        "university": 0.6341370940208435,
+        "learner": 0.4778575003147125
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Stanford:d52f31e25a2d",
+      "objectives": {
+        "market": 0.2855544984340668,
+        "mission": 0.3636261522769928,
+        "university": 0.5953248739242554,
+        "learner": 0.502040445804596
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Cornell:c4a403a78018",
+      "objectives": {
+        "market": 0.22171251475811005,
+        "mission": 0.6236076354980469,
+        "university": 0.4326188862323761,
+        "learner": 0.28501278162002563
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Cornell:f3872717c660",
+      "objectives": {
+        "market": 0.41630789637565613,
+        "mission": 0.24685373902320862,
+        "university": 0.45290979743003845,
+        "learner": 0.5605961680412292
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Cornell:a15460922182",
+      "objectives": {
+        "market": 0.06033146381378174,
+        "mission": 0.6254565715789795,
+        "university": 0.5436803102493286,
+        "learner": 0.41544046998023987
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Cornell:7955227ab5c7",
+      "objectives": {
+        "market": 0.1109231486916542,
+        "mission": 0.3749732971191406,
+        "university": 0.6422284841537476,
+        "learner": 0.5279649496078491
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Cornell:7955227ab5c7",
+      "objectives": {
+        "market": 0.1109231486916542,
+        "mission": 0.3749732971191406,
+        "university": 0.6422284841537476,
+        "learner": 0.5279649496078491
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:99dd33c5eb66",
+      "objectives": {
+        "market": 0.5208166241645813,
+        "mission": 0.351553738117218,
+        "university": 0.4972795844078064,
+        "learner": 0.49511080980300903
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:928b711d94c6",
+      "objectives": {
+        "market": 0.22352728247642517,
+        "mission": 0.1309632956981659,
+        "university": 0.576042890548706,
+        "learner": 0.5176936984062195
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:ac9a08509643",
+      "objectives": {
+        "market": 0.09305854886770248,
+        "mission": 0.3124156594276428,
+        "university": 0.5806239247322083,
+        "learner": 0.6095753908157349
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:fece20f813d7",
+      "objectives": {
+        "market": 0.2073255479335785,
+        "mission": 0.3593478500843048,
+        "university": 0.6192137598991394,
+        "learner": 0.5922697186470032
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:3a85e0b78300",
+      "objectives": {
+        "market": 0.19739308953285217,
+        "mission": 0.35277026891708374,
+        "university": 0.6051563024520874,
+        "learner": 0.5988243222236633
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:38ed0c7205a6",
+      "objectives": {
+        "market": 0.44547080993652344,
+        "mission": 0.37090954184532166,
+        "university": 0.4939417243003845,
+        "learner": 0.5378407835960388
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:6ae658d33db1",
+      "objectives": {
+        "market": 0.5227339267730713,
+        "mission": 0.2335507869720459,
+        "university": 0.4391463100910187,
+        "learner": 0.48357319831848145
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:bad8f1a3e621",
+      "objectives": {
+        "market": 0.5609385371208191,
+        "mission": 0.2451002150774002,
+        "university": 0.4226795732975006,
+        "learner": 0.4756307899951935
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:99dd33c5eb66",
+      "objectives": {
+        "market": 0.5208166241645813,
+        "mission": 0.351553738117218,
+        "university": 0.4972795844078064,
+        "learner": 0.49511080980300903
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:1eb12a73eaa5",
+      "objectives": {
+        "market": 0.5548585653305054,
+        "mission": 0.25509917736053467,
+        "university": 0.4483921229839325,
+        "learner": 0.4803432524204254
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:471622a18c17",
+      "objectives": {
+        "market": 0.1973930299282074,
+        "mission": 0.35277047753334045,
+        "university": 0.6051561832427979,
+        "learner": 0.5988243222236633
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:151f067ebff5",
+      "objectives": {
+        "market": -0.01826121099293232,
+        "mission": 0.3408353328704834,
+        "university": 0.6415319442749023,
+        "learner": 0.6277503967285156
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:0367717cf335",
+      "objectives": {
+        "market": 0.22792701423168182,
+        "mission": 0.33851686120033264,
+        "university": 0.6777684092521667,
+        "learner": 0.444217711687088
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:99dd33c5eb66",
+      "objectives": {
+        "market": 0.5208166241645813,
+        "mission": 0.351553738117218,
+        "university": 0.4972795844078064,
+        "learner": 0.49511080980300903
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:42e1a0d57c96",
+      "objectives": {
+        "market": 0.49792203307151794,
+        "mission": 0.319206178188324,
+        "university": 0.37872621417045593,
+        "learner": 0.5461599230766296
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:32f573c7e1c0",
+      "objectives": {
+        "market": 0.1392679363489151,
+        "mission": 0.3460127115249634,
+        "university": 0.6236370205879211,
+        "learner": 0.5530807971954346
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:fece20f813d7",
+      "objectives": {
+        "market": 0.2073255479335785,
+        "mission": 0.3593478500843048,
+        "university": 0.6192137598991394,
+        "learner": 0.5922697186470032
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:5e20f672baca",
+      "objectives": {
+        "market": 0.5234471559524536,
+        "mission": 0.29919788241386414,
+        "university": 0.3704383671283722,
+        "learner": 0.5200145244598389
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:151f067ebff5",
+      "objectives": {
+        "market": -0.01826121099293232,
+        "mission": 0.3408353328704834,
+        "university": 0.6415319442749023,
+        "learner": 0.6277503967285156
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:ab5ddcadf7ba",
+      "objectives": {
+        "market": 0.2508000433444977,
+        "mission": 0.41980627179145813,
+        "university": 0.391791433095932,
+        "learner": 0.622062087059021
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:a6d240f97e97",
+      "objectives": {
+        "market": 0.03843865916132927,
+        "mission": 0.22861723601818085,
+        "university": 0.6390134692192078,
+        "learner": 0.5534809827804565
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:b8847e2eef7f",
+      "objectives": {
+        "market": 0.21588759124279022,
+        "mission": 0.3866438567638397,
+        "university": 0.5670543909072876,
+        "learner": 0.5626175999641418
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:fc731637d87e",
+      "objectives": {
+        "market": 0.13513565063476562,
+        "mission": 0.3612944483757019,
+        "university": 0.5697212219238281,
+        "learner": 0.5966821908950806
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:KTH:151f067ebff5",
+      "objectives": {
+        "market": -0.01826121099293232,
+        "mission": 0.3408353328704834,
+        "university": 0.6415319442749023,
+        "learner": 0.6277503967285156
+      },
+      "feasible": true,
+      "violations": {}
+    },
+    {
+      "option_id": "course:Edinburgh:0380b31b7043",
+      "objectives": {
+        "market": 0.35832706093788147,
+        "mission": 0.31346064805984497,
+        "university": 0.6423651576042175,
+        "learner": 0.40616652369499207
+      },
+      "feasible": true,
+      "violations": {}
+    }
+  ]
+}

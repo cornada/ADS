@@ -1,0 +1,63 @@
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+ADS-Unified-v4 Dataset
+======================
+
+Copyright (c) 2026 ADS Research Team
+
+This dataset is licensed under the Creative Commons Attribution 4.0
+International License (CC BY 4.0).
+
+You are free to:
+- Share: copy and redistribute the material in any medium or format
+- Adapt: remix, transform, and build upon the material for any purpose,
+  even commercially
+
+Under the following terms:
+- Attribution: You must give appropriate credit, provide a link to the
+  license, and indicate if changes were made.
+
+Full license text: https://creativecommons.org/licenses/by/4.0/legalcode
+
+---
+
+Data Source Attribution
+=======================
+
+This dataset incorporates data from the following sources:
+
+1. O*NET Database
+   - Source: U.S. Department of Labor, Employment and Training Administration
+   - License: Public Domain (U.S. Government Work)
+   - URL: https://www.onetonline.org/
+
+2. MIT OpenCourseWare
+   - Source: Massachusetts Institute of Technology
+   - License: CC BY-NC-SA 4.0
+   - URL: https://ocw.mit.edu/
+   - Note: Derived work is transformative (metadata extraction only)
+
+3. College Scorecard
+   - Source: U.S. Department of Education
+   - License: Public Domain (U.S. Government Work)
+   - URL: https://collegescorecard.ed.gov/
+
+4. University Course Catalogs
+   - Sources: UC Berkeley, Stanford, UIUC, Cornell, KTH, Edinburgh
+   - License: Public information
+   - Note: Course descriptions are factual information
+
+---
+
+Citation
+========
+
+If you use this dataset, please cite:
+
+@dataset{ads_unified_v4_2026,
+  title = {ADS-Unified-v4: Multi-Stakeholder Curriculum Evaluation Benchmark},
+  author = {ADS Research Team},
+  year = {2026},
+  publisher = {Zenodo},
+  doi = {[TO BE ASSIGNED]}
+}

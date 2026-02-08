@@ -1,0 +1,209 @@
+{
+  "@context": {
+    "@vocab": "https://schema.org/",
+    "ml": "http://mlcommons.org/croissant/",
+    "sc": "https://schema.org/"
+  },
+  "@type": "sc:Dataset",
+  "name": "ADS-Unified-v4",
+  "description": "Agent-Didactic Spaces (ADS) benchmark dataset for multi-stakeholder curriculum evaluation. Contains 27,586 deduplicated courses from 7 universities (MIT, UC Berkeley, Stanford, UIUC, Cornell, KTH Sweden, Edinburgh UK) across 3 countries, linked to 1,016 O*NET occupations and 62 institutional mission statements. Includes O*NET structured data (skills, tasks, technology), CIP-SOC crosswalks, time-travel market drift analysis (4 O*NET versions 2022-2025), and reference experiment results (Pareto sets, baselines, goal sensitivity).",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "url": "https://github.com/ads-research/ads-unified-v4",
+  "version": "4.0.1",
+  "datePublished": "2026-02-07",
+  "creator": [
+    {
+      "@type": "sc:Organization",
+      "name": "ADS Research Team"
+    }
+  ],
+  "keywords": [
+    "education",
+    "curriculum",
+    "multi-objective optimization",
+    "Pareto",
+    "benchmark",
+    "courses",
+    "universities",
+    "O*NET",
+    "labor market",
+    "KDD"
+  ],
+  "distribution": [
+    {
+      "@type": "sc:FileObject",
+      "@id": "courses.csv",
+      "name": "courses.csv",
+      "description": "Deduplicated course records with descriptions, learning outcomes, and university metadata",
+      "contentUrl": "courses.csv",
+      "encodingFormat": "text/csv",
+      "sha256": "8f246faa12bc7593e94e0f6a55ca98e44d54dd52f5fa6cb166343b75737cc624"
+    },
+    {
+      "@type": "sc:FileObject",
+      "@id": "artifacts.jsonl",
+      "name": "artifacts.jsonl",
+      "description": "All artifacts including courses, missions, O*NET occupations, and Scorecard programs",
+      "contentUrl": "artifacts.jsonl",
+      "encodingFormat": "application/jsonl",
+      "sha256": "eeaed5051a82cf15424ba81406215fb8bddd675dca8c93f9dd4d116ab0b493e0"
+    },
+    {
+      "@type": "sc:FileObject",
+      "@id": "programs.csv",
+      "name": "programs.csv",
+      "description": "College Scorecard academic programs and degree outcomes",
+      "contentUrl": "programs.csv",
+      "encodingFormat": "text/csv",
+      "sha256": "badafaa704d3b7b4bbc11bd2a7b322e241bf4491e3c34bffa1891d31d2221575"
+    },
+    {
+      "@type": "sc:FileObject",
+      "@id": "onet-occupations",
+      "name": "onet/occupations.csv",
+      "description": "O*NET occupation profiles (1,016 occupations)",
+      "contentUrl": "onet/occupations.csv",
+      "encodingFormat": "text/csv",
+      "sha256": "91deed7c08f1e530d29defa46337465a8aa5b91896a0e8251aa9bbd28eeecd62"
+    },
+    {
+      "@type": "sc:FileObject",
+      "@id": "onet-skills",
+      "name": "onet/skills.csv",
+      "description": "O*NET skill records (71K records across occupations)",
+      "contentUrl": "onet/skills.csv",
+      "encodingFormat": "text/csv",
+      "sha256": "0504a85c6e66e35a640a63cfe6f785e32b7c7cd5452984aa6e0ab62ad3f3ec62"
+    },
+    {
+      "@type": "sc:FileObject",
+      "@id": "onet-tasks",
+      "name": "onet/tasks.csv",
+      "description": "O*NET task statements per occupation",
+      "contentUrl": "onet/tasks.csv",
+      "encodingFormat": "text/csv",
+      "sha256": "1fb6f18578961fa9fa0f821ffe299646423b2d673966c4bfb531c6f6cf3e9fa7"
+    },
+    {
+      "@type": "sc:FileObject",
+      "@id": "onet-technology",
+      "name": "onet/technology.csv",
+      "description": "O*NET technology/tools per occupation",
+      "contentUrl": "onet/technology.csv",
+      "encodingFormat": "text/csv",
+      "sha256": "d0b995a1d4d1ced583dee2300fe3024f95262cd8cada8649e68dc00899662fd3"
+    }
+  ],
+  "ml:recordSet": [
+    {
+      "@type": "ml:RecordSet",
+      "name": "courses",
+      "description": "Deduplicated course records from 7 universities across 3 countries",
+      "key": "course_id",
+      "ml:field": [
+        {
+          "@type": "ml:Field",
+          "name": "course_id",
+          "description": "Unique course identifier",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "ml:Field",
+          "name": "course_name",
+          "description": "Course title",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "ml:Field",
+          "name": "description",
+          "description": "Course description and learning outcomes",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "ml:Field",
+          "name": "university",
+          "description": "University name",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "ml:Field",
+          "name": "units",
+          "description": "Credit units",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "ml:Field",
+          "name": "department",
+          "description": "Department name",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "ml:Field",
+          "name": "level",
+          "description": "Course level (undergraduate/graduate)",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "ml:Field",
+          "name": "prerequisites",
+          "description": "Course prerequisites",
+          "dataType": "sc:Text"
+        }
+      ]
+    },
+    {
+      "@type": "ml:RecordSet",
+      "name": "artifacts",
+      "description": "All artifacts including courses, missions, occupations",
+      "key": "artifact_id",
+      "ml:field": [
+        {
+          "@type": "ml:Field",
+          "name": "artifact_id",
+          "description": "Unique artifact identifier",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "ml:Field",
+          "name": "type",
+          "description": "Artifact type (COURSE, MISSION, JOB_ROLE, OUTCOME_MAJOR, etc.)",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "ml:Field",
+          "name": "text",
+          "description": "Full text content of the artifact",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "ml:Field",
+          "name": "source_url",
+          "description": "Original source URL",
+          "dataType": "sc:URL"
+        }
+      ]
+    }
+  ],
+  "ml:datasetStats": {
+    "numCourses": 27586,
+    "numUniversities": 7,
+    "numCountries": 3,
+    "numOccupations": 1016,
+    "numMissions": 62,
+    "numArtifactsTotal": 28633,
+    "numPrograms": 398,
+    "numOnetSkillRecords": 71520,
+    "numOnetTaskRecords": 13326,
+    "numOnetTechRecords": 32773,
+    "numTimeTravelVersions": 4,
+    "universityCounts": {
+      "UC Berkeley": 11102,
+      "MIT": 6944,
+      "KTH": 4768,
+      "Stanford": 2663,
+      "Cornell": 842,
+      "UIUC": 821,
+      "Edinburgh": 446
+    }
+  }
+}
