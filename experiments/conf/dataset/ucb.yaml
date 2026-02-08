@@ -5,3 +5,5 @@ artifacts_path: "data/processed/ucb/artifacts.jsonl"
 outcomes_csv_path: "data/processed/ucb/outcomes_major_level.csv"
 # Uses pre-generated fixtures by default for reproducibility
 # Run `python -m ads_core.ingest.ucb` to regenerate
+# Set strict_data: true for paper experiments to require real ingested data
+strict_data: false

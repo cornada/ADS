@@ -1,0 +1,10 @@
+{
+  "pareto_size": 141,
+  "pareto_hv": 0.112249,
+  "pareto_spacing": 0.030513,
+  "best_baseline_hv_ratio": 0.9893,
+  "best_baseline_name": "random_scalarization",
+  "eps_market_size": 10168,
+  "eps_mission_size": 9393,
+  "eps_learner_size": 9030
+}

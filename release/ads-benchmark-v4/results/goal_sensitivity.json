@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "career": 107,
+    "research": 131,
+    "balanced": 141,
+    "social": 79
+  },
+  "min_jaccard": 0.375,
+  "max_jaccard": 0.6424,
+  "mean_jaccard": 0.4878
+}

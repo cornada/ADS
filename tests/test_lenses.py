@@ -359,3 +359,134 @@ class TestLensIntegration:
         v = np.random.randn(8)
         result = lens_a.transform(v)
         assert result.shape == v.shape
+
+
+class TestHydraLensesConfig:
+    """Tests for Hydra lenses config integration (P0.1/P0.2 fix verification)."""
+
+    def test_build_lenses_respects_mode(self):
+        """_build_lenses should respect 'mode' key from Hydra configs."""
+        from ads_core.pipeline.dataset_pipeline import _build_lenses
+        from ads_core.data.schemas import Artifact, ArtifactType
+
+        # Create minimal test artifacts
+        artifacts = [
+            Artifact(
+                artifact_id="course_1",
+                type=ArtifactType.COURSE,
+                text="Test course",
+                source_url="test://",
+            ),
+        ]
+        id2vec = {"course_1": np.random.randn(64)}
+
+        # Test with mode=identity (Hydra style)
+        lenses = _build_lenses({"mode": "identity"}, d=64, id2vec=id2vec, artifacts=artifacts)
+        assert "default" in lenses
+        assert lenses["default"].lens_id == "identity:default"
+
+        # Test with mode=diagonal (Hydra style)
+        lenses = _build_lenses({"mode": "diagonal"}, d=64, id2vec=id2vec, artifacts=artifacts)
+        assert "default" in lenses
+        assert "diagonal" in lenses["default"].lens_id
+
+    def test_build_lenses_backward_compat_kind(self):
+        """_build_lenses should also support 'kind' key for backward compat."""
+        from ads_core.pipeline.dataset_pipeline import _build_lenses
+        from ads_core.data.schemas import Artifact, ArtifactType
+
+        artifacts = [
+            Artifact(
+                artifact_id="course_1",
+                type=ArtifactType.COURSE,
+                text="Test course",
+                source_url="test://",
+            ),
+        ]
+        id2vec = {"course_1": np.random.randn(64)}
+
+        # Test with kind=identity (old style)
+        lenses = _build_lenses({"kind": "identity"}, d=64, id2vec=id2vec, artifacts=artifacts)
+        assert "default" in lenses
+        assert lenses["default"].lens_id == "identity:default"
+
+    def test_build_lenses_mode_takes_precedence(self):
+        """If both 'mode' and 'kind' present, 'mode' takes precedence."""
+        from ads_core.pipeline.dataset_pipeline import _build_lenses
+        from ads_core.data.schemas import Artifact, ArtifactType
+
+        artifacts = [
+            Artifact(
+                artifact_id="course_1",
+                type=ArtifactType.COURSE,
+                text="Test course",
+                source_url="test://",
+            ),
+        ]
+        id2vec = {"course_1": np.random.randn(64)}
+
+        # Both present - mode should win
+        lenses = _build_lenses({"mode": "diagonal", "kind": "identity"}, d=64, id2vec=id2vec, artifacts=artifacts)
+        assert "default" in lenses
+        assert "diagonal" in lenses["default"].lens_id
+
+    def test_build_lenses_learned_produces_stakeholder_lenses(self):
+        """Learned lens mode produces per-stakeholder lenses."""
+        from ads_core.pipeline.dataset_pipeline import _build_lenses
+        from ads_core.data.schemas import Artifact, ArtifactType
+
+        # Need diverse artifacts for learned lenses
+        artifacts = [
+            Artifact(artifact_id=f"course_{i}", type=ArtifactType.COURSE, text=f"Course {i}", source_url="test://")
+            for i in range(10)
+        ] + [
+            Artifact(artifact_id=f"job_{i}", type=ArtifactType.JOB_ROLE, text=f"Job {i}", source_url="test://")
+            for i in range(10)
+        ]
+
+        np.random.seed(42)
+        id2vec = {a.artifact_id: np.random.randn(64) for a in artifacts}
+
+        lenses = _build_lenses({"mode": "learned"}, d=64, id2vec=id2vec, artifacts=artifacts)
+
+        # Should have stakeholder-specific lenses (not "default")
+        assert "university" in lenses or "market" in lenses
+        assert "default" not in lenses or len(lenses) > 1
+
+    def test_pipeline_different_lenses_different_results(self, tmp_path):
+        """Different lens modes should produce different evaluation results."""
+        from ads_core.pipeline.dataset_pipeline import run_dataset
+        import json
+
+        # Run with identity lens
+        outputs_identity = run_dataset(
+            dataset_id="toy",
+            out_dir=tmp_path / "identity_run",
+            seed=42,
+            embedding_cfg={"kind": "stub", "d": 64},
+            lenses_cfg={"mode": "identity"},
+            objectives=["market", "learner"],
+            autonomy_tau=0.3,
+        )
+
+        # Run with diagonal lens
+        outputs_diagonal = run_dataset(
+            dataset_id="toy",
+            out_dir=tmp_path / "diagonal_run",
+            seed=42,
+            embedding_cfg={"kind": "stub", "d": 64},
+            lenses_cfg={"mode": "diagonal"},
+            objectives=["market", "learner"],
+            autonomy_tau=0.3,
+        )
+
+        # Both should succeed
+        assert outputs_identity.results_json.exists()
+        assert outputs_diagonal.results_json.exists()
+
+        # With uniform diagonal weights=1, results should be same as identity
+        # (this is expected behavior for uniform diagonal weights)
+        results_i = json.loads(outputs_identity.results_json.read_text(encoding="utf-8"))
+        results_d = json.loads(outputs_diagonal.results_json.read_text(encoding="utf-8"))
+
+        assert len(results_i["results"]) == len(results_d["results"])

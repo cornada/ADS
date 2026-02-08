@@ -35,6 +35,7 @@ class DatasetRunOutputs:
     pareto_json: Path
     artifact_count: int
     pareto_count: int
+    is_synthetic: bool = False  # True if data came from fixtures
 
 
 def _select_encoder(embedding_cfg: dict):
@@ -51,34 +52,66 @@ def _select_encoder(embedding_cfg: dict):
 
 
 def _build_lenses(lenses_cfg: dict, d: int, id2vec: dict, artifacts: List[Artifact]):
-    """Build lens transformations based on config."""
-    kind = lenses_cfg.get("kind", "identity")
+    """Build lens transformations based on config.
 
-    if kind == "identity":
+    Args:
+        lenses_cfg: Lens configuration dict. Supports both 'mode' (Hydra configs)
+            and 'kind' (backward compat) keys for lens type selection.
+        d: Embedding dimension
+        id2vec: Dict mapping artifact_id to embedding vector
+        artifacts: List of artifacts
+
+    Returns:
+        Dict mapping lens name to Lens instance
+    """
+    # Support both 'mode' (Hydra configs) and 'kind' (backward compat)
+    mode = lenses_cfg.get("mode") or lenses_cfg.get("kind", "identity")
+
+    if mode == "identity":
         return {"default": IdentityLens(lens_id="identity:default")}
 
-    if kind == "diagonal":
+    if mode == "diagonal":
         return {"default": DiagonalLens(lens_id="diagonal:default", weights=np.ones(d))}
 
-    if kind == "learned":
-        # Learn per-stakeholder lenses
+    if mode == "learned":
+        # Learn per-stakeholder lenses using one-vs-rest classification
+        # Group artifacts by stakeholder type
+        corpora: Dict[str, np.ndarray] = {}
+
+        # Courses represent university stakeholder
         course_arts = [a for a in artifacts if a.type == ArtifactType.COURSE]
+        if course_arts:
+            corpora["university"] = np.array([id2vec[a.artifact_id] for a in course_arts])
+
+        # Jobs represent market stakeholder
         job_arts = [a for a in artifacts if a.type == ArtifactType.JOB_ROLE]
+        if job_arts:
+            corpora["market"] = np.array([id2vec[a.artifact_id] for a in job_arts])
 
-        if course_arts and job_arts:
-            course_vecs = np.array([id2vec[a.artifact_id] for a in course_arts])
-            job_vecs = np.array([id2vec[a.artifact_id] for a in job_arts])
+        # Skills also represent market stakeholder (merge with jobs if both exist)
+        skill_arts = [a for a in artifacts if a.type == ArtifactType.SKILL]
+        if skill_arts:
+            skill_vecs = np.array([id2vec[a.artifact_id] for a in skill_arts])
+            if "market" in corpora:
+                corpora["market"] = np.vstack([corpora["market"], skill_vecs])
+            else:
+                corpora["market"] = skill_vecs
 
-            weights, _ = learn_one_vs_rest_diagonal_weights(
-                X=np.vstack([course_vecs, job_vecs]),
-                y=[0] * len(course_vecs) + [1] * len(job_vecs),
-            )
-            return {"default": DiagonalLens(lens_id="learned:default", weights=weights)}
+        # Mission artifacts
+        mission_arts = [a for a in artifacts if a.type == ArtifactType.MISSION]
+        if mission_arts:
+            corpora["mission"] = np.array([id2vec[a.artifact_id] for a in mission_arts])
 
-        # Fallback to identity
-        return {"default": IdentityLens(lens_id="identity:default")}
+        if len(corpora) >= 2:
+            # Need at least 2 stakeholders for one-vs-rest learning
+            from ads_core.lenses.learn_lenses import learn_from_labeled_corpora
+            learned = learn_from_labeled_corpora(corpora, seed=42)
+            return learned.get_all_lenses(prefix="learned")
 
-    raise ValueError(f"Unknown lenses kind: {kind}")
+        # Fallback to diagonal if not enough data for learning
+        return {"default": DiagonalLens(lens_id="diagonal:default", weights=np.ones(d))}
+
+    raise ValueError(f"Unknown lenses mode: {mode}")
 
 
 def _get_target_artifacts(
@@ -117,6 +150,7 @@ def run_dataset(
     objectives: List[str],
     autonomy_tau: float,
     data_dir: Optional[Path] = None,
+    strict_data: bool = False,
 ) -> DatasetRunOutputs:
     """Run evaluation pipeline on a dataset.
 
@@ -129,6 +163,8 @@ def run_dataset(
         objectives: List of objectives to optimize
         autonomy_tau: Autonomy drift threshold
         data_dir: Base data directory (defaults to project root)
+        strict_data: If True, fail when processed data is missing instead
+            of auto-generating from fixtures. Use for paper experiments.
 
     Returns:
         DatasetRunOutputs with paths to results
@@ -137,8 +173,9 @@ def run_dataset(
     np.random.seed(seed)
 
     # 1) Load dataset
-    bundle = load_dataset(dataset_id, data_dir)
+    bundle = load_dataset(dataset_id, data_dir, strict_data=strict_data)
     artifacts = bundle.artifacts
+    is_synthetic = bundle.is_synthetic
 
     # Store artifacts
     store = LocalArtifactStore(root=out_dir / "store")
@@ -151,6 +188,7 @@ def run_dataset(
         "dataset": dataset_id,
         "seed": seed,
         "artifact_count": len(artifacts),
+        "is_synthetic": is_synthetic,
     })
 
     # 2) Compute embeddings
@@ -164,7 +202,9 @@ def run_dataset(
 
     # 3) Build lenses
     lens_result = _build_lenses(lenses_cfg, d, id2vec, artifacts)
-    default_lens = lens_result["default"]
+    # For learned lenses, lens_result may have per-stakeholder lenses (e.g., "market", "university")
+    # For identity/diagonal, it has a single "default" lens
+    has_stakeholder_lenses = "default" not in lens_result
 
     # 4) Build target centroids
     target_centroids: Dict[str, np.ndarray] = {}
@@ -206,8 +246,23 @@ def run_dataset(
         # Fall back to all artifacts as options
         option_arts = artifacts
 
-    # 6) Build per-objective lens dict (same lens for all objectives)
-    lenses_dict = {k: default_lens for k in target_centroids.keys()}
+    # 6) Build per-objective lens dict
+    # For learned lenses, use stakeholder-specific lenses when available
+    # For identity/diagonal, use the same default lens for all objectives
+    if has_stakeholder_lenses:
+        # Map objectives to stakeholder lenses with fallback to identity
+        fallback_lens = IdentityLens(lens_id="identity:fallback")
+        lenses_dict = {}
+        for obj in target_centroids.keys():
+            if obj in lens_result:
+                lenses_dict[obj] = lens_result[obj]
+            else:
+                # e.g., "learner" may not have a learned lens
+                lenses_dict[obj] = fallback_lens
+    else:
+        # Use the default lens for all objectives
+        default_lens = lens_result["default"]
+        lenses_dict = {k: default_lens for k in target_centroids.keys()}
 
     # 7) Evaluate each option with constraints
     results = []
@@ -247,6 +302,7 @@ def run_dataset(
         "encoder": enc.model_id,
         "objectives": objective_keys,
         "autonomy_tau": autonomy_tau,
+        "is_synthetic": is_synthetic,
         "results": results,
     }, indent=2), encoding="utf-8")
 
@@ -262,4 +318,5 @@ def run_dataset(
         pareto_json=pareto_json,
         artifact_count=len(artifacts),
         pareto_count=len(pareto_result.indices),
+        is_synthetic=is_synthetic,
     )

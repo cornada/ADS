@@ -46,9 +46,14 @@ def main(cfg: DictConfig) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     (out_dir / "config_resolved.yaml").write_text(OmegaConf.to_yaml(cfg), encoding="utf-8")
+
+    # Get strict_data from config (default False for backward compatibility)
+    strict_data = bool(cfg.dataset.get("strict_data", False))
+
     (out_dir / "meta.json").write_text(json.dumps({
         "created_at": datetime.now(timezone.utc).isoformat(),
         "hydra_cwd": os.getcwd(),
+        "strict_data": strict_data,
     }, indent=2), encoding="utf-8")
 
     if cfg.dataset.id == "toy":
@@ -74,7 +79,7 @@ def main(cfg: DictConfig) -> None:
             print("[OK] Ethics report:", outputs.ethics_json)
         if outputs.stability_json:
             print("[OK] Stability report:", outputs.stability_json)
-    elif cfg.dataset.id in ("mit", "ucb", "asu"):
+    elif cfg.dataset.id in ("mit", "ucb", "asu", "unified_v3", "unified_v4"):
         # Use generic dataset pipeline for real datasets
         data_dir = Path(cfg.dataset.get("data_dir", ".")) if cfg.dataset.get("data_dir") else None
 
@@ -87,6 +92,7 @@ def main(cfg: DictConfig) -> None:
             objectives=list(cfg.objectives.enabled),
             autonomy_tau=float(cfg.constraints.autonomy_drift_tau),
             data_dir=data_dir,
+            strict_data=strict_data,
         )
         artifacts = build_pareto_report(outputs.run_dir)
         print(f"[OK] Dataset: {outputs.dataset_id}")
@@ -94,8 +100,10 @@ def main(cfg: DictConfig) -> None:
         print(f"[OK] Pareto options: {outputs.pareto_count}")
         print(f"[OK] Run dir: {outputs.run_dir}")
         print(f"[OK] Paper artifacts: {dict((k, str(v)) for k, v in artifacts.items())}")
+        if outputs.is_synthetic:
+            print("[WARNING] Data is SYNTHETIC (from fixtures). Use +profile=paper for real data.")
     else:
-        raise NotImplementedError(f"Unknown dataset: {cfg.dataset.id}. Supported: toy, mit, ucb, asu")
+        raise NotImplementedError(f"Unknown dataset: {cfg.dataset.id}. Supported: toy, mit, ucb, asu, unified_v3, unified_v4")
 
 
 if __name__ == "__main__":

@@ -4,10 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ads"
-version = "0.0.2"
+version = "0.0.3"
 description = "Agent-Didactic Spaces (ADS) prototype skeleton (v2)"
 readme = "README.md"
 requires-python = ">=3.10"
+# Core: minimal dependencies for API server
 dependencies = [
   "fastapi>=0.110",
   "uvicorn[standard]>=0.23",

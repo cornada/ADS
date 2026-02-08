@@ -5,12 +5,14 @@ import numpy as np
 import pytest
 
 from ads_core.explain.explainer import (
+    DEFAULT_EVIDENCE_THRESHOLD,
     Explainer,
     Explanation,
     RecourseResult,
     explain_option,
     suggest_recourse,
 )
+from ads_core.eval.pareto import dominates
 from ads_core.lenses.identity import IdentityLens
 
 
@@ -327,3 +329,219 @@ class TestConvenienceFunctions:
         assert isinstance(rec, RecourseResult)
         assert rec.original_option_id == "course:a"
         assert rec.weak_objective == "mission"
+
+
+class TestDominanceCorrectness:
+    """Tests for dominance correctness (KT18).
+
+    Ensures explanations use canonical dominates() and handle edge cases.
+    """
+
+    def test_identical_objectives_neither_dominates(self):
+        """Test that identical objective vectors result in neither dominating.
+
+        This is a critical edge case: if A == B on all objectives,
+        then neither A dominates B nor B dominates A.
+        """
+        a = {"market": 0.5, "mission": 0.5, "learner": 0.5}
+        b = {"market": 0.5, "mission": 0.5, "learner": 0.5}
+        keys = ["market", "mission", "learner"]
+
+        # Neither should dominate the other
+        assert not dominates(a, b, keys)
+        assert not dominates(b, a, keys)
+
+    def test_strict_dominance_requires_one_better(self):
+        """Test that dominance requires at least one strictly better objective."""
+        a = {"market": 0.6, "mission": 0.5, "learner": 0.5}
+        b = {"market": 0.5, "mission": 0.5, "learner": 0.5}
+        keys = ["market", "mission", "learner"]
+
+        # A should dominate B (equal on 2, strictly better on 1)
+        assert dominates(a, b, keys)
+        assert not dominates(b, a, keys)
+
+    def test_weak_dominance_not_counted(self):
+        """Test that being equal on all but worse on one is not dominating."""
+        a = {"market": 0.5, "mission": 0.5, "learner": 0.5}
+        b = {"market": 0.5, "mission": 0.5, "learner": 0.4}  # worse on learner
+        keys = ["market", "mission", "learner"]
+
+        # A dominates B (equal on 2, strictly better on learner)
+        assert dominates(a, b, keys)
+        # B does NOT dominate A
+        assert not dominates(b, a, keys)
+
+    def test_incomparable_solutions(self):
+        """Test that trade-off solutions are incomparable (neither dominates)."""
+        a = {"market": 0.8, "mission": 0.3}  # high market, low mission
+        b = {"market": 0.3, "mission": 0.8}  # low market, high mission
+        keys = ["market", "mission"]
+
+        # Neither dominates - they represent different trade-offs
+        assert not dominates(a, b, keys)
+        assert not dominates(b, a, keys)
+
+    def test_explainer_uses_canonical_dominates(self, sample_data):
+        """Test that explainer's dominance check matches pareto.dominates()."""
+        # Add a new option that is identical to course:c
+        sample_data["option_embeddings"]["course:e"] = sample_data["option_embeddings"]["course:c"].copy()
+        sample_data["option_texts"]["course:e"] = "Duplicate of course:c"
+        sample_data["all_objectives"]["course:e"] = sample_data["all_objectives"]["course:c"].copy()
+        sample_data["pareto_ids"].add("course:e")  # Both should be Pareto
+
+        explainer = Explainer(
+            option_embeddings=sample_data["option_embeddings"],
+            option_texts=sample_data["option_texts"],
+            target_centroids=sample_data["target_centroids"],
+            target_artifacts=sample_data["target_artifacts"],
+            lenses=sample_data["lenses"],
+            all_objectives=sample_data["all_objectives"],
+            pareto_ids=sample_data["pareto_ids"],
+        )
+
+        # Both c and e should show as Pareto (neither dominates the other)
+        exp_c = explainer.explain("course:c")
+        exp_e = explainer.explain("course:e")
+
+        assert exp_c.pareto_status == "pareto"
+        assert exp_e.pareto_status == "pareto"
+
+    def test_dominated_explanation_shows_dominating_objectives(self, sample_data):
+        """Test that dominated explanation shows which objectives caused it."""
+        explainer = Explainer(
+            option_embeddings=sample_data["option_embeddings"],
+            option_texts=sample_data["option_texts"],
+            target_centroids=sample_data["target_centroids"],
+            target_artifacts=sample_data["target_artifacts"],
+            lenses=sample_data["lenses"],
+            all_objectives=sample_data["all_objectives"],
+            pareto_ids=sample_data["pareto_ids"],
+        )
+
+        # course:d is dominated by course:c
+        exp = explainer.explain("course:d")
+
+        assert exp.pareto_status == "dominated"
+        # Reason should mention which option dominates and which objectives
+        assert "course:c" in exp.pareto_reason
+        assert "strictly better" in exp.pareto_reason.lower() or "better" in exp.pareto_reason.lower()
+
+
+class TestEvidenceThreshold:
+    """Tests for configurable evidence threshold (KT18)."""
+
+    def test_default_evidence_threshold(self):
+        """Test that default evidence threshold is 0.5."""
+        assert DEFAULT_EVIDENCE_THRESHOLD == 0.5
+
+    def test_custom_evidence_threshold(self, sample_data):
+        """Test that custom evidence threshold is used."""
+        # Use a very high threshold
+        explainer = Explainer(
+            option_embeddings=sample_data["option_embeddings"],
+            option_texts=sample_data["option_texts"],
+            target_centroids=sample_data["target_centroids"],
+            target_artifacts=sample_data["target_artifacts"],
+            lenses=sample_data["lenses"],
+            all_objectives=sample_data["all_objectives"],
+            pareto_ids=sample_data["pareto_ids"],
+            evidence_threshold=0.99,  # Very high threshold
+        )
+
+        assert explainer.evidence_threshold == 0.99
+
+        # With high threshold, most evidence should be "weakens"
+        exp = explainer.explain("course:c")
+        for obj_name, obj_exp in exp.objectives.items():
+            for evidence in obj_exp.evidence:
+                # Most should be "weakens" with such high threshold
+                if evidence.similarity < 0.99:
+                    assert evidence.contribution == "weakens"
+
+    def test_low_evidence_threshold_more_supports(self, sample_data):
+        """Test that lower threshold results in more 'supports' contributions."""
+        # Use a very low threshold
+        explainer = Explainer(
+            option_embeddings=sample_data["option_embeddings"],
+            option_texts=sample_data["option_texts"],
+            target_centroids=sample_data["target_centroids"],
+            target_artifacts=sample_data["target_artifacts"],
+            lenses=sample_data["lenses"],
+            all_objectives=sample_data["all_objectives"],
+            pareto_ids=sample_data["pareto_ids"],
+            evidence_threshold=0.1,  # Very low threshold
+        )
+
+        assert explainer.evidence_threshold == 0.1
+
+        # With low threshold, most evidence should be "supports"
+        exp = explainer.explain("course:a")
+        market_evidence = exp.objectives["market"].evidence
+        supports_count = sum(1 for e in market_evidence if e.contribution == "supports")
+        # High similarity with market artifacts should be "supports"
+        assert supports_count > 0
+
+
+class TestExplanationDeterminism:
+    """Tests that explanations are deterministic and consistent."""
+
+    def test_explanation_deterministic(self, sample_data):
+        """Test that same inputs produce identical explanations."""
+        explainer = Explainer(
+            option_embeddings=sample_data["option_embeddings"],
+            option_texts=sample_data["option_texts"],
+            target_centroids=sample_data["target_centroids"],
+            target_artifacts=sample_data["target_artifacts"],
+            lenses=sample_data["lenses"],
+            all_objectives=sample_data["all_objectives"],
+            pareto_ids=sample_data["pareto_ids"],
+        )
+
+        exp1 = explainer.explain("course:a")
+        exp2 = explainer.explain("course:a")
+
+        # Should be identical
+        assert exp1.pareto_status == exp2.pareto_status
+        assert exp1.pareto_reason == exp2.pareto_reason
+        assert exp1.overall_summary == exp2.overall_summary
+
+        # Objective scores should match
+        for obj in exp1.objectives:
+            assert exp1.objectives[obj].score == exp2.objectives[obj].score
+            assert exp1.objectives[obj].rank == exp2.objectives[obj].rank
+
+    def test_explanation_consistent_with_pareto_engine(self, sample_data):
+        """Test that explanation status matches Pareto engine classification."""
+        from ads_core.eval.pareto import pareto_front
+
+        # Compute Pareto front from objectives
+        items = [
+            sample_data["all_objectives"]["course:a"],
+            sample_data["all_objectives"]["course:b"],
+            sample_data["all_objectives"]["course:c"],
+            sample_data["all_objectives"]["course:d"],
+        ]
+        keys = ["market", "mission", "learner"]
+        pareto_indices = pareto_front(items, keys)
+
+        option_ids = ["course:a", "course:b", "course:c", "course:d"]
+        pareto_ids_from_engine = {option_ids[i] for i in pareto_indices}
+
+        explainer = Explainer(
+            option_embeddings=sample_data["option_embeddings"],
+            option_texts=sample_data["option_texts"],
+            target_centroids=sample_data["target_centroids"],
+            target_artifacts=sample_data["target_artifacts"],
+            lenses=sample_data["lenses"],
+            all_objectives=sample_data["all_objectives"],
+            pareto_ids=pareto_ids_from_engine,  # Use engine-computed Pareto
+        )
+
+        # Explanations should be consistent with engine
+        for oid in option_ids:
+            exp = explainer.explain(oid)
+            if oid in pareto_ids_from_engine:
+                assert exp.pareto_status == "pareto", f"{oid} should be pareto"
+            else:
+                assert exp.pareto_status in ("dominated", "infeasible"), f"{oid} should not be pareto"

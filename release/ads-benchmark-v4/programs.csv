@@ -1,0 +1,399 @@
+program_name,degree_type,department_code,university
+Aerospace Engineering,SB,16,MIT
+Biological Engineering,SB,20,MIT
+Chemical Engineering,SB,10,MIT
+Civil and Environmental Engineering,SB,1,MIT
+Computer Science and Engineering,SB,6-3,MIT
+Electrical Engineering and Computer Science,SB,6-2,MIT
+Electrical Science and Engineering,SB,6-1,MIT
+Materials Science and Engineering,SB,3,MIT
+Mechanical Engineering,SB,2,MIT
+Nuclear Science and Engineering,SB,22,MIT
+Architecture,SB,4,MIT
+Urban Studies and Planning,SB,11,MIT
+Biology,SB,7,MIT
+Brain and Cognitive Sciences,SB,9,MIT
+Chemistry,SB,5,MIT
+"Earth, Atmospheric and Planetary Sciences",SB,12,MIT
+Mathematics,SB,18,MIT
+Physics,SB,8,MIT
+Economics,SB,14,MIT
+Linguistics and Philosophy,SB,24,MIT
+Literature,SB,21L,MIT
+Music,SB,21M,MIT
+Political Science,SB,17,MIT
+"Science, Technology, and Society",SB,STS,MIT
+Theater Arts,SB,21T,MIT
+Writing,SB,21W,MIT
+Management Science,SB,15,MIT
+Computation and Cognition,SB,6-9,MIT
+Artificial Intelligence and Decision Making,SB,6-4,MIT
+Data Science and Analytics,Minor,IDS,MIT
+Statistics and Data Science,Minor,IDS,MIT
+Business Analytics,Minor,15,MIT
+History,SB,21H,MIT
+Anthropology,SB,21A,MIT
+Global Studies and Languages,SB,21G,MIT
+Women's and Gender Studies,Minor,WGS,MIT
+African and African Diaspora Studies,Minor,21A,MIT
+Asian and Asian Diaspora Studies,Minor,21G,MIT
+Latin American and Latino Studies,Minor,21G,MIT
+Middle Eastern Studies,Minor,21G,MIT
+Energy Studies,Minor,IDS,MIT
+Environment and Sustainability,Minor,IDS,MIT
+Public Policy,Minor,IDS,MIT
+Biomedical Engineering,Minor,HST,MIT
+Aerospace Engineering,BS,,UC Berkeley
+Aerospace Engineering and Business Administration,BS,,UC Berkeley
+African American Studies,BA,,UC Berkeley
+American Studies,BA,,UC Berkeley
+Analytics,BA,,UC Berkeley
+Ancient Greek and Roman Studies,BA,,UC Berkeley
+Anthropology,BA,,UC Berkeley
+Applied Language Studies,Minor,,UC Berkeley
+Applied Mathematics,BA,,UC Berkeley
+Arabic,Minor,,UC Berkeley
+Architecture,BA,,UC Berkeley
+Armenian Studies,Minor,,UC Berkeley
+Art,BA,,UC Berkeley
+Asian American and Asian Diaspora Studies,Minor,,UC Berkeley
+Accountancy,BS,Multiple,ASU
+Actuarial Science,BS,Multiple,ASU
+Aeronautical Management Technology,BS,Multiple,ASU
+Air Traffic Management,BS,Multiple,ASU
+Air Transportation Management,BS,Multiple,ASU
+Professional Flight,BS,Multiple,ASU
+Unmanned Aerial Systems,BS,Multiple,ASU
+African & African American Studies,BA,Multiple,ASU
+Aging,BS,Multiple,ASU
+American Indian Studies,BA,Multiple,ASU
+American Studies,BA,Multiple,ASU
+Anthropology,BA,Multiple,ASU
+Applied Science,BAS,Multiple,ASU
+Animal Biology,BS,Multiple,ASU
+Applied Leadership,BS,Multiple,ASU
+Applied Nutrition & Health,BS,Multiple,ASU
+Aviation,BS,Multiple,ASU
+Early Childhood Studies,BS,Multiple,ASU
+Emergency Management,BS,Multiple,ASU
+Graphic Information Technology,BS,Multiple,ASU
+Health Entrepreneurship & Innovation,BS,Multiple,ASU
+Health Sciences,BS,Multiple,ASU
+Internet & Web Development,BS,Multiple,ASU
+Medical Laboratory Sciences,BS,Multiple,ASU
+Operations Management,BS,Multiple,ASU
+Project Management,BS,Multiple,ASU
+Technical Communication,BS,Multiple,ASU
+Architectural Studies,BS,Multiple,ASU
+Art,BFA,Multiple,ASU
+Animation,BFA,Multiple,ASU
+Art Education,BS,Multiple,ASU
+Art History,BA,Multiple,ASU
+Art Studies,BA,Multiple,ASU
+Ceramics,BFA,Multiple,ASU
+Digital Photography,BFA,Multiple,ASU
+Expanded Arts,BFA,Multiple,ASU
+Museum Studies,BA,Multiple,ASU
+Painting & Drawing,BFA,Multiple,ASU
+Photography,BFA,Multiple,ASU
+Printmaking,BFA,Multiple,ASU
+Sculpture,BFA,Multiple,ASU
+Arts,BA,Multiple,ASU
+Artificial Intelligence in Business,BS,Multiple,ASU
+Asian Languages,BA,Multiple,ASU
+Chinese,BA,Multiple,ASU
+Japanese,BA,Multiple,ASU
+Asian Pacific American Studies,BA,Multiple,ASU
+Astronomical & Planetary Sciences,BS,Multiple,ASU
+Biochemistry,BS,Multiple,ASU
+Medicinal Chemistry,BS,Multiple,ASU
+Biological Sciences,BS,Multiple,ASU
+Biology & Society,BS,Multiple,ASU
+Biomedical Sciences,BS,Multiple,ASU
+Conservation Biology & Ecology,BS,Multiple,ASU
+Neurobiology Physiology & Behavior,BS,Multiple,ASU
+Biological Sciences Applied,BS,Multiple,ASU
+Natural Resource Ecology,BS,Multiple,ASU
+Pre-Dental,BS,Multiple,ASU
+Preveterinary Medicine,BS,Multiple,ASU
+Secondary Education in Biology,BS,Multiple,ASU
+Sustainable Horticulture,BS,Multiple,ASU
+Biology,BS,Multiple,ASU
+Environmental Justice,BA,Multiple,ASU
+Pharmacology/Toxicology,BS,Multiple,ASU
+Biophysics,BS,Multiple,ASU
+Biotechnology & Bioenterprise,BS,Multiple,ASU
+Business,BS,Multiple,ASU
+Agribusiness Innovation & Technology,BS,Multiple,ASU
+Business Administration,BS,Multiple,ASU
+Business Exploratory,BS,Multiple,ASU
+Communication,BA,Multiple,ASU
+Corporate Accounting,BS,Multiple,ASU
+Financial Planning,BS,Multiple,ASU
+Food Industry Management,BS,Multiple,ASU
+Global Leadership,BS,Multiple,ASU
+Global Logistics Management,BS,Multiple,ASU
+Global Politics,BA,Multiple,ASU
+Health Care,BS,Multiple,ASU
+Human Resources,BS,Multiple,ASU
+Information Security,BS,Multiple,ASU
+Language & Culture,BA,Multiple,ASU
+Law,BS,Multiple,ASU
+Public Service & Public Policy,BS,Multiple,ASU
+Retail Management,BS,Multiple,ASU
+Sports Business,BS,Multiple,ASU
+Statistics,BS,Multiple,ASU
+Sustainability,BS,Multiple,ASU
+Technology,BS,Multiple,ASU
+Tourism,BS,Multiple,ASU
+Business & Technology Solutions Applied,BS,Multiple,ASU
+Robotics,BS,Multiple,ASU
+Business Data Analytics,BS,Multiple,ASU
+Business Entrepreneurship,BS,Multiple,ASU
+Chemistry,BS,Multiple,ASU
+Environmental Chemistry,BS,Multiple,ASU
+Civic & Economic Thought,BA,Multiple,ASU
+Clinical Exercise Science,BS,Multiple,ASU
+Community Advocacy & Social Policy,BS,Multiple,ASU
+Community Health,BS,Multiple,ASU
+Computational Forensics,BS,Multiple,ASU
+Computational Mathematical Sciences,BS,Multiple,ASU
+Computer Information Systems,BS,Multiple,ASU
+Computer Science,BS,Multiple,ASU
+Cybersecurity,BS,Multiple,ASU
+Software Engineering,BS,Multiple,ASU
+Computing Applied,BS,Multiple,ASU
+Conflict Resolution,BA,Multiple,ASU
+Construction Management & Technology,BS,Multiple,ASU
+Counseling & Applied Psychological Science,BS,Multiple,ASU
+Counseling Military Members & Veterans,BS,Multiple,ASU
+Sports & Performance Counseling,BS,Multiple,ASU
+Substance Abuse & Addictions,BS,Multiple,ASU
+Criminology & Criminal Justice,BA,Multiple,ASU
+Policing,BS,Multiple,ASU
+Culture Technology & Environment,BA,Multiple,ASU
+Dance,BFA,Multiple,ASU
+Dance Education,BS,Multiple,ASU
+Data Science,BS,Multiple,ASU
+Dietetics,BS,Multiple,ASU
+Digital Audiences,BS,Multiple,ASU
+Digital Media Literacy,BS,Multiple,ASU
+Disability Studies,BS,Multiple,ASU
+Earth & Environmental Sciences,BS,Multiple,ASU
+Earth & Space Exploration,BS,Multiple,ASU
+Astrobiology,BS,Multiple,ASU
+Astrophysics,BS,Multiple,ASU
+Exploration Systems Design,BS,Multiple,ASU
+Geological & Planetary Sciences,BS,Multiple,ASU
+Economics,BA,Multiple,ASU
+Politics & the Economy,BA,Multiple,ASU
+Education Early Childhood,BS,Multiple,ASU
+Education Elementary,BS,Multiple,ASU
+Education Exploratory,BS,Multiple,ASU
+Education Middle Grades,BS,Multiple,ASU
+Education Secondary,BS,Multiple,ASU
+English,BA,Multiple,ASU
+History,BA,Multiple,ASU
+Mathematics,BS,Multiple,ASU
+Education Special,BS,Multiple,ASU
+Visual Impairment,BS,Multiple,ASU
+Educational Studies,BS,Multiple,ASU
+Early Childhood Education,BS,Multiple,ASU
+Instructional Design,BS,Multiple,ASU
+Elementary Multilingual Education,BS,Multiple,ASU
+Emergency Management & Homeland Security,BS,Multiple,ASU
+Engineering,BSE,Multiple,ASU
+Automotive Systems,BSE,Multiple,ASU
+Mechanical Engineering Systems,BSE,Multiple,ASU
+Engineering Aerospace,BSE,Multiple,ASU
+Aeronautics,BSE,Multiple,ASU
+Astronautics,BSE,Multiple,ASU
+Autonomous Vehicle Systems,BSE,Multiple,ASU
+Engineering Biomedical,BSE,Multiple,ASU
+Biological Devices,BSE,Multiple,ASU
+Biomedical Devices,BSE,Multiple,ASU
+Engineering Chemical,BSE,Multiple,ASU
+Engineering Civil,BSE,Multiple,ASU
+Sustainable Engineering,BSE,Multiple,ASU
+Engineering Computer Systems,BSE,Multiple,ASU
+Engineering Construction,BSE,Multiple,ASU
+Engineering Electrical,BSE,Multiple,ASU
+Electric Power & Energy Systems,BSE,Multiple,ASU
+Engineering Environmental,BSE,Multiple,ASU
+Engineering Human Systems,BSE,Multiple,ASU
+User Experience,BSE,Multiple,ASU
+Engineering Industrial,BSE,Multiple,ASU
+Engineering Manufacturing,BSE,Multiple,ASU
+Engineering Materials Science &,BSE,Multiple,ASU
+Engineering Mechanical,BSE,Multiple,ASU
+Computational Mechanics,BSE,Multiple,ASU
+Energy & Environment,BSE,Multiple,ASU
+Engineering Software,BS,Multiple,ASU
+Engineering Science,BS,Multiple,ASU
+Microelectronics,BS,Multiple,ASU
+Creative Writing,BA,Multiple,ASU
+Linguistics,BA,Multiple,ASU
+Literature,BA,Multiple,ASU
+Narrative Studies,BA,Multiple,ASU
+Secondary Education,BS,Multiple,ASU
+Writing Rhetoric & Literacies,BA,Multiple,ASU
+Entrepreneurial Leadership,BS,Multiple,ASU
+Environmental & Resource Management,BS,Multiple,ASU
+Environmental Design,BS,Multiple,ASU
+Environmental Science,BS,Multiple,ASU
+Family & Human Development,BS,Multiple,ASU
+Fashion,BS,Multiple,ASU
+Apparel Technical Design,BS,Multiple,ASU
+Design,BS,Multiple,ASU
+Film,BA,Multiple,ASU
+Film & Media Studies,BA,Multiple,ASU
+Filmmaking Practices,BA,Multiple,ASU
+Film & Media Production,BA,Multiple,ASU
+Finance,BS,Multiple,ASU
+Financial Technology,BS,Multiple,ASU
+Forensic Science,BS,Multiple,ASU
+Death Investigations,BS,Multiple,ASU
+French,BA,Multiple,ASU
+Gender Women & Sexuality Studies,BA,Multiple,ASU
+General Studies,BGS,Multiple,ASU
+Geographic Information Science,BS,Multiple,ASU
+Geography,BA,Multiple,ASU
+Meteorology-Climatology,BS,Multiple,ASU
+German,BA,Multiple,ASU
+Global Asia Studies,BA,Multiple,ASU
+Global Health,BS,Multiple,ASU
+Global Management,BS,Multiple,ASU
+Global Studies,BA,Multiple,ASU
+Graphic Design,BFA,Multiple,ASU
+Full-Stack Web Development,BS,Multiple,ASU
+Health Administration & Policy,BS,Multiple,ASU
+Health Care Compliance & Regulations,BS,Multiple,ASU
+Health Care Coordination,BS,Multiple,ASU
+Health Education & Health Promotion,BS,Multiple,ASU
+Healthy Lifestyles & Fitness Science,BS,Multiple,ASU
+Honors College,BA,Multiple,ASU
+Industrial Design,BS,Multiple,ASU
+Informatics Biomedical,BS,Multiple,ASU
+Information Technology,BS,Multiple,ASU
+Innovation in Society,BS,Multiple,ASU
+Integrative Health,BS,Multiple,ASU
+Interdisciplinary Arts & Performance,BFA,Multiple,ASU
+Interdisciplinary Arts & Sciences,BA,Multiple,ASU
+Interdisciplinary Studies,BA,Multiple,ASU
+Interior Design,BS,Multiple,ASU
+International Letters & Cultures,BA,Multiple,ASU
+Arabic Studies,BA,Multiple,ASU
+Classical Civilization,BA,Multiple,ASU
+Classics,BA,Multiple,ASU
+International Public Health,BS,Multiple,ASU
+International Relations,BA,Multiple,ASU
+International Trade,BS,Multiple,ASU
+Italian,BA,Multiple,ASU
+Jewish Studies,BA,Multiple,ASU
+Journalism & Mass Communication,BA,Multiple,ASU
+Justice Studies,BA,Multiple,ASU
+Kinesiology,BS,Multiple,ASU
+Landscape Architecture,BS,Multiple,ASU
+Latin American Studies,BA,Multiple,ASU
+Liberal Studies,BA,Multiple,ASU
+Management,BS,Multiple,ASU
+Marketing,BS,Multiple,ASU
+Digital & Integrated Marketing,BS,Multiple,ASU
+Communications,BS,Multiple,ASU
+Professional Sales,BS,Multiple,ASU
+Mass Communication & Media Studies,BA,Multiple,ASU
+Mathematics for the Life & Social Sciences Applied,BS,Multiple,ASU
+Media Arts & Sciences,BS,Multiple,ASU
+Education,BS,Multiple,ASU
+Games & Interactive Media,BS,Multiple,ASU
+Interdisciplinary Technology,BS,Multiple,ASU
+Media Processing,BS,Multiple,ASU
+Music,BM,Multiple,ASU
+Medical Studies,BS,Multiple,ASU
+Microbiology,BS,Multiple,ASU
+Military & Veteran Studies Applied,BS,Multiple,ASU
+Molecular Biosciences & Biotechnology,BS,Multiple,ASU
+Music & Culture,BA,Multiple,ASU
+Popular Music,BM,Multiple,ASU
+Music Learning & Teaching,BM,Multiple,ASU
+Music Therapy,BM,Multiple,ASU
+Neuroscience,BS,Multiple,ASU
+Nursing,BSN,Multiple,ASU
+Nutrition & Health Promotion,BS,Multiple,ASU
+Nutritional Science,BS,Multiple,ASU
+Ocean Futures,BS,Multiple,ASU
+Coastal & Marine Science,BS,Multiple,ASU
+Organizational Leadership,BS,Multiple,ASU
+Veterans Society & Service & Innovation,BS,Multiple,ASU
+Parks Recreation & Sport Management,BS,Multiple,ASU
+Performance,BM,Multiple,ASU
+Collaborative Piano,BM,Multiple,ASU
+Guitar,BM,Multiple,ASU
+Jazz,BM,Multiple,ASU
+Keyboard,BM,Multiple,ASU
+Music Theatre,BM,Multiple,ASU
+Orchestral Instrument,BM,Multiple,ASU
+Voice,BM,Multiple,ASU
+Performance & Movement,BFA,Multiple,ASU
+Pharmacology & Toxicology,BS,Multiple,ASU
+Philosophy,BA,Multiple,ASU
+Morality Politics & Law,BA,Multiple,ASU
+Science Nature & Mind,BA,Multiple,ASU
+Philosophy Religion & Society,BA,Multiple,ASU
+Physical Education,BS,Multiple,ASU
+Physics,BS,Multiple,ASU
+Physics Applied,BS,Multiple,ASU
+Political Science,BA,Multiple,ASU
+Psychology,BS,Multiple,ASU
+Forensic Psychology,BS,Multiple,ASU
+Industrial & Organizational Psychology,BS,Multiple,ASU
+Positive Psychology,BS,Multiple,ASU
+Psychological Science,BS,Multiple,ASU
+Public Health,BS,Multiple,ASU
+Criminology,BA,Multiple,ASU
+Health Policy,BS,Multiple,ASU
+Nonprofit Leadership & Management,BS,Multiple,ASU
+Parks & Recreation Management,BS,Multiple,ASU
+Social Services Delivery,BS,Multiple,ASU
+Quantitative Science Applied,BS,Multiple,ASU
+Recreation Therapy,BS,Multiple,ASU
+Religion Culture & Public Life,BA,Multiple,ASU
+Religion Politics & Global Affairs,BA,Multiple,ASU
+Robotics & Autonomous Systems,BS,Multiple,ASU
+Science Technology & Society,BS,Multiple,ASU
+Social & Behavioral Sciences,BS,Multiple,ASU
+Social & Cultural Analysis,BA,Multiple,ASU
+Ethnic Race & Indigenous Studies,BA,Multiple,ASU
+Peace Studies,BA,Multiple,ASU
+Race & Sexuality Studies,BA,Multiple,ASU
+Women & Gender Studies,BA,Multiple,ASU
+Social Justice & Human Rights,BA,Multiple,ASU
+Social Work,BSW,Multiple,ASU
+Sociology,BA,Multiple,ASU
+Spanish,BA,Multiple,ASU
+Speech & Hearing Science,BS,Multiple,ASU
+Sports Science & Performance,BS,Multiple,ASU
+Strength & Conditioning,BS,Multiple,ASU
+Supply Chain Management,BS,Multiple,ASU
+Sustainability Science,BS,Multiple,ASU
+Data Visualization,BS,Multiple,ASU
+Social Media Management,BS,Multiple,ASU
+Technological Entrepreneurship & Management,BS,Multiple,ASU
+Transformational Leadership,BS,Multiple,ASU
+Theatre,BA,Multiple,ASU
+Acting,BFA,Multiple,ASU
+Design & Production,BFA,Multiple,ASU
+Theory & Composition,BM,Multiple,ASU
+Composition,BM,Multiple,ASU
+Theory,BM,Multiple,ASU
+Tourism Development & Management,BS,Multiple,ASU
+Meetings & Events,BS,Multiple,ASU
+Resort & Hotel Leadership,BS,Multiple,ASU
+Sustainable Tourism,BS,Multiple,ASU
+Transborder Chicano/a & Latino/a Studies,BA,Multiple,ASU
+Undeclared - Exploratory,BA,Multiple,ASU
+Applied Technology,BS,Multiple,ASU
+Health & Life Sciences,BS,Multiple,ASU
+Humanities Fine Arts & Design,BA,Multiple,ASU
+Math Physical Sciences Engineering & Technology,BS,Multiple,ASU
+Urban Planning,BS,Multiple,ASU

@@ -1,0 +1,224 @@
+{
+  "summary": {
+    "num_universities": 7,
+    "num_us": 5,
+    "num_international": 2,
+    "us_mean_alignment": 0.4701305031776428,
+    "intl_mean_alignment": 0.3394559174776077,
+    "alignment_gap": 0.1306745857000351
+  },
+  "universities": {
+    "Cornell": {
+      "num_courses": 842,
+      "market_alignment": 0.4734216034412384,
+      "course_market_mean": 0.20183596014976501,
+      "course_market_std": 0.08934371918439865,
+      "course_market_max": 0.5141314268112183,
+      "top_occupations": [
+        {
+          "occupation": "onet:25-2032.00",
+          "similarity": 0.5768042802810669
+        },
+        {
+          "occupation": "onet:15-2031.00",
+          "similarity": 0.5225363969802856
+        },
+        {
+          "occupation": "onet:25-2023.00",
+          "similarity": 0.5139189958572388
+        },
+        {
+          "occupation": "onet:19-2012.00",
+          "similarity": 0.5105860233306885
+        },
+        {
+          "occupation": "onet:15-1221.00",
+          "similarity": 0.499581903219223
+        }
+      ]
+    },
+    "Edinburgh": {
+      "num_courses": 890,
+      "market_alignment": 0.2975080609321594,
+      "course_market_mean": 0.12423684448003769,
+      "course_market_std": 0.09554969519376755,
+      "course_market_max": 0.473471075296402,
+      "top_occupations": [
+        {
+          "occupation": "onet:19-2012.00",
+          "similarity": 0.4526485800743103
+        },
+        {
+          "occupation": "onet:15-2099.00",
+          "similarity": 0.39147549867630005
+        },
+        {
+          "occupation": "onet:15-1221.00",
+          "similarity": 0.3728840947151184
+        },
+        {
+          "occupation": "onet:15-2031.00",
+          "similarity": 0.36706024408340454
+        },
+        {
+          "occupation": "onet:51-9162.00",
+          "similarity": 0.3561185598373413
+        }
+      ]
+    },
+    "KTH": {
+      "num_courses": 9456,
+      "market_alignment": 0.38140377402305603,
+      "course_market_mean": 0.14438021183013916,
+      "course_market_std": 0.09650611877441406,
+      "course_market_max": 0.4909617602825165,
+      "top_occupations": [
+        {
+          "occupation": "onet:19-2041.03",
+          "similarity": 0.447541743516922
+        },
+        {
+          "occupation": "onet:17-3026.00",
+          "similarity": 0.4445675313472748
+        },
+        {
+          "occupation": "onet:15-2031.00",
+          "similarity": 0.4436960518360138
+        },
+        {
+          "occupation": "onet:15-1221.00",
+          "similarity": 0.43302154541015625
+        },
+        {
+          "occupation": "onet:19-2012.00",
+          "similarity": 0.4305556118488312
+        }
+      ]
+    },
+    "MIT": {
+      "num_courses": 6941,
+      "market_alignment": 0.4881061315536499,
+      "course_market_mean": 0.18307159841060638,
+      "course_market_std": 0.10813475400209427,
+      "course_market_max": 0.5083732008934021,
+      "top_occupations": [
+        {
+          "occupation": "onet:25-2032.00",
+          "similarity": 0.5961964130401611
+        },
+        {
+          "occupation": "onet:25-2023.00",
+          "similarity": 0.5452221632003784
+        },
+        {
+          "occupation": "onet:19-2012.00",
+          "similarity": 0.519736111164093
+        },
+        {
+          "occupation": "onet:25-1032.00",
+          "similarity": 0.515305757522583
+        },
+        {
+          "occupation": "onet:25-1051.00",
+          "similarity": 0.5064550042152405
+        }
+      ]
+    },
+    "Stanford": {
+      "num_courses": 2663,
+      "market_alignment": 0.48479366302490234,
+      "course_market_mean": 0.1953682005405426,
+      "course_market_std": 0.09106679260730743,
+      "course_market_max": 0.49555766582489014,
+      "top_occupations": [
+        {
+          "occupation": "onet:25-2032.00",
+          "similarity": 0.6148636341094971
+        },
+        {
+          "occupation": "onet:25-2023.00",
+          "similarity": 0.5614644289016724
+        },
+        {
+          "occupation": "onet:25-1032.00",
+          "similarity": 0.5307607650756836
+        },
+        {
+          "occupation": "onet:25-1021.00",
+          "similarity": 0.5224380493164062
+        },
+        {
+          "occupation": "onet:25-1194.00",
+          "similarity": 0.521171510219574
+        }
+      ]
+    },
+    "UC Berkeley": {
+      "num_courses": 11076,
+      "market_alignment": 0.4321295917034149,
+      "course_market_mean": 0.16704413294792175,
+      "course_market_std": 0.10124754905700684,
+      "course_market_max": 0.5009632110595703,
+      "top_occupations": [
+        {
+          "occupation": "onet:25-2032.00",
+          "similarity": 0.5618414282798767
+        },
+        {
+          "occupation": "onet:25-1125.00",
+          "similarity": 0.5256984233856201
+        },
+        {
+          "occupation": "onet:25-1061.00",
+          "similarity": 0.5237954258918762
+        },
+        {
+          "occupation": "onet:25-1062.00",
+          "similarity": 0.5211630463600159
+        },
+        {
+          "occupation": "onet:25-2023.00",
+          "similarity": 0.5205556154251099
+        }
+      ]
+    },
+    "UIUC": {
+      "num_courses": 860,
+      "market_alignment": 0.47220152616500854,
+      "course_market_mean": 0.21158134937286377,
+      "course_market_std": 0.0899737998843193,
+      "course_market_max": 0.4375740587711334,
+      "top_occupations": [
+        {
+          "occupation": "onet:25-2032.00",
+          "similarity": 0.5545540452003479
+        },
+        {
+          "occupation": "onet:15-2031.00",
+          "similarity": 0.5516088604927063
+        },
+        {
+          "occupation": "onet:13-2099.01",
+          "similarity": 0.5186777710914612
+        },
+        {
+          "occupation": "onet:11-3021.00",
+          "similarity": 0.5121110081672668
+        },
+        {
+          "occupation": "onet:25-2023.00",
+          "similarity": 0.4925280809402466
+        }
+      ]
+    }
+  },
+  "ranking": [
+    "MIT",
+    "Stanford",
+    "Cornell",
+    "UIUC",
+    "UC Berkeley",
+    "KTH",
+    "Edinburgh"
+  ]
+}

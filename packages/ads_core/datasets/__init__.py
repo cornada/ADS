@@ -8,6 +8,7 @@ Provides unified access to all institutional datasets:
 """
 from ads_core.datasets.registry import (
     DatasetBundle,
+    StrictDataError,
     load_dataset,
     list_datasets,
     get_dataset_info,
@@ -17,6 +18,7 @@ from ads_core.datasets.registry import (
 
 __all__ = [
     "DatasetBundle",
+    "StrictDataError",
     "load_dataset",
     "list_datasets",
     "get_dataset_info",

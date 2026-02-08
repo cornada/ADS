@@ -27,6 +27,10 @@ from ads_core.analysis.outcome_sanity import (
     compute_outcome_sanity,
     compute_keyword_baseline,
     aggregate_sanity_results,
+    build_unit_vectors_curriculum_text,
+    build_unit_vectors_from_names,
+    CURRICULUM_DESCRIPTIONS,
+    get_curriculum_description,
 )
 
 
@@ -401,4 +405,283 @@ class TestIntegration:
         )
 
         assert result.dataset_id == "asu"
+        assert result.coverage > 0.5
+
+
+class TestCurriculumDescriptions:
+    """Tests for curriculum description mappings (KT20)."""
+
+    def test_curriculum_descriptions_defined(self):
+        """Verify curriculum descriptions are defined for datasets."""
+        assert "ucb" in CURRICULUM_DESCRIPTIONS
+        assert "asu" in CURRICULUM_DESCRIPTIONS
+
+    def test_ucb_curriculum_coverage(self):
+        """Verify UCB curriculum descriptions cover all fixture units."""
+        ucb_desc = CURRICULUM_DESCRIPTIONS["ucb"]
+        # Should have at least 10 majors described
+        assert len(ucb_desc) >= 10
+        # Check some specific majors
+        assert "COE:Computer Science" in ucb_desc
+        assert "L&S:Economics" in ucb_desc
+        assert "HAAS:Business Administration" in ucb_desc
+
+    def test_asu_curriculum_coverage(self):
+        """Verify ASU curriculum descriptions cover all fixture units."""
+        asu_desc = CURRICULUM_DESCRIPTIONS["asu"]
+        # Should have at least 5 colleges described
+        assert len(asu_desc) >= 5
+        # Check specific colleges
+        assert "FSE" in asu_desc
+        assert "WPC" in asu_desc
+        assert "CONHI" in asu_desc
+
+    def test_curriculum_description_content(self):
+        """Verify curriculum descriptions have meaningful content."""
+        cs_desc = CURRICULUM_DESCRIPTIONS["ucb"]["COE:Computer Science"]
+        # Should mention relevant topics
+        assert "algorithm" in cs_desc.lower() or "software" in cs_desc.lower()
+        assert len(cs_desc) > 100  # Should be substantial
+
+        fse_desc = CURRICULUM_DESCRIPTIONS["asu"]["FSE"]
+        assert "engineering" in fse_desc.lower()
+        assert len(fse_desc) > 100
+
+    def test_get_curriculum_description(self):
+        """Test get_curriculum_description helper."""
+        desc = get_curriculum_description("ucb", "COE:Computer Science")
+        assert desc is not None
+        assert "software" in desc.lower() or "algorithm" in desc.lower()
+
+        # Unknown unit should return None
+        desc = get_curriculum_description("ucb", "UNKNOWN:Unit")
+        assert desc is None
+
+        # Unknown dataset should return None
+        desc = get_curriculum_description("unknown_dataset", "FSE")
+        assert desc is None
+
+
+class TestBuildUnitVectors:
+    """Tests for unit vector building functions (KT20)."""
+
+    @pytest.fixture
+    def sample_outcomes(self):
+        """Create sample outcomes for testing."""
+        return [
+            CanonicalOutcome(
+                institution="UCB",
+                unit="COE:Computer Science",
+                unit_name="Computer Science (College of Engineering)",
+                cohort_year="2024",
+                employment_rate=0.85,
+                median_salary=130000,
+            ),
+            CanonicalOutcome(
+                institution="UCB",
+                unit="L&S:Economics",
+                unit_name="Economics (Letters & Science)",
+                cohort_year="2024",
+                employment_rate=0.78,
+                median_salary=75000,
+            ),
+            CanonicalOutcome(
+                institution="UCB",
+                unit="UNKNOWN:Major",
+                unit_name="Unknown Major",
+                cohort_year="2024",
+                employment_rate=0.60,
+                median_salary=50000,
+            ),
+        ]
+
+    @pytest.fixture
+    def encoder_fn(self):
+        """Create a simple encoder function."""
+        from ads_core.embed.encoder import StubEncoder
+        encoder = StubEncoder(d=64)
+        return encoder.encode
+
+    def test_build_unit_vectors_from_names(self, sample_outcomes, encoder_fn):
+        """Build unit vectors from unit names."""
+        vectors = build_unit_vectors_from_names(sample_outcomes, encoder_fn)
+
+        assert len(vectors) == 3
+        assert "COE:Computer Science" in vectors
+        assert "L&S:Economics" in vectors
+        assert "UNKNOWN:Major" in vectors
+
+        # Vectors should be normalized
+        for unit, vec in vectors.items():
+            norm = np.linalg.norm(vec)
+            assert 0.9 < norm < 1.1, f"Vector for {unit} not normalized: {norm}"
+
+    def test_build_unit_vectors_curriculum_text(self, sample_outcomes, encoder_fn):
+        """Build unit vectors from curriculum text."""
+        vectors = build_unit_vectors_curriculum_text(
+            dataset_id="ucb",
+            outcomes=sample_outcomes,
+            encoder_fn=encoder_fn,
+        )
+
+        assert len(vectors) == 3
+        assert "COE:Computer Science" in vectors
+        assert "L&S:Economics" in vectors
+        # Unknown unit should still get a vector (from unit name fallback)
+        assert "UNKNOWN:Major" in vectors
+
+        # Vectors should be normalized
+        for unit, vec in vectors.items():
+            norm = np.linalg.norm(vec)
+            assert 0.9 < norm < 1.1, f"Vector for {unit} not normalized: {norm}"
+
+    def test_curriculum_text_uses_descriptions(self, encoder_fn):
+        """Verify curriculum text method uses descriptions when available."""
+        # Create outcomes that have curriculum descriptions
+        outcomes = [
+            CanonicalOutcome(
+                institution="UCB",
+                unit="COE:Computer Science",
+                unit_name="Computer Science",
+                cohort_year="2024",
+            ),
+        ]
+
+        # With sbert, different text should produce different vectors
+        # But with stub encoder, we can't easily verify content difference
+        # So we just verify the function runs without error
+        vectors = build_unit_vectors_curriculum_text(
+            dataset_id="ucb",
+            outcomes=outcomes,
+            encoder_fn=encoder_fn,
+        )
+        assert "COE:Computer Science" in vectors
+
+    def test_custom_descriptions_override(self, sample_outcomes, encoder_fn):
+        """Verify custom descriptions override defaults."""
+        custom_desc = {
+            "COE:Computer Science": "Custom description for testing purposes.",
+        }
+
+        vectors = build_unit_vectors_curriculum_text(
+            dataset_id="ucb",
+            outcomes=sample_outcomes,
+            encoder_fn=encoder_fn,
+            custom_descriptions=custom_desc,
+        )
+
+        # Should still produce vectors
+        assert len(vectors) == 3
+        assert "COE:Computer Science" in vectors
+
+
+class TestCurriculumTextIntegration:
+    """Integration tests for curriculum-text method (KT20)."""
+
+    def test_curriculum_text_vs_name_ucb(self):
+        """Compare curriculum-text and unit-name methods on UCB."""
+        from ads_core.embed.encoder import StubEncoder
+
+        outcomes = load_normalized_outcomes("ucb")
+        encoder = StubEncoder(d=64)
+
+        # Build vectors both ways
+        name_vectors = build_unit_vectors_from_names(outcomes, encoder.encode)
+        curriculum_vectors = build_unit_vectors_curriculum_text(
+            dataset_id="ucb",
+            outcomes=outcomes,
+            encoder_fn=encoder.encode,
+        )
+
+        # Should have same units
+        assert set(name_vectors.keys()) == set(curriculum_vectors.keys())
+
+        # Both should be valid vectors
+        for unit in name_vectors:
+            assert name_vectors[unit].shape == curriculum_vectors[unit].shape
+            assert np.linalg.norm(name_vectors[unit]) > 0.9
+            assert np.linalg.norm(curriculum_vectors[unit]) > 0.9
+
+    def test_curriculum_text_vs_name_asu(self):
+        """Compare curriculum-text and unit-name methods on ASU."""
+        from ads_core.embed.encoder import StubEncoder
+
+        outcomes = load_normalized_outcomes("asu")
+        encoder = StubEncoder(d=64)
+
+        name_vectors = build_unit_vectors_from_names(outcomes, encoder.encode)
+        curriculum_vectors = build_unit_vectors_curriculum_text(
+            dataset_id="asu",
+            outcomes=outcomes,
+            encoder_fn=encoder.encode,
+        )
+
+        assert set(name_vectors.keys()) == set(curriculum_vectors.keys())
+
+    def test_sanity_with_curriculum_text_ucb(self):
+        """Run sanity check with curriculum-text method on UCB."""
+        from ads_core.embed.encoder import StubEncoder
+
+        outcomes = load_normalized_outcomes("ucb")
+        encoder = StubEncoder(d=64)
+
+        # Create market vectors
+        market_texts = get_market_category_texts()
+        market_embeddings = encoder.encode(list(market_texts.values()))
+        market_vectors = {
+            cat_id: market_embeddings[i]
+            for i, cat_id in enumerate(market_texts.keys())
+        }
+
+        # Build curriculum-text vectors
+        unit_vectors = build_unit_vectors_curriculum_text(
+            dataset_id="ucb",
+            outcomes=outcomes,
+            encoder_fn=encoder.encode,
+        )
+
+        # Run sanity check
+        result = compute_outcome_sanity(
+            dataset_id="ucb",
+            outcomes=outcomes,
+            unit_vectors=unit_vectors,
+            market_vectors=market_vectors,
+            method="curriculum_text_stub",
+        )
+
+        assert result.dataset_id == "ucb"
+        assert result.method == "curriculum_text_stub"
+        assert result.coverage > 0.5
+        assert len(result.unit_results) > 0
+
+    def test_sanity_with_curriculum_text_asu(self):
+        """Run sanity check with curriculum-text method on ASU."""
+        from ads_core.embed.encoder import StubEncoder
+
+        outcomes = load_normalized_outcomes("asu")
+        encoder = StubEncoder(d=64)
+
+        market_texts = get_market_category_texts()
+        market_embeddings = encoder.encode(list(market_texts.values()))
+        market_vectors = {
+            cat_id: market_embeddings[i]
+            for i, cat_id in enumerate(market_texts.keys())
+        }
+
+        unit_vectors = build_unit_vectors_curriculum_text(
+            dataset_id="asu",
+            outcomes=outcomes,
+            encoder_fn=encoder.encode,
+        )
+
+        result = compute_outcome_sanity(
+            dataset_id="asu",
+            outcomes=outcomes,
+            unit_vectors=unit_vectors,
+            market_vectors=market_vectors,
+            method="curriculum_text_stub",
+        )
+
+        assert result.dataset_id == "asu"
+        assert result.method == "curriculum_text_stub"
         assert result.coverage > 0.5

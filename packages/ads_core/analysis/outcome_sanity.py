@@ -9,9 +9,13 @@ Key Metrics:
 - MAE: How close are the predicted distributions to observed?
 - Coverage: What fraction of units have usable outcomes data?
 
-Baselines:
-- B0: Keyword matching (major name only)
-- B1: Content centroid (course text embeddings)
+Methods:
+- unit_name: Embed unit name directly (baseline embedding approach)
+- curriculum_text: Embed rich curriculum description text for each unit
+- keyword_baseline: Keyword-only prediction (no embeddings, B0)
+
+The curriculum_text method uses configurable unit-to-curriculum mappings
+that describe the typical courses and skills for each academic unit.
 """
 from __future__ import annotations
 
@@ -29,6 +33,182 @@ from ads_core.market.targets import (
     predict_market_distribution,
     keyword_baseline_prediction,
 )
+
+
+# Default curriculum descriptions for academic units
+# These provide richer semantic content than unit names alone
+CURRICULUM_DESCRIPTIONS: Dict[str, Dict[str, str]] = {
+    # UCB majors (by college:major format)
+    "ucb": {
+        "COE:Computer Science": (
+            "Computer Science curriculum covering algorithms, data structures, "
+            "machine learning, artificial intelligence, software engineering, "
+            "operating systems, computer architecture, databases, and programming "
+            "languages. Career paths include software development, data science, "
+            "machine learning engineering, and tech industry roles."
+        ),
+        "COE:Electrical Engineering": (
+            "Electrical Engineering curriculum covering circuits, signal processing, "
+            "electronics, communications, control systems, and embedded systems. "
+            "Career paths include hardware engineering, telecommunications, "
+            "semiconductor industry, and power systems."
+        ),
+        "COE:Mechanical Engineering": (
+            "Mechanical Engineering curriculum covering thermodynamics, fluid mechanics, "
+            "solid mechanics, dynamics, manufacturing, robotics, and design. "
+            "Career paths include mechanical design, automotive, aerospace, "
+            "energy, and manufacturing industries."
+        ),
+        "COE:Bioengineering": (
+            "Bioengineering curriculum combining biology, chemistry, and engineering "
+            "for medical devices, biomaterials, tissue engineering, and biotech. "
+            "Career paths include medical device companies, pharmaceutical research, "
+            "biotech startups, and graduate school in biomedical sciences."
+        ),
+        "COE:Civil Engineering": (
+            "Civil Engineering curriculum covering structural analysis, geotechnical "
+            "engineering, transportation, environmental engineering, and construction. "
+            "Career paths include construction management, structural engineering, "
+            "infrastructure development, and environmental consulting."
+        ),
+        "L&S:Data Science": (
+            "Data Science curriculum covering statistics, machine learning, data "
+            "visualization, data engineering, and computational methods. "
+            "Career paths include data analyst, data scientist, business intelligence, "
+            "and analytics roles across industries."
+        ),
+        "L&S:Economics": (
+            "Economics curriculum covering microeconomics, macroeconomics, econometrics, "
+            "game theory, and economic policy. Career paths include finance, "
+            "consulting, policy analysis, and business strategy roles."
+        ),
+        "L&S:Statistics": (
+            "Statistics curriculum covering probability theory, statistical inference, "
+            "regression analysis, experimental design, and Bayesian methods. "
+            "Career paths include statistician, quantitative analyst, actuary, "
+            "and research positions."
+        ),
+        "L&S:Mathematics": (
+            "Mathematics curriculum covering analysis, algebra, topology, "
+            "differential equations, and mathematical modeling. Career paths "
+            "include academia, quantitative finance, data science, and research."
+        ),
+        "L&S:Psychology": (
+            "Psychology curriculum covering cognitive psychology, developmental "
+            "psychology, social psychology, clinical psychology, and neuroscience. "
+            "Career paths include clinical practice, counseling, research, "
+            "human resources, and healthcare."
+        ),
+        "L&S:Political Science": (
+            "Political Science curriculum covering American politics, international "
+            "relations, political theory, and public policy. Career paths include "
+            "government, law school, public policy, campaigns, and non-profits."
+        ),
+        "L&S:English": (
+            "English curriculum covering literature, creative writing, rhetoric, "
+            "and critical analysis. Career paths include education, publishing, "
+            "communications, marketing, and law school preparation."
+        ),
+        "HAAS:Business Administration": (
+            "Business Administration curriculum covering finance, accounting, "
+            "marketing, operations, strategy, and entrepreneurship. Career paths "
+            "include consulting, investment banking, corporate management, "
+            "and startup founding."
+        ),
+        "COC:Chemistry": (
+            "Chemistry curriculum covering organic, inorganic, physical, and "
+            "analytical chemistry, with laboratory research experience. "
+            "Career paths include pharmaceutical research, chemical industry, "
+            "graduate school, and medical school preparation."
+        ),
+        "COC:Chemical Biology": (
+            "Chemical Biology curriculum at the interface of chemistry and biology, "
+            "covering biochemistry, molecular biology, and chemical synthesis. "
+            "Career paths include biotech, pharmaceutical research, and "
+            "graduate programs in life sciences."
+        ),
+        "CNR:Environmental Science": (
+            "Environmental Science curriculum covering ecology, environmental policy, "
+            "conservation biology, and sustainability. Career paths include "
+            "environmental consulting, government agencies, non-profits, "
+            "and sustainability roles."
+        ),
+        "CNR:Nutritional Science": (
+            "Nutritional Science curriculum covering biochemistry of nutrition, "
+            "dietetics, food science, and public health nutrition. Career paths "
+            "include clinical dietetics, food industry, public health, and research."
+        ),
+        "CED:Architecture": (
+            "Architecture curriculum covering design studio, building technology, "
+            "structures, history, and urban design. Career paths include "
+            "architectural firms, urban planning, construction, and design consultancy."
+        ),
+    },
+    # ASU colleges
+    "asu": {
+        "FSE": (
+            "Fulton Schools of Engineering offering programs in computer science, "
+            "electrical engineering, mechanical engineering, civil engineering, "
+            "aerospace, biomedical engineering, and construction management. "
+            "Strong industry partnerships with tech and manufacturing sectors."
+        ),
+        "WPC": (
+            "W. P. Carey School of Business offering programs in finance, accounting, "
+            "marketing, supply chain management, information systems, and "
+            "management. Career paths include corporate roles, consulting, "
+            "and entrepreneurship."
+        ),
+        "CLAS": (
+            "College of Liberal Arts and Sciences offering programs across humanities, "
+            "social sciences, natural sciences, and mathematics. Diverse career "
+            "paths including research, education, government, and non-profits."
+        ),
+        "CISA": (
+            "College of Integrative Sciences and Arts offering applied programs "
+            "in organizational leadership, applied science, and technical communication. "
+            "Career-focused curriculum for working professionals."
+        ),
+        "WCFA": (
+            "Herberger Institute for Design and the Arts offering programs in "
+            "art, design, dance, music, theatre, and film. Career paths include "
+            "creative industries, arts education, and entertainment."
+        ),
+        "CONHI": (
+            "Edson College of Nursing and Health Innovation offering nursing, "
+            "healthcare innovation, and population health programs. High placement "
+            "rates in hospitals, clinics, and healthcare organizations."
+        ),
+        "MLFTC": (
+            "Mary Lou Fulton Teachers College offering education degrees for "
+            "K-12 teaching, educational leadership, and learning design. "
+            "Career paths in schools, curriculum development, and educational tech."
+        ),
+        "NEWC": (
+            "Walter Cronkite School of Journalism offering programs in journalism, "
+            "mass communication, and digital media. Career paths in news media, "
+            "public relations, and digital content creation."
+        ),
+        "SST": (
+            "College of Health Solutions offering programs in health sciences, "
+            "kinesiology, speech and hearing, and health policy. Career paths "
+            "in healthcare, wellness, and clinical practice."
+        ),
+    },
+}
+
+
+def get_curriculum_description(dataset_id: str, unit: str) -> Optional[str]:
+    """Get curriculum description for a unit.
+
+    Args:
+        dataset_id: Dataset ID (ucb, asu)
+        unit: Unit identifier
+
+    Returns:
+        Curriculum description text or None if not found
+    """
+    dataset_curricula = CURRICULUM_DESCRIPTIONS.get(dataset_id, {})
+    return dataset_curricula.get(unit)
 
 
 @dataclass
@@ -176,6 +356,102 @@ def _build_unit_representations(
                 # Fall back to unit name if no courses found
                 vec = encoder_fn([outcome.unit_name])[0]
                 unit_vectors[unit] = vec
+
+    return unit_vectors
+
+
+def build_unit_vectors_curriculum_text(
+    dataset_id: str,
+    outcomes: List[CanonicalOutcome],
+    encoder_fn: Callable[[List[str]], np.ndarray],
+    custom_descriptions: Optional[Dict[str, str]] = None,
+) -> Dict[str, np.ndarray]:
+    """Build unit vectors from curriculum text descriptions.
+
+    This method uses rich curriculum descriptions that include course topics,
+    skills, and career paths to create more semantically meaningful vectors
+    than unit names alone.
+
+    Args:
+        dataset_id: Dataset ID (ucb, asu) for looking up default descriptions
+        outcomes: List of canonical outcomes
+        encoder_fn: Text encoder function
+        custom_descriptions: Optional custom descriptions mapping unit -> text.
+            If provided, these override the defaults.
+
+    Returns:
+        Dict mapping unit to embedding vector
+    """
+    unit_vectors = {}
+
+    # Get unique units
+    units = {o.unit: o for o in outcomes}
+
+    # Collect all texts to encode in batch for efficiency
+    texts_to_encode = []
+    unit_order = []
+
+    for unit, outcome in units.items():
+        # Try custom descriptions first, then defaults, then fall back to unit name
+        text = None
+        if custom_descriptions:
+            text = custom_descriptions.get(unit)
+        if text is None:
+            text = get_curriculum_description(dataset_id, unit)
+        if text is None:
+            # Fall back to unit name
+            text = outcome.unit_name
+
+        texts_to_encode.append(text)
+        unit_order.append(unit)
+
+    # Batch encode
+    if texts_to_encode:
+        embeddings = encoder_fn(texts_to_encode)
+        for i, unit in enumerate(unit_order):
+            vec = embeddings[i]
+            # Normalize
+            norm = np.linalg.norm(vec)
+            if norm > 1e-8:
+                vec = vec / norm
+            unit_vectors[unit] = vec
+
+    return unit_vectors
+
+
+def build_unit_vectors_from_names(
+    outcomes: List[CanonicalOutcome],
+    encoder_fn: Callable[[List[str]], np.ndarray],
+) -> Dict[str, np.ndarray]:
+    """Build unit vectors by embedding unit names directly.
+
+    This is the baseline approach - simple but less semantically rich.
+
+    Args:
+        outcomes: List of canonical outcomes
+        encoder_fn: Text encoder function
+
+    Returns:
+        Dict mapping unit to embedding vector
+    """
+    unit_vectors = {}
+
+    # Get unique units
+    units = {o.unit: o.unit_name for o in outcomes}
+
+    # Batch encode
+    unit_ids = list(units.keys())
+    unit_names = list(units.values())
+
+    if unit_names:
+        embeddings = encoder_fn(unit_names)
+        for i, uid in enumerate(unit_ids):
+            vec = embeddings[i]
+            # Normalize
+            norm = np.linalg.norm(vec)
+            if norm > 1e-8:
+                vec = vec / norm
+            unit_vectors[uid] = vec
 
     return unit_vectors
 
