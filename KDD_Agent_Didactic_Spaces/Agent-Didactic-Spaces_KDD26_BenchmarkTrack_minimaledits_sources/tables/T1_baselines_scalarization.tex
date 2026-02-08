@@ -1,0 +1,19 @@
+\begin{table}[htbp]
+\centering
+\caption{Comparison of Multi-Objective Methods on unified\_v3 Dataset}
+\label{tab:baselines}
+\adjustbox{width=0.9\linewidth}{
+\begin{tabular}{lrrl}
+\toprule
+\textbf{Method} & \textbf{Solutions} & \textbf{Coverage (\%)} & \textbf{Notes} \\
+\midrule
+\textbf{ADS-Pareto (Full)} & 103 & 100.0 & Reference \\
+Weighted-Sum Grid (50$\times$) & 4 & 3.9 & Non-convex failure \\
+Random Scalarization ($N$=500) & 4 & 3.9 & Same limitation \\
+Lexicographic (market$>$mission) & 1--10 & 1--10 & $\varepsilon$-dependent \\
+Lexicographic (mission$>$market) & 1--7 & 1--7 & $\varepsilon$-dependent \\
+Single-Objective (top-10) & 10 & 3--6 & Misses diversity \\
+No Constraint ($\tau$=$\infty$) & 109 & 106 & +6 extreme options \\
+\bottomrule
+\end{tabular}}
+\end{table}

@@ -1,0 +1,57 @@
+{
+  "method_name": "random_baseline",
+  "tasks": {
+    "A": {
+      "task": "A",
+      "metrics": {
+        "coverage": 0.0592,
+        "diversity": 0.555308,
+        "objective_balance": 0.9948,
+        "external_alignment": {
+          "precision": 0.78,
+          "recall": 0.2532,
+          "f1": 0.3824,
+          "jaccard": 0.2364
+        },
+        "rank_quality_vs_aggregate": -0.3637,
+        "selection_size": 50,
+        "valid_fraction": 1.0
+      }
+    },
+    "B": {
+      "task": "B",
+      "metrics": {
+        "hypervolume": 0.019091,
+        "spacing": 0.047019,
+        "spread": 0.490905,
+        "pareto_precision": 0.78,
+        "pareto_recall": 0.2532,
+        "dominance_resistance": 0.92,
+        "objective_balance": 0.9948,
+        "n_trade_off_points": 50
+      }
+    },
+    "C": {
+      "task": "C",
+      "metrics": {
+        "bootstrap_jaccard_mean": 0.1332,
+        "bootstrap_jaccard_std": 0.0358,
+        "hv_retention": 0.7423,
+        "rank_stability_mean": 0.0453,
+        "rank_stability_std": 0.2515,
+        "core_stable_fraction": 0.006,
+        "core_stable_count": 1,
+        "n_perturbation_runs": 6
+      }
+    }
+  },
+  "summary": {
+    "task_a_coverage": 0.0592,
+    "task_a_diversity": 0.555308,
+    "task_a_balance": 0.9948,
+    "task_b_hypervolume": 0.019091,
+    "task_b_pareto_precision": 0.78,
+    "task_c_jaccard": 0.1332,
+    "task_c_hv_retention": 0.7423
+  }
+}

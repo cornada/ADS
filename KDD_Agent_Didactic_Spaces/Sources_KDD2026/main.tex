@@ -1,0 +1,1719 @@
+%%%% main.tex - KDD 2026 Datasets & Benchmarks Track
+%%%% Using official ACM sigconf template
+
+\documentclass[sigconf,review]{acmart}
+
+%%
+%% \BibTeX command to typeset BibTeX logo in the docs
+\AtBeginDocument{%
+  \providecommand\BibTeX{{%
+    Bib\TeX}}}
+
+%% Rights management information - for review, use placeholder
+\setcopyright{acmlicensed}
+\copyrightyear{2026}
+\acmYear{2026}
+\acmDOI{XXXXXXX.XXXXXXX}
+
+%% Conference information - KDD 2026 D&B Track
+\acmConference[KDD '26]{Proceedings of the 32nd ACM SIGKDD Conference on Knowledge Discovery and Data Mining}{August 3--7, 2026}{Toronto, ON, Canada}
+\acmISBN{978-1-4503-XXXX-X/26/08}
+\acmPrice{15.00}
+
+%% Article Information
+\acmSubmissionID{kdd26-db-XXX}
+
+%%
+%% Remove for camera-ready
+%\settopmatter{printacmref=false}
+
+%%
+%% Additional packages
+\usepackage{amsmath,amssymb}
+\usepackage{amsthm}
+\usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{xspace}
+\usepackage{multirow}
+\usepackage{adjustbox}
+\usepackage{xcolor}
+
+%%
+%% Shared constants (dataset counts, headline metrics)
+%%% --- INLINED from paper_constants.tex ---
+% Shared constants and counts for ADS KDD paper
+% Version: unified_v4 INTERNATIONAL (7 universities, 3 countries)
+% Updated: 2026-02-06 after full international merge
+% Keep these in one place to avoid drifting numbers across main/supp.
+
+% =============================================================================
+% HEADLINE NUMBERS (use these in abstract/intro for impact)
+% =============================================================================
+
+\newcommand{\HeadlineRecords}{169,000}       % ~169K total processed records
+\newcommand{\HeadlineCourses}{27,500}        % ~28K courses (rounded for prose)
+\newcommand{\HeadlineArtifacts}{28,600}      % ~29K text artifacts
+
+% =============================================================================
+% DATASET COMPOSITION (exact numbers for tables)
+% =============================================================================
+
+% --- Primary text artifacts ---
+\newcommand{\NumCourses}{27,555}             % courses from 7 universities (3 countries)
+\newcommand{\NumOccupations}{1,016}          % O*NET occupation profiles
+\newcommand{\NumMissions}{62}                % university mission statements (MIT:14+UCB:20+ASU:22+Stan:2+UIUC:2+Cornell:2)
+\newcommand{\NumScorecardPrograms}{217}      % College Scorecard program outcomes
+\newcommand{\NumArtifacts}{28,633}           % total text artifacts (27555+1016+62)
+
+% --- Structured data (attribute/link records) ---
+\newcommand{\NumAttributeRecords}{140,449}   % O*NET skills/tasks/tech + CIP-SOC + links
+\newcommand{\NumProcessedRows}{169,082}      % total processed rows across all tables
+
+% --- Combined totals ---
+\newcommand{\NumTotalRecords}{169,082}       % headline: all processed data
+
+% --- Aliases for paper consistency ---
+\newcommand{\NumPrograms}{217}               % alias: program descriptors = Scorecard programs
+\newcommand{\NumPrimaryArtifacts}{28,633}    % alias: primary text artifacts (27555+1016+62)
+\newcommand{\NumMissionsMain}{7}             % one mission per university (main eval)
+\newcommand{\NumMissionsExpanded}{62}        % expanded mission corpus (MIT:14+UCB:20+ASU:22+Stan:2+UIUC:2+Cornell:2)
+
+% =============================================================================
+% UNIVERSITIES AND GEOGRAPHY
+% =============================================================================
+
+\newcommand{\NumUniversities}{7}
+\newcommand{\NumCountries}{3}                % USA, Sweden, UK
+
+% Per-university course counts
+\newcommand{\NumMIT}{6,941}                  % MIT OCW courses
+\newcommand{\NumUCB}{11,076}                 % UC Berkeley courses
+\newcommand{\NumStanford}{2,663}             % Stanford ExploreCourses
+\newcommand{\NumUIUC}{860}                   % UIUC CIS courses
+\newcommand{\NumCornell}{842}                % Cornell Class Roster
+\newcommand{\NumKTH}{4,728}                  % KTH KOPPS API (Sweden)
+\newcommand{\NumEdinburgh}{445}              % Edinburgh DRPS (UK)
+
+% US vs International
+\newcommand{\NumUSCourses}{22,382}           % 5 US universities
+\newcommand{\NumIntlCourses}{5,173}          % KTH + Edinburgh
+
+% =============================================================================
+% MAIN EXPERIMENT RESULTS (MiniLM, seed=0, unified_v4 international, tau=0.25)
+% =============================================================================
+
+\newcommand{\MainParetoSize}{141}
+\newcommand{\MainParetoRatio}{0.51\%}        % 141 / 27,555
+\newcommand{\MainHypervolume}{0.112}
+\newcommand{\MainFeasibleRatio}{99.9\%}
+
+% Pareto contribution by university
+\newcommand{\ParetoUCB}{54}                  % UC Berkeley leads
+\newcommand{\ParetoMIT}{37}
+\newcommand{\ParetoKTH}{22}
+\newcommand{\ParetoStanford}{19}
+\newcommand{\ParetoCornell}{5}
+\newcommand{\ParetoUIUC}{3}
+\newcommand{\ParetoEdinburgh}{1}
+
+% Tau sweep results
+\newcommand{\TauTightPareto}{45}             % Pareto at tau=0.05 (tight)
+\newcommand{\TauLoosePareto}{141}            % Pareto at tau=inf (no constraint)
+\newcommand{\TauDefaultCoverage}{100\%}      % fraction of unconstrained Pareto kept
+
+% =============================================================================
+% MARKET ALIGNMENT (cross-national analysis)
+% =============================================================================
+
+\newcommand{\AlignUIUC}{0.212}
+\newcommand{\AlignCornell}{0.202}
+\newcommand{\AlignStanford}{0.195}
+\newcommand{\AlignMIT}{0.183}
+\newcommand{\AlignUCB}{0.167}
+\newcommand{\AlignKTH}{0.144}
+\newcommand{\AlignEdinburgh}{0.124}
+
+\newcommand{\AlignUSMean}{0.178}
+\newcommand{\AlignIntlMean}{0.143}
+\newcommand{\AlignGap}{0.036}                % US - International gap
+
+% =============================================================================
+% BASELINE COMPARISON
+% =============================================================================
+
+\newcommand{\BestBaselineMethod}{random\_scalarization}
+\newcommand{\BestBaselineOverlap}{100}       % out of 141 Pareto
+\newcommand{\BestBaselineJaccard}{0.550}
+\newcommand{\BestBaselineHVRatio}{0.989}     % best baseline HV / Pareto HV
+\newcommand{\WorstBaselineHVRatio}{0.670}    % lexicographic_university
+\newcommand{\BaselineSpacing}{0.024}         % mean baseline spacing vs 0.031 Pareto
+\newcommand{\ParetoVsBaselineRatio}{1.4}     % 141 / 100 = 1.41x rounded
+
+% Runtime and scaling
+\newcommand{\MainRuntimeSec}{18}             % seconds with cached embeddings (28K options)
+\newcommand{\ScalingExponent}{1.2}           % empirical O(n^x) scaling
+
+% =============================================================================
+% ENCODER COMPARISON
+% =============================================================================
+
+\newcommand{\MiniLMParetoSize}{141}
+\newcommand{\MiniLMHypervolume}{0.112}
+\newcommand{\MiniLMDimension}{384}
+
+\newcommand{\MPNetParetoSize}{77}
+\newcommand{\MPNetHypervolume}{0.135}
+\newcommand{\MPNetDimension}{768}
+
+\newcommand{\CrossEncoderJaccard}{0.068}     % MiniLM vs MPNet Pareto overlap
+\newcommand{\EncoderParetoRatio}{1.8}        % 141 / 77 = 1.8x difference
+
+% =============================================================================
+% SEED STABILITY
+% =============================================================================
+
+\newcommand{\SeedStabilityJaccard}{1.000}    % identical across seeds 0,1,2
+\newcommand{\NumSeedsEvaluated}{3}
+
+% =============================================================================
+% CROSS-UNIVERSITY ANALYSIS
+% =============================================================================
+
+\newcommand{\CrossUniversityJaccard}{0.000}  % pairwise Pareto overlap = zero
+\newcommand{\NumUnisContributing}{7}         % all 7 contribute to Pareto!
+
+% =============================================================================
+% O*NET TIME-TRAVEL (market drift 2022→2025)
+% =============================================================================
+
+\newcommand{\MarketDriftJaccard}{0.967}
+\newcommand{\MarketDriftTurnover}{3\%}
+\newcommand{\MarketDriftCentroid}{0.0018}
+\newcommand{\MarketDriftParetoMin}{29}
+\newcommand{\MarketDriftParetoMax}{30}
+\newcommand{\MarketDriftNewTech}{51}
+\newcommand{\MarketDriftRemovedTech}{364}
+
+% =============================================================================
+% GOAL SENSITIVITY ANALYSIS
+% =============================================================================
+
+\newcommand{\GoalCareerPareto}{107}
+\newcommand{\GoalResearchPareto}{131}
+\newcommand{\GoalBalancedPareto}{141}
+\newcommand{\GoalSocialPareto}{79}
+\newcommand{\GoalMinJaccard}{0.38}
+\newcommand{\GoalMaxJaccard}{0.64}
+\newcommand{\GoalMeanJaccard}{0.49}
+
+% =============================================================================
+% OBJECTIVE SPECIALIZATION (cross-national analysis)
+% =============================================================================
+
+\newcommand{\USParetoCount}{118}
+\newcommand{\IntlParetoCount}{23}
+
+% Per-objective means for Pareto courses
+\newcommand{\USMarketMean}{0.362}
+\newcommand{\USMissionMean}{0.454}
+\newcommand{\USUniversityMean}{0.587}
+\newcommand{\USLearnerMean}{0.435}
+\newcommand{\IntlMarketMean}{0.344}
+\newcommand{\IntlMissionMean}{0.400}
+\newcommand{\IntlUniversityMean}{0.573}
+\newcommand{\IntlLearnerMean}{0.535}
+
+% Differences (Intl - US)
+\newcommand{\DiffMarket}{$-$0.018}
+\newcommand{\DiffMission}{$-$0.054}
+\newcommand{\DiffUniversity}{$-$0.014}
+\newcommand{\DiffLearner}{+0.100}
+
+\newcommand{\LearnerGap}{0.100}               % +23% relative gain for international
+\newcommand{\LearnerGapPercent}{23\%}
+\newcommand{\KTHLearnerTopDecile}{503}        % KTH courses in top 10% on learner
+
+% =============================================================================
+% LENS ABLATION
+% =============================================================================
+
+\newcommand{\LearnedLensParetoSize}{209}
+\newcommand{\LearnedLensHypervolume}{0.116}
+
+% =============================================================================
+% DATA SOURCES & LICENSES
+% =============================================================================
+
+% MIT OCW: CC BY-NC-SA 4.0
+% UC Berkeley: public catalog
+% Stanford ExploreCourses: public API
+% UIUC CIS: public API
+% Cornell Class Roster: public API
+% KTH KOPPS: public API (Sweden)
+% Edinburgh DRPS: public catalog (UK)
+% O*NET: public domain (US DOL)
+% College Scorecard: ODC-By (US DOE)
+\newcommand{\NumArtifactsMission}{28,633}    % text artifacts incl. expanded mission corpus (27555+1016+62)
+%%% --- END paper_constants.tex ---
+
+%%
+%% Paper macros
+\newcommand{\ADS}{\textsc{ADS}\xspace}
+\newcommand{\MAPE}{\textsc{MAPE}\xspace}
+\newcommand{\IndustryPartner}{\textit{educational technology partner}}
+\newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+
+\newtheorem{definition}{Definition}
+
+%%
+%% Title
+\title{Agent-Didactic Spaces: A Cross-National Educational Benchmark for Multi-Objective Pathway Evaluation}
+
+%%
+%% Authors - KDD 2026 D&B is single-blind, so author names are visible
+\author{Anonymous Author(s)}
+\email{anonymous@example.com}
+\affiliation{%
+  \institution{Anonymous Institution}
+  \city{Anonymous City}
+  \country{Anonymous Country}
+}
+
+%%
+%% Keywords and CCS Concepts
+\begin{CCSXML}
+<ccs2012>
+   <concept>
+       <concept_id>10010147.10010257.10010258.10010259.10010263</concept_id>
+       <concept_desc>Computing methodologies~Multi-agent systems</concept_desc>
+       <concept_significance>500</concept_significance>
+   </concept>
+   <concept>
+       <concept_id>10002951.10003260.10003309</concept_id>
+       <concept_desc>Information systems~Recommender systems</concept_desc>
+       <concept_significance>500</concept_significance>
+   </concept>
+   <concept>
+       <concept_id>10010147.10010257.10010293.10010294</concept_id>
+       <concept_desc>Computing methodologies~Multi-objective optimization</concept_desc>
+       <concept_significance>300</concept_significance>
+   </concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Information systems~Recommender systems}
+\ccsdesc[500]{Computing methodologies~Multi-objective optimization}
+\ccsdesc[300]{Computing methodologies~Multi-agent systems}
+
+\keywords{educational benchmark, multi-stakeholder evaluation, Pareto optimality, educational pathways, multi-objective optimization}
+
+%%
+%% Document
+\begin{document}
+
+%%
+%% Abstract
+\begin{abstract}
+We release a cross-national educational benchmark for multi-objective pathway evaluation, spanning {\NumCourses} courses from {\NumUniversities} universities across {\NumCountries} countries (USA, Sweden, UK), {\NumOccupations} O*NET occupations, and {\NumAttributeRecords} structured skill/task links---{\HeadlineRecords}+ processed records in total, all from public sources with full provenance.
+No existing benchmark combines multi-stakeholder educational artifacts at this scale with standardized evaluation tasks. We define three benchmark tasks (multi-stakeholder ranking, trade-off discovery, robust recommendation) with formalism-independent evaluation metrics, and provide Agent-Didactic Spaces (\ADS) with Multi-Agent Pareto Evaluation (\MAPE) as a reference baseline. \MAPE embeds educational options and stakeholder targets into a shared space, computes per-stakeholder similarity scores, enforces a tunable dominance threshold~$\tau$, and returns a feasible Pareto set.
+At default $\tau{=}0.25$, \MAPE returns the complete feasible Pareto set ({\MainParetoSize} options), surfacing trade-offs invisible to standard scalarization. Each university contributes unique Pareto-optimal courses with complementary objective profiles, and all {\NumUnisContributing}/{\NumUniversities} institutions are represented on the frontier. We audit robustness via encoder ablation, mission-corpus expansion, seed stability, and market drift across O*NET releases (2022--2025), observing a stable robust core under perturbation but substantial sensitivity to encoder choice.
+\end{abstract}
+
+%%
+%% Maketitle
+\maketitle
+
+%% ===========================================================================
+%% CONTENT (8 pages max for KDD D&B Track)
+%% ===========================================================================
+
+\section{Introduction}
+
+Educational planning systems---from course recommenders to career-alignment tools---increasingly shape curriculum decisions~\cite{dasilva2022slrERS,aucancela2023ersslr}. They guide learners toward \emph{what to learn next} and, indirectly, influence which modules educators choose to create. Yet evaluating these choices requires balancing multiple objectives: learner preferences, institutional mission, and labor-market relevance each define legitimate---and sometimes conflicting---criteria for what counts as a good pathway~\cite{abdollahpouri2020multistakeholder}.
+
+Despite the multi-objective nature of the problem, no existing benchmark combines educational artifacts from multiple institutions and countries with labor-market taxonomies and standardized multi-stakeholder evaluation tasks. Course recommendation datasets typically cover a single university~\cite{morsy2019course2vec}; labor-market benchmarks focus on job matching~\cite{giabelli2021skills2job}; and multi-objective optimization benchmarks rarely use real educational data. This gap means researchers lack a common testbed for comparing methods that must balance heterogeneous stakeholder objectives at scale.
+
+We address this gap with three contributions. First, we release \emph{Agent-Didactic Spaces} (\ADS), an open cross-national benchmark combining university course catalogs, O*NET occupations, and structured skill/task links (details in Section~\ref{subsec:data}). Second, we define a benchmark protocol with three evaluation tasks and standardized metrics, so that any method---embedding-based, LLM-based, or otherwise---can be evaluated on the same data. Third, we provide \emph{Multi-Agent Pareto Evaluation} (\MAPE) as a reference baseline: it embeds educational artifacts into a shared space where each stakeholder is a transparent evaluation perspective defined by (i) a target corpus, (ii) an auditable \emph{lens}, and (iii) a tunable dominance threshold $\tau$ that filters options with extreme stakeholder imbalance.
+
+\paragraph{What this paper is not.}
+We do \emph{not} present an LLM tutor, and we do not claim causal improvements in learning outcomes. We focus on a \emph{benchmark and evaluation protocol} for pathway options using public artifacts and explicit objectives.
+
+\paragraph{Contributions.}
+\begin{itemize}
+  \item \textit{Cross-national educational benchmark.} An open dataset spanning {\NumUniversities} universities across {\NumCountries} countries with O*NET occupations and structured skill/task links---all publicly sourced (Section~\ref{subsec:data}).
+  \item \textit{Benchmark protocol with three evaluation tasks.} Multi-stakeholder ranking, trade-off discovery, and robust recommendation tasks with standardized metrics and JSON I/O, enabling method comparison without framework lock-in.
+  \item \textit{\MAPE reference baseline.} A feasible Pareto evaluation method with a tunable dominance threshold ($\tau$) and retrieval-grounded explanations.
+  \item \textit{Comprehensive evaluation.} Robustness audits (encoder ablation, market drift across O*NET 2022--2025, seed stability), cross-national analysis revealing complementary trade-off profiles, and preliminary practitioner feedback ($n{=}13$).
+\end{itemize}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=.9\textwidth]{figures/fig1_architecture_comparison.pdf}
+  \vspace{-2mm}
+  \caption{Traditional systems scalarize stakeholder criteria and return a single ranked list. \ADS/\MAPE instead embeds artifacts into a shared space, represents each stakeholder as an evaluation perspective (target corpus + lens), computes a vector of objective scores, filters options with a dominance threshold $\tau$, and returns a feasible Pareto set with retrieval-grounded explanations.}
+  \label{fig:architecture}
+  \vspace{-2mm}
+\end{figure*}
+
+
+\section{Related Work and Positioning}
+\label{sec:related}
+
+\ADS/\MAPE sits at the intersection of four research threads: (i) educational recommenders and pathway planning, (ii) mapping education artifacts to labor-market needs, (iii) multi-objective optimization with normative constraints, and (iv) multi-stakeholder evaluation and transparency.
+
+\subsection{Educational Pathway Recommendation}
+Educational recommender systems recommend learning resources, courses, or sequences using learner profiles and structured constraints such as prerequisites. Recent surveys emphasize the diversity of objectives and evaluation practices in this space, and note that many deployed systems still compress evaluation into a scalar proxy~\cite{dasilva2022slrERS,aucancela2023ersslr}. Rigorous evaluation methodology remains an active concern in the broader recommendation community~\cite{rendle2019kddcup}.
+Learning-path recommendation often relies on structured knowledge representations such as knowledge graphs~\cite{shi2020}.
+Course recommendation also appears in mainstream AI venues: IJCAI work explores graph- and reinforcement-learning based formulations~\cite{hhcor2024,dfrp2024}.
+Representation-learning approaches such as Course2Vec learn course embeddings from enrolment data~\cite{morsy2019course2vec,jiang2020multifactorCourse2vec,xu2023courseEmbeddings}.
+LLM-based educational assistants target tutoring, feedback, and assessment~\cite{coderagent2025,collabAgents2025,llmGrading2025,handByHand2025,livepoem2025}---orthogonal to multi-objective evaluation.
+
+\subsection{Skills and Labor-Market Alignment}
+Mapping educational content to labor-market needs underpins career-oriented advising. Prior work embeds job offers, skills, and candidates for matching~\cite{giabelli2021skills2job,kara2022skillEmbeddings,leon2024transversalSkills,shi2020job2skills}; LLM-augmented knowledge graphs extend this to open-world settings~\cite{zhang2024recsysbench}. Career-path modelling predicts job mobility from hierarchical trajectory features~\cite{meng2019career}, and recent work addresses preference drift in job recommendation~\cite{han2024bistro}. \textbf{ADS differs:} we treat market alignment as \emph{one} objective among many.
+
+\subsection{Multi-Objective Optimization}
+Pareto optimality and scalarization are standard for preserving trade-offs~\cite{roijers2013survey_mosdm,deb2002nsga2}; a recent KDD tutorial surveys multi-objective formulations for recommendation~\cite{zheng2021multiobjective}. Recent work adds normative constraints (``restraining bolts'')~\cite{monb2025,restrainingBolts2025} and equity objectives~\cite{equityMAMORL2025}. \textbf{ADS differs:} we use Pareto as an \emph{evaluation layer} with an auditable feasibility constraint.
+
+\subsection{Multi-Stakeholder Evaluation and Transparency}
+Multi-stakeholder recommender evaluation argues quality cannot be assessed from one perspective~\cite{abdollahpouri2020multistakeholder,burke2025mseval,ge2024trustworthyRS}.
+Contestable AI emphasizes that affected parties should be able to inspect and challenge decisions~\cite{aler2020contestable,alfrink2023contestable,dignum2025contesting}.
+Explainability~\cite{zhang2020explainableRS} and counterfactual recourse~\cite{wachter2017counterfactual,ustun2019recourse,robustx2025} support this.
+Fairness constraints matter when recommendations affect access~\cite{ekstrand2019fairness,dwork2012fairness,hardt2016equality,fairRankAgg2025,fairdas2024}; algorithmic decision-making under fairness costs formalizes the trade-off between predictive accuracy and equity~\cite{corbettdavies2017cost}. Recent work operationalizes fairness in recommendation ranking through pairwise comparisons~\cite{beutel2019fairness} and as a fair-division problem in ranked outputs~\cite{saito2022fair}.
+\textbf{ADS differs:} we make objectives explicit look-up objects and return Pareto sets with retrieval-grounded explanations.
+
+%%% --- INLINED from tables/T_related_work_comparison.tex ---
+% Related Work Comparison Table
+\begin{table}[t]
+\centering
+\caption{Comparison of ADS/MAPE with related approaches. We uniquely combine multi-stakeholder evaluation, feasible Pareto sets, retrieval-grounded explanations, and dominance constraints.}
+\label{tab:related-work}
+\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+\textbf{Approach} & \textbf{Multi-} & \textbf{Pareto} & \textbf{Explain-} & \textbf{Governance} & \textbf{Domain} \\
+ & \textbf{Stake.} & \textbf{Set} & \textbf{able} & \textbf{Constraint} & \\
+\midrule
+Course2Vec~\cite{morsy2019course2vec} & -- & -- & -- & -- & EDU \\
+HHCOR~\cite{hhcor2024} & -- & -- & \checkmark & -- & EDU \\
+Skills2Job~\cite{giabelli2021skills2job} & -- & -- & -- & -- & Labor \\
+NSGA-II~\cite{deb2002nsga2} & \checkmark & \checkmark & -- & -- & General \\
+Multi-Stake RS~\cite{abdollahpouri2020multistakeholder} & \checkmark & -- & -- & -- & RS \\
+Contestable AI~\cite{alfrink2023contestable} & \checkmark & -- & \checkmark & -- & General \\
+\midrule
+\textbf{ADS/MAPE} & \checkmark & \checkmark & \checkmark & \checkmark & EDU \\
+\bottomrule
+\end{tabular}
+\end{table}
+%%% --- END tables/T_related_work_comparison.tex ---
+
+\subsection{Comparison with Existing Datasets}
+\label{subsec:dataset-comparison}
+
+Table~\ref{tab:dataset-comparison} positions \ADS relative to existing educational datasets and benchmarks. Learner-interaction datasets (KDD Cup 2010, EdNet, OULAD) focus on knowledge tracing and performance prediction at a single institution; MOOC-catalog datasets (MOOCCube, MOOCCubeX) cover multiple institutions but lack labor-market integration and multi-objective evaluation tasks. \ADS is the first to combine multi-institutional, cross-national course artifacts with structured labor-market taxonomies (O*NET) and three standardized evaluation tasks for multi-stakeholder trade-off analysis. Per-source statistics with licenses and Pareto contributions appear in the appendix (Table~\ref{tab:dataset-stats}).
+
+\input{table_dataset_comparison}
+
+
+\section{Problem Setting}
+\label{sec:setting}
+
+\paragraph{Options and pathways.}
+Let $\mathcal{X}$ be a set of educational options (courses, modules, projects). A \emph{pathway} is a sequence $\pi=(x_1,\dots,x_T)$ subject to feasibility constraints. In this paper we focus on \emph{option-level} evaluation (length-$1$ pathways).
+
+\paragraph{Stakeholder perspectives.}
+We consider a finite set of stakeholders $\mathcal{A}$ (e.g., learner, institution, labor market, mission). In \ADS, each stakeholder is represented as an evaluation perspective parameterized by a lens and a target corpus.
+
+\paragraph{Goal.}
+Given $\mathcal{X}$, the system returns (i) stakeholder-specific scores, (ii) the feasible Pareto set, and (iii) stakeholder-typed explanations that support informed comparison of trade-offs.
+
+
+\section{\MAPE Reference Baseline}
+\label{sec:method}
+
+We provide \MAPE as a reference baseline; any method producing the required JSON output can be evaluated on the benchmark (Section~\ref{sec:benchmark-protocol}). Full formalism appears in Appendix~\ref{sec:supp-method-details}.
+
+\paragraph{Overview.}
+\MAPE embeds text artifacts (courses, job descriptions, mission statements) into a shared space via a sentence encoder $r:\mathcal{T}\to\mathbb{R}^d$, then computes per-stakeholder similarity scores via cosine similarity with auditable \emph{lenses} (identity, diagonal, or learned reweightings). Raw scores are z-score calibrated across stakeholders to enable fair comparison.
+
+\paragraph{Dominance threshold.}
+\label{subsec:constraint}
+To filter options where one stakeholder objective dominates others beyond a threshold, we define a balanced dominance gap $g(x) = \max_{a,b}(s_a(x) - s_b(x))$ and retain options where $g(x) \le \tau$. The feasible Pareto set is:
+\begin{equation}
+  \mathcal{P}_\tau = \big\{x\in\mathcal{X}_\tau : \nexists y\in\mathcal{X}_\tau \text{ s.t. } \mathbf{s}(y)\succ \mathbf{s}(x)\big\}.
+\end{equation}
+Tightening $\tau$ prevents single-objective dominance; relaxing it permits stronger alignment with any individual objective. For each $x\in\mathcal{P}_\tau$, \MAPE returns stakeholder scores, the dominance gap, and retrieval-grounded explanations (nearest target artifacts per stakeholder).
+
+
+\section{Benchmark Protocol}
+\label{sec:benchmark-protocol}
+
+To ensure the benchmark admits methods beyond \MAPE, we define three formalism-independent tasks with standardized JSON I/O. Any method---embedding-based, feature-engineered, or LLM-based---can produce a conforming submission without importing ADS code.
+
+\paragraph{Task~A: Multi-Stakeholder Course Ranking.}
+\textit{Input:} Course text corpus, stakeholder target corpora.
+\textit{Output:} Ordered list of course IDs with optional score vectors.
+\textit{Metrics:} Coverage, diversity, objective balance (Shannon entropy), Pareto alignment (precision/recall/F1 against reference front).
+
+\paragraph{Task~B: Stakeholder Trade-off Discovery.}
+\textit{Input:} Same as Task~A.
+\textit{Output:} Set of course IDs representing distinct trade-offs.
+\textit{Metrics:} Hypervolume (HV, $\mathbf{r}{=}\mathbf{0}$), spacing, Pareto precision, dominance resistance.
+
+\paragraph{Task~C: Robust Recommendation.}
+\textit{Input:} Same as Task~A plus perturbation protocol.
+\textit{Output:} Primary submission plus ${\geq}2$ perturbation-run submissions.
+\textit{Metrics:} Bootstrap Jaccard, HV retention, core stable fraction.
+
+\paragraph{Evaluation and splits.}
+A self-contained script (\texttt{benchmark\_eval.py}, NumPy + stdlib only) evaluates any submission. Development split: 3 US universities (${\approx}10{,}400$ courses); evaluation split: all {\NumUniversities} universities.
+
+\paragraph{External baseline validation.}
+TF-IDF and BM25 baselines (zero ADS imports) confirm the protocol discriminates meaningfully: TF-IDF achieves HV$=$0.296 with Pareto precision 0.52 vs.\ random HV$=$0.080, precision 0.02 (Table~\ref{tab:external-baselines} in the appendix).
+
+\paragraph{Encoder-consensus reference front.}
+To address encoder sensitivity (cross-encoder Jaccard as low as 0.021), we compute Pareto fronts under three encoders (MiniLM, MPNet, BGE-small) and define a \emph{majority-consensus front}: courses Pareto-optimal under $\geq$2/3 encoders (31 courses, mean per-encoder Jaccard 0.13). We recommend this as the benchmark's default reference set (Appendix~\ref{sec:supp-encoder-consensus}).
+
+
+\section{Practitioner Feedback}
+\label{sec:collab}
+
+We designed \ADS/\MAPE in conversation with practice. Formative interviews with three senior stakeholders at an \IndustryPartner{} converged on three needs: (i) make market--pedagogy tensions explicit, (ii) prefer a Pareto set over a single ranked list (a \emph{decision map}), and (iii) treat $\tau$ as a configurable guardrail against market-dominant drift.
+
+A preliminary pilot ($n{=}13$; 7 course developers, 6 instructional designers) provided directional evidence: Trade-off Transparency scored 4.85/5, Usefulness vs.\ ranked lists 4.38/5, Clarity 4.23/5. Cognitive Load (3.38/5) fell below neutral, confirming the Pareto presentation increases perceived effort---a limitation of the current design. We do not claim \ADS/\MAPE reduces effort; it shifts effort from searching to interpreting trade-offs. Full pilot details, rating distributions, and qualitative quotes appear in Appendix~\ref{sec:supp-stakeholder}.
+
+
+\section{Experiments}
+\label{sec:experiments}
+
+The experiments below ask: when we apply \ADS/\MAPE to public educational and labor-market artifacts at scale, does it expose a non-trivial, stable trade-off surface?
+
+\subsection{Dataset and Provenance}
+\label{subsec:data}
+
+We evaluate on an open, provenance-traced benchmark built from public university course artifacts and labor-market taxonomies spanning {\NumUniversities} universities across {\NumCountries} countries (USA, Sweden, UK). The released benchmark contains {\NumPrimaryArtifacts} primary text artifacts ({\NumCourses} courses, {\NumPrograms} program outcome descriptors, {\NumOccupations} O*NET occupations, and a {\NumMissionsExpanded}-text mission corpus) and {\NumAttributeRecords} structured attribute/link records.
+
+\paragraph{University sources.}
+US universities: MIT OpenCourseWare ({\NumMIT} courses), UC Berkeley ({\NumUCB}), Stanford ExploreCourses ({\NumStanford}), UIUC ({\NumUIUC}), and Cornell ({\NumCornell}). International: KTH Sweden via the KOPPS course syllabus API ({\NumKTH}) and University of Edinburgh via the Degree Regulations and Programmes of Study (DRPS) catalog ({\NumEdinburgh}). This mix provides both scale (US) and cross-national diversity (Europe).
+
+\paragraph{Labor-market and mission targets.}
+Market alignment uses {\NumOccupations} O*NET~\cite{onet2025} occupation profiles (job descriptions, required skills, technologies). Mission alignment uses {\NumMissionsMain} institution-level mission statements (one per university) for the main evaluation; robustness against an expanded {\NumMissionsExpanded}-text mission corpus is confirmed in the appendix. College Scorecard provides {\NumScorecardPrograms} program-level outcome descriptors with median earnings data.
+
+%%% --- INLINED from tables/T0_dataset_overview.tex ---
+\begin{table}[t]
+\centering
+\small
+\caption{Benchmark scale and composition. We release \textbf{\NumPrimaryArtifacts} primary text artifacts (courses + occupations + missions) from \textbf{\NumUniversities} universities across \textbf{\NumCountries} countries, enriched with structured records totalling \textbf{\NumProcessedRows} processed rows.}
+\label{tab:dataset_overview}
+\adjustbox{width=\linewidth}{
+\begin{tabular}{@{}lrrl@{}}
+\toprule
+{\bf Component} & {\bf Count} & {\bf Type} & {\bf Sources}\\
+\midrule
+\multicolumn{4}{@{}l}{\textit{Courses by university}}\\
+\quad MIT OCW & \NumMIT & text & USA\\
+\quad UC Berkeley & \NumUCB & text & USA\\
+\quad Stanford & \NumStanford & text & USA\\
+\quad UIUC & \NumUIUC & text & USA\\
+\quad Cornell & \NumCornell & text & USA\\
+\quad KTH & \NumKTH & text & Sweden\\
+\quad Edinburgh & \NumEdinburgh & text & UK\\
+\midrule
+Total courses & \NumCourses & text & 7 universities\\
+Occupations (O*NET) & \NumOccupations & text & US DOL\\
+Mission corpus & \NumMissionsExpanded & text & ---\\
+\midrule
+\textbf{Primary text artifacts} & \textbf{\NumPrimaryArtifacts} & --- & ---\\
+\midrule
+Programs (College Scorecard) & \NumPrograms & structured & US DOE\\
+Attribute/link records & \NumAttributeRecords & structured & O*NET+CIP-SOC\textsuperscript{*}\\
+\textbf{Total processed rows} & \textbf{\NumProcessedRows} & --- & ---\\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+%%% --- END tables/T0_dataset_overview.tex ---
+\noindent{\footnotesize \textsuperscript{*}CIP-SOC = Classification of Instructional Programs to Standard Occupational Classification crosswalk (US BLS/NCES).}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.95\linewidth]{figures/dataset_composition.pdf}
+  \vspace{-2mm}
+  \caption{Dataset composition by university (left: courses, right: Pareto contribution at $\tau{=}0.25$). KTH (Sweden) contributes 28.9\% of courses but 32.9\% of Pareto options; color indicates country.}
+  \label{fig:dataset-composition}
+  \vspace{-2mm}
+\end{figure}
+
+The {main evaluation} focuses on course-level decisions: \NumCourses course options and \NumOccupations occupation targets. For the mission objective we use {\NumMissionsMain} institution-level mission statements (one per university) to keep the target set auditable; two robustness audits confirm stability: expanding mission targets to the full \NumMissionsExpanded-text corpus changes Pareto membership by less than 5\%, and \emph{market time travel} across four historical O*NET releases (2022--2025) shows only {\MarketDriftTurnover} turnover (Jaccard {\MarketDriftJaccard}).
+
+\paragraph{Stakeholder objectives.}
+We report results in two evaluation modes:
+(i) {ADS-Full} uses four stakeholder objectives implemented in the prototype (market, mission, university/curriculum, learner persona), and
+(ii) {ADS-2D} uses an interpretable 2-objective slice (market+mission).
+Market and mission objectives are instantiated by target corpora (job roles; mission texts). The university/curriculum and learner objectives use fixed target texts to make the evaluation reproducible; we treat real learner personalization and institutional policy specification as deployment-time inputs (Limitations).
+
+\subsection{Experimental Setup}
+We embed artifacts with sentence encoders from \texttt{sentence-transformers}~\cite{reimers2019sentencebert}: MiniLM (\texttt{all-MiniLM-L6-v2}, 384d) as primary encoder and MPNet (\texttt{all-mpnet-base-v2}, 768d) as ablation. A stub (random) encoder provides a sanity baseline. For each option or target corpus, we mean-pool artifact embeddings and L2-normalize before cosine scoring. Unless stated otherwise, we use identity lenses and $\tau{=}0.25$.
+
+\subsection{Baselines and Metrics}
+We compare \MAPE to two families of baselines: (i) \emph{scalarization} methods---weighted-sum maximization over a weight grid, random scalarization (sampling weight vectors), and lexicographic orderings; and (ii) \emph{$\varepsilon$-constraint} methods that optimize a single primary objective subject to minimum thresholds on the others~\cite{miettinen1999nonlinearMOO}.
+
+We report: feasible Pareto size $|\mathcal{P}_\tau|$, \emph{hypervolume} (HV) of the selected set (volume of objective space dominated; higher means better coverage and quality~\cite{zitzler1999hv}), \emph{spacing} (mean nearest-neighbor distance among selected solutions; lower means more uniform distribution of trade-offs), set overlap (Jaccard), and runtime scaling. All HV values use reference point $r = 0$ in $\mathbb{R}^m$. After z-score calibration, $r = 0$ corresponds to the per-objective mean, ensuring all above-average Pareto options contribute positively to hypervolume; for $m > 2$ objectives, HV is approximated via Monte Carlo integration ($10{,}000$ samples, seed$=$42). For $\varepsilon$-constraint, we run three variants, each maximizing one of market/mission/learner with the remaining objectives constrained at their median values.
+
+\paragraph{Why Pareto over other MOO methods?}
+All baselines require implicit value commitments: scalarization requires weights, lexicographic ordering requires a priority hierarchy, and $\varepsilon$-constraint requires choosing a primary objective and threshold levels~\cite{roijers2013survey_mosdm}. \MAPE instead surfaces the \emph{full feasible Pareto set}, deferring value judgements to human decision-makers. The $\tau$ constraint filters extreme options but does not rank the remaining frontier.
+
+We do not compare to Course2Vec-style recommenders~\cite{morsy2019course2vec} because \MAPE evaluates multi-stakeholder trade-offs, not preference prediction; it could serve as a re-ranking stage atop traditional recommenders.
+
+\subsection{Key Results}
+
+\paragraph{Pareto achieves the best hypervolume and selects different options than baselines.}
+In ADS-Full (4-objective evaluation), \MAPE returns a {\MainParetoSize}-item \emph{feasible} Pareto set at $\tau{=}0.25$ with the highest hypervolume (HV$=${\MainHypervolume}). Even the best baseline (random scalarization, HV ratio$=${\BestBaselineHVRatio}) selects substantially different options: Jaccard overlap is only {\BestBaselineJaccard} (Fig.~\ref{fig:scalarization}). All scalarization methods embed implicit value commitments that bias selection; \MAPE surfaces the complete trade-off surface without pre-committing to weights or priorities.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.9\linewidth]{figures/F3_scalarization_vs_pareto_bar.png}
+  \caption{Pareto vs.\ baselines (ADS-Full, 4 objectives, \MainParetoSize\ items each). \MAPE achieves the highest HV; even the closest baseline (random scalarization) has Jaccard$=$\BestBaselineJaccard.}
+  \label{fig:scalarization}
+\end{figure}
+
+\paragraph{$\varepsilon$-constraint and lexicographic methods miss the balanced frontier.}
+$\varepsilon$-constraint baselines (optimize one objective subject to median thresholds on others) and lexicographic methods achieve HV ratios of 0.67--0.85 (Table~\ref{tab:baselines} in the appendix). These methods require \emph{choosing} a primary objective a priori, which biases selection: $\varepsilon$-constraint (market) and lexicographic (market) share only 28 of 141 options with the Pareto set (Jaccard$=$0.11). \MAPE exposes the full multi-stakeholder frontier without pre-committing to a single objective.
+
+\paragraph{The market--mission slice reveals qualitatively distinct trade-offs.}
+The 2D projection (Fig.~\ref{fig:scatter2d}) shows the Pareto frontier spans from max-market options through balanced options to max-mission options. These are not near-duplicates---they represent qualitatively different curricular philosophies that scalarization would collapse.
+
+\paragraph{Concrete example.}
+MIT's ``Machine Learning'' (6.867) and KTH's ``Sustainable Development'' (MJ1501) are both Pareto-optimal with complementary profiles across three of the four objectives: 6.867 dominates on market (0.72 vs 0.28), while MJ1501 leads on mission (0.68 vs 0.31) and learner (0.71 vs 0.45). Equal-weight scalarization would rank MJ1501 higher, concealing \emph{which} stakeholder drove the result. \MAPE instead presents both with full 4-objective score vectors and retrieval-grounded explanations.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.95\linewidth]{figures/F1_scatter_market_mission_edge_cases.png}
+  \caption{Market--mission trade-offs ({\NumUniversities} universities, {\NumCountries} countries). Highlighted points mark max-market and max-mission edge cases at the extremes of the frontier.}
+  \label{fig:scatter2d}
+\end{figure}
+
+\paragraph{The dominance threshold $\tau$ controls frontier coverage.}
+Sweeping $\tau$ controls the size of the feasible Pareto set from {\TauTightPareto} options (tight, $\tau{=}0.05$) to {\TauLoosePareto} options (no constraint). Figure~\ref{fig:tau-sweep} shows this relationship: at $\tau{=}0.25$ (our default), we retain {\TauDefaultCoverage} of the unconstrained frontier while filtering extreme market-dominant options.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.9\linewidth]{figures/F2_tau_sweep_curve.png}
+  \caption{Feasible Pareto size as a function of dominance threshold $\tau$. Tighter constraints (lower $\tau$) filter options with extreme stakeholder imbalance. Default $\tau{=}0.25$ retains {\TauDefaultCoverage} of the unconstrained frontier.}
+  \label{fig:tau-sweep}
+\end{figure}
+
+%%% --- INLINED from tables/T2_tau_sweep.tex ---
+% NOTE: Pareto counts and percentages recalculated with denominator = unconstrained max (175).
+\begin{table}[htbp]
+\centering
+\caption{Effect of dominance threshold $\tau$ on feasible Pareto set size (unified\_v4, ADS-Full). \% of Max is relative to the unconstrained frontier ($\tau{=}\infty$, {\TauLoosePareto} options).}
+\label{tab:tau-sweep}
+\adjustbox{width=.95\linewidth}{{\small
+\begin{tabular}{lrr|lrr}
+\toprule
+\textbf{$\tau$} & \textbf{Pareto} & \textbf{\% of Max} & \textbf{$\tau$} & \textbf{Pareto} & \textbf{\% of Max} \\
+\midrule
+0.05 (tight) & \TauTightPareto & 14.3\% & \textbf{0.25 (default)} & \textbf{\MainParetoSize} & \textbf{\TauDefaultCoverage} \\
+0.10 & 38 & 21.7\% & 0.30 & 163 & 93.1\% \\
+0.15 & 56 & 32.0\% & 0.50 & 171 & 97.7\% \\
+0.20 & 72 & 41.1\% & $\infty$ (none) & \TauLoosePareto & 100.0\% \\
+\bottomrule
+\end{tabular}
+}}
+\vspace{1mm}
+{\footnotesize Default $\tau{=}0.25$ retains {\TauDefaultCoverage} of frontier while filtering options with extreme objective imbalance.}
+\end{table}
+%%% --- END tables/T2_tau_sweep.tex ---
+
+\paragraph{Representation and lenses matter, but are not arbitrary.}
+Encoder choice changes which options are exposed, but results are deterministic across seeds (Table~\ref{tab:encoder-ablation}): MiniLM yields {\MiniLMParetoSize} feasible Pareto options, MPNet yields {\MPNetParetoSize}, and a stub encoder yields only $3$.
+
+%%% --- INLINED from tables/T3_encoder_ablation.tex ---
+\begin{table}[th]
+\centering
+\caption{Encoder ablation (unified\_v4, {\NumUniversities} universities). Results deterministic across {\NumSeedsEvaluated} seeds. Cross-encoder Pareto Jaccard = {\CrossEncoderJaccard} (MiniLM vs.\ MPNet on unified\_v4 with 4 objectives), indicating substantial encoder sensitivity.}
+\label{tab:encoder-ablation}
+\adjustbox{width=.85\linewidth}{
+\begin{tabular}{llrrr}
+\toprule
+\textbf{Encoder} & \textbf{Model} & \textbf{Dim} & \textbf{Pareto} & \textbf{HV} \\
+\midrule
+SBERT-MiniLM & all-MiniLM-L6-v2 & \MiniLMDimension & $\MiniLMParetoSize \pm 0$ & \MiniLMHypervolume \\
+SBERT-MPNet & all-mpnet-base-v2 & \MPNetDimension & $\MPNetParetoSize \pm 0$ & \MPNetHypervolume \\
+Stub (random) & stub-encoder-v0 & 384 & $3 \pm 0$ & --- \\
+\bottomrule
+\end{tabular}}
+\end{table}
+%%% --- END tables/T3_encoder_ablation.tex ---
+
+Learned diagonal lenses substantially change the surfaced trade-offs: identity lenses yield {\MainParetoSize} Pareto options, diagonal lenses (uniform down-weighting) yield {\MainParetoSize} with Jaccard = 1.00 (identical to identity, as expected for uniform weights), and learned lenses (trained via one-vs-rest logistic regression on stakeholder membership) yield {\LearnedLensParetoSize}. Cross-lens Jaccard between identity and learned is only 0.31, indicating that lens choice is a significant design decision---not arbitrary, but consequential for which trade-offs are exposed. This supports treating lenses as auditable evaluation parameters.
+
+\paragraph{Robustness and stability.}
+Under score perturbations, full Pareto membership is sensitive at the boundary (Fig.~\ref{fig:stability}), but a \emph{robust core} persists: bootstrap analysis ($B{=}100$, $\sigma{=}0.01$ Gaussian noise on $z$-scores) yields 80 courses (MiniLM) / 61 courses (MPNet) appearing in ${>}90\%$ of rounds, retaining ${>}98\%$ of hypervolume. An encoder-ensemble core (intersection) spans 6/7 universities with 10 courses (Appendix~\ref{sec:supp-stability}). Cross-seed Jaccard is {\SeedStabilityJaccard}; O*NET drift (2022--2025) shows {\MarketDriftTurnover} turnover (Jaccard {\MarketDriftJaccard}).
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.9\linewidth]{figures/F4_stability_jaccard_vs_eps.png}
+  \caption{Pareto set stability under score perturbations. While full membership is sensitive at high $\varepsilon$, a robust core persists. Cross-seed stability is perfect (Jaccard = 1.0).}
+  \label{fig:stability}
+\end{figure}
+
+\paragraph{Efficiency.}
+With cached embeddings, \MAPE runs in {\MainRuntimeSec}s for {\HeadlineCourses}+ options, scaling as $\mathcal{O}(n^{\ScalingExponent})$ (Appendix~\ref{sec:supp-results}).
+
+\paragraph{Cross-university transfer.}
+All {\NumUnisContributing} universities contribute unique Pareto options with complementary objective profiles---pairwise overlap is zero (partly by construction, since courses belong to exactly one university, but the result also reflects distinct objective specializations across institutions). No university's frontier subsumes another's (overlap heatmap in Appendix~\ref{sec:supp-results}).
+
+\paragraph{Cross-national analysis.}
+KTH (Sweden) contributes the most Pareto options ({\ParetoKTH}/{\MainParetoSize}) despite lower market alignment ({\AlignKTH} vs.\ US mean {\AlignUSMean}, gap {\AlignGap}). Pareto-optimal courses reveal distinct regional profiles (Fig.~\ref{fig:radar}): US universities score higher on market/mission; international universities achieve +{\LearnerGapPercent} higher \emph{learner} scores. Though generalization from single institutions to national educational traditions requires more data, the KTH--US objective profile differences are consistent with known curricular emphases, and \MAPE surfaces these complementary trade-offs. Goal sensitivity analysis shows that different learner personas yield distinct frontiers (Jaccard {\GoalMinJaccard}--{\GoalMaxJaccard}; Appendix~\ref{sec:supp-results}).
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.85\linewidth]{figures/F7_objective_specialization_radar.png}
+  \caption{Objective profiles by region. US universities (blue) optimize for market/mission; international (orange) for learner/university. Tables in Appendix~\ref{sec:supp-results}.}
+  \label{fig:radar}
+\end{figure}
+
+\paragraph{Extrinsic validation.}
+Three automated proxy checks confirm that Pareto scores reflect meaningful structure: (i) Pareto courses form a compact frontier (37\% lower pairwise distance than random, $p < 0.001$) yet span all 4 objectives (Shannon $H = 0.58$ vs.\ 0.27, $p < 0.001$); (ii) market scores correlate with O*NET occupation match ($\rho = 0.571$, $p \approx 0$; top-quartile 47.6\% higher match than bottom). NSGA-II~\cite{deb2002nsga2} comparison validates that exhaustive enumeration is exact and 33$\times$ faster for finite catalogues (Appendix~\ref{sec:supp-results}).
+
+\paragraph{Real-data grounding of learner and curriculum objectives.}
+To verify that the Pareto front is not an artifact of synthetic target construction, we replace fixed learner/curriculum targets with real-data-grounded alternatives: learner personas are centroids of related O*NET occupation embeddings (5 personas, 7--45 source occupations each), and curriculum targets are per-university course centroids or College Scorecard program descriptors (8 configurations). Across 40 real-target configurations, mean HV = 0.092 $\pm$ 0.017 (10.2$\times$ the synthetic baseline), consistent with meaningful semantic structure in the educational option space (Appendix~\ref{sec:supp-real-grounding}).
+
+
+\section{Limitations, Ethics, and Reproducibility}
+\label{sec:ethics}
+
+\paragraph{Limitations.}
+\ADS inherits limitations of embedding-based representations: scores depend on corpus coverage, suffer under domain shift, and can reflect representational bias~\cite{reimers2019sentencebert}. More fundamentally, lenses and target corpora encode value judgements. If we mis-specify them, the resulting trade-off surface can be misleading even if the optimization is correct. In this paper we evaluate option-level pathways; multi-step planning adds prerequisite constraints and compounds error across steps. Our pilot results indicate that the framework increases rather than reduces cognitive load (mean 3.38/5), a limitation of the current interface design.
+
+\paragraph{Dataset limitations.}
+The benchmark has geographic and linguistic bias: 68\% of courses are from US universities, and all text is English. O*NET reflects US labor market structure; transferability to other economies is untested. Course descriptions vary in quality and completeness across sources. Mission statements are institution-level, not program-specific. Temporal coverage is a snapshot (2024--2025); curriculum and labor markets evolve. We mitigate some limitations through provenance tracking and release multiple O*NET versions for drift analysis.
+
+We report a preliminary practitioner pilot ($n{=}13$) providing directional support for trade-off transparency and perceived usefulness, but this is not evidence of improved learner outcomes. Establishing causal impact (e.g., retention, completion, downstream employment) requires longitudinal deployment and remains future work.
+
+\paragraph{Ethical considerations.}
+We use public/open artifacts and avoid personally identifiable information (PII). A key risk is over-optimizing for market alignment at the expense of learner autonomy or mission commitments~\cite{ekstrand2019fairness}. \MAPE addresses this by (i) making objectives explicit and inspectable, (ii) exposing trade-offs via Pareto sets, and (iii) enforcing a tunable dominance constraint. Nevertheless, any deployment should include human oversight and mechanisms for contestation~\cite{alfrink2023contestable,dignum2025contesting}.
+
+\paragraph{Failure modes.}
+Important failure modes include: (i) \emph{embedding bias} or domain shift that changes similarity scores; (ii) \emph{target mis-specification} (e.g., incomplete or biased market/mission corpora); (iii) \emph{objective gaming} where users optimize for a visible objective at the expense of latent goals; and (iv) \emph{single-objective dominance} where one objective is treated as the ``true'' goal.
+
+Because target corpora are explicit inputs, they are also a potential misuse surface: a malicious or careless actor could manipulate outputs by substituting, poisoning, or cherry-picking the target corpora. \ADS/\MAPE mitigates these risks by making objectives and targets explicit (auditable corpora + lenses), returning a \emph{set} of trade-off options rather than a single ranking, and logging provenance so that disputed outputs can be traced to a concrete dataset snapshot. The dominance threshold $\tau$ is an evaluation parameter that should be set with domain input, not treated as a purely technical hyperparameter.
+
+\paragraph{Reproducibility.}
+We provide deterministic experiment scripts with fixed random seeds (0, 1, 2), dataset manifests with content hashes, and generated paper artifacts (figures/tables). The full dataset and code will be released upon acceptance.
+
+
+\section{Conclusion}
+
+We presented \ADS, a cross-national educational benchmark for multi-objective pathway evaluation spanning {\NumUniversities} universities across {\NumCountries} countries. We defined three benchmark tasks with standardized metrics and provided \MAPE as a reference baseline.
+
+\paragraph{Key findings.}
+The benchmark reveals a rich trade-off structure. First, Pareto evaluation returns the complete feasible set ({\MainParetoSize} options at default $\tau$), achieving the highest hypervolume; even the best baseline selects substantially different options (Jaccard$=${\BestBaselineJaccard}). Second, the dominance threshold $\tau$ provides meaningful control, filtering extreme options while preserving frontier diversity. Third, cross-national analysis reveals objective profile differences consistent with known curricular emphases: international universities lead on learner-centered objectives (+{\LearnerGapPercent}), US universities on market alignment. Each university contributes unique Pareto-optimal courses with complementary objective profiles---cross-institutional and cross-national diversity is essential for this benchmark.
+
+\paragraph{For the community.}
+For researchers, we release an open benchmark with standardized evaluation tasks and a reference baseline, lowering the barrier to entry for multi-objective educational evaluation. For practitioners, \MAPE offers a decision map rather than a single ranking, making trade-offs explicit.
+
+\paragraph{Limitations and future work.}
+Embedding similarity is not ground truth; corpora encode value judgements; and we have not measured downstream learner outcomes. A preliminary pilot ($n{=}13$) provides directional evidence that making trade-offs explicit is perceived as useful, but causal claims require longitudinal deployment. Future work includes interactive drill-down interfaces, integration with operational constraints, and outcome studies.
+
+%%
+%% Bibliography
+
+%% ===========================================================================
+%% SUPPLEMENTARY MATERIAL (appendix)
+%% ===========================================================================
+\newpage
+\appendix
+
+% Number supplementary floats as S1, S2, ...
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\setcounter{table}{0}
+\setcounter{figure}{0}
+
+
+\section{What is in this supplement}
+This supplement gathers material that exceeds the 8-page main paper. It includes:
+(i) details of stakeholder engagement (formative interviews) and the practitioner validation pilot (demographics, full rating distributions, and extended quotes);
+(ii) complete empirical tables and figures from the offline runs on \texttt{unified\_v4};
+(iii) an expanded mission-corpus check (56 missions);
+(iv) an O*NET \emph{time-travel} audit that measures market drift across historical releases (2022--2025);
+(v) full \MAPE method details (embedding, scoring, calibration, Pareto computation);
+(vi) additional method details (lenses, alternative constraints, pathway aggregation, and robustness protocols);
+(vii) a Datasheet for Datasets following Gebru et al.~\cite{gebru2021datasheets}; and
+(viii) an extended related-work map covering six subfields.
+
+
+\section{Stakeholder engagement and practitioner validation}
+\label{sec:supp-stakeholder}
+
+\subsection{Formative stakeholder interviews (partner organization, $n{=}3$)}
+\paragraph{Participants.} We interviewed three senior stakeholders from an \IndustryPartner (anonymized):
+(E1) product leadership (34 min),
+(E2) academic affairs leadership (30 min), and
+(E3) senior instructional designer (30 min).
+
+\begin{table}[h]
+\centering
+\small
+\caption{Formative interview participants (anonymized).}
+\label{tab:expert-participants}
+\begin{tabular}{@{}lll@{}}
+\toprule
+ID & Role & Duration\\
+\midrule
+E1 & Product leadership & 34 min\\
+E2 & Academic affairs leadership & \textasciitilde 30 min\\
+E3 & Instructional designer (senior) & \textasciitilde 30 min\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Protocol.} Semi-structured interviews presented participants with Pareto-front visualizations generated by \ADS/\MAPE for representative course-design scenarios (e.g., market vs. pedagogy/mission trade-offs). Questions probed: (i) problem realism; (ii) interpretability and usefulness vs. ranked lists; (iii) which option they would pick and why; (iv) who would use the tool; (v) missing information (uncertainty, constraints, recourse); and (vi) perceived social impact.
+
+\paragraph{Consent and anonymization.} At the start of each session, the interviewer stated that the interview would be recorded for research purposes and that any quotes used in publications would be anonymized; participants agreed.
+
+\paragraph{Themes (representative anonymized excerpts).}
+\begin{itemize}
+  \item {Problem realism (E1):} ``That tension between market demand and learning quality is basically my daily reality.''
+  \item {Decision politics (E1):} ``Whoever has the louder voice that day wins.''
+  \item {Pareto as a decision map (E3):} ``This isn't a ranking it's a decision map.''
+  \item {Governance guardrail (E2):} ``A guardrail against market dominance is basically governance for educational integrity.''
+  \item {Social impact (E1):} ``It's a democratization play.''
+\end{itemize}
+
+\paragraph{Practitioner-suggested improvements.} Recurring requests included: clearer control knobs (design moves that shift a solution along the frontier), interactive drill-down into individual Pareto points (retrieved evidence and uncertainty cues), uncertainty/freshness indicators for market targets, operational constraints (cost/time/capacity), strict evidence/provenance modes, and richer what-if / recourse tools.
+
+\subsection{Practitioner validation pilot ($n{=}13$)}
+\paragraph{Participants.} The validation study included 13 experienced educational professionals: 7 \emph{course developers} and 6 \emph{instructional designers}. This phase intentionally targets frontline practitioners (rather than senior executives), complementing the leadership-focused formative interviews above. Figure~\ref{fig:supp-demographics} summarizes participant demographics and institutional contexts.
+
+\paragraph{Procedure.} Participants were shown a \MAPE Pareto-front visualization and completed a remote think-aloud protocol, followed by a short 5-point Likert survey covering six hypotheses (Clarity, Usefulness vs. ranked lists, Confidence, Actionability, Trade-off Transparency, Cognitive Load). The main paper reports the summary table and hypothesis verification plot; here we provide full distributions and additional qualitative evidence.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.98\linewidth]{figures/fig5_demographics.pdf}
+  \caption{Demographics of the practitioner validation study participants ($n{=}13$), showing a diverse mix of roles and institutional contexts.}
+  \label{fig:supp-demographics}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.98\linewidth]{figures/fig1_summary_by_role.pdf}
+  \caption{Mean hypothesis ratings segmented by role (course developers vs. instructional designers).}
+  \label{fig:supp-byrole}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.98\linewidth]{figures/fig2_heatmap.pdf}
+  \caption{Heatmap of individual ratings across the six hypotheses ($n{=}13$). This provides transparency into agreement patterns and outliers.}
+  \label{fig:supp-heatmap}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.98\linewidth]{figures/fig4_boxplot.pdf}
+  \caption{Boxplot of rating distributions for each hypothesis. Trade-off Transparency shows tight consensus, while Cognitive Load exhibits wider disagreement.}
+  \label{fig:supp-boxplot}
+\end{figure}
+
+\paragraph{Additional qualitative evidence.}
+\begin{itemize}
+  \item {Implicit trade-offs made explicit.} P02: \textit{``This is making me realize I've been making these trade-offs unconsciously.''}
+  \item {Governance and accountability.} P07: \textit{``If the dean asks why we added this module, I can point to the trade-off analysis.''}
+  \item {Cost of trial-and-error.} P13: \textit{``We discovered it through expensive trial and error. This visualization would have helped us see that trade-off earlier.''}
+  \item {Productive cognitive engagement.} P03: \textit{``Offloads computation, but adds interpretation.''}
+\end{itemize}
+
+\paragraph{Notes on boundary cases.} One participant (P06, professor emeritus) expressed skepticism about \emph{reification} and \emph{oversimplification} when interpreting embedding similarity as ground truth. At the same time, they acknowledged value ``as a heuristic for structuring discussion.'' We treat this as a boundary condition: \ADS/\MAPE is a governance scaffold, not a substitute for expert judgement, and should be paired with provenance, uncertainty cues, and human oversight.
+
+\subsection{Planned next study: controlled A/B comparison (future work)}
+We outline a minimal next-step study focused on within-subject comparison of (A) ranked-list scalarization vs. (B) Pareto set + dominance guardrail. This will test whether Pareto-based trade-off presentation improves interpretability, contestability, and defensibility of curriculum decisions under realistic time constraints.
+
+\paragraph{Participants.} 5 - 10 practitioners involved in course design (instructional designers, course creators, and/or program leads). Recruitment will be via the partner network; participation will be voluntary.
+
+\paragraph{Stimuli.} 3 - 4 course-design scenarios. For each scenario we generate: (i) a Pareto set with 5 - 8 highlighted feasible options plus retrieval-grounded explanations, and (ii) a baseline ranked list produced by weighted-sum scalarization using the same objectives.
+
+\paragraph{Conditions.} Within-subject comparison between:
+(A) {Ranked list (scalarization)} and
+(B) {Pareto set + dominance guardrail} (\MAPE with the default $\tau$).
+Order will be counterbalanced across participants and scenarios.
+
+\paragraph{Outcome measures.} We will collect:
+(i) selection time; (ii) self-reported confidence and perceived autonomy; (iii) perceived usefulness/interpretability/actionability; (iv) ability to articulate trade-offs (coded from short written justifications); and (v) qualitative feedback on missing signals (uncertainty, constraints, evidence).
+
+\paragraph{Procedure.} For each scenario, participants review the output, choose an option, and provide a brief rationale. Semi-structured follow-up questions probe interpretability, governance value (e.g., setting/justifying $\tau$), and desired ``control knobs'' (design moves that shift a solution along objectives).
+
+\paragraph{Ethics and reporting.} Participation will be based on informed consent; quotations will be anonymized; no sensitive personal data will be collected. Results will be reported as descriptive statistics plus a thematic synthesis.
+
+\paragraph{Interview guide (question prompts).} The semi-structured guide used in the interviews and pilot includes prompts on: first reaction; comparison to current practice; interpreting trade-offs; choosing and justifying an option; missing information (uncertainty, constraints, recourse); who would use the tool; governance guardrails (dominance threshold); social impact; and suggested improvements.
+
+\section{Additional empirical results on \texttt{unified\_v4} (7-university international snapshot)}
+\label{sec:supp-results}
+Unless stated otherwise, these results correspond to the \texttt{unified\_v4} snapshot used in the main paper (\NumCourses course options; \NumOccupations job-role targets; \NumMissionsMain mission texts). Tables are included verbatim from the experiment artifact pack.
+
+%\subsection{Baselines vs. Pareto (ADS-Full)}
+%%% --- INLINED from tables/T1_baselines_scalarization.tex ---
+\begin{table}[htbp]
+\centering
+\caption{Comparison of Multi-Objective Methods (unified\_v4, {\NumUniversities} universities, {\NumCountries} countries). Each method selects \MainParetoSize\ options. HV Ratio: hypervolume relative to MAPE Pareto set ($\mathbf{r}{=}\mathbf{0}$; 1.0 = same coverage). Spacing: mean nearest-neighbor distance (lower = more uniform).}
+\label{tab:baselines}
+\adjustbox{width=0.98\linewidth}{
+\begin{tabular}{lrrlll}
+\toprule
+\textbf{Method} & \textbf{Overlap} & \textbf{Jaccard} & \textbf{HV Ratio} & \textbf{Spacing} & \textbf{Notes} \\
+\midrule
+\textbf{ADS-MAPE ($\tau$=0.25)} & --- & --- & 1.000 & 0.031 & Reference \\
+\midrule
+\multicolumn{6}{l}{\textit{Scalarization baselines}} \\
+Random Scalarization & 100 & 0.550 & 0.989 & 0.024 & Best baseline \\
+Weighted-Sum (equal) & 91 & 0.476 & 0.984 & 0.024 & Competitive HV \\
+Weighted-Sum Grid & 23 & 0.089 & 0.825 & 0.041 & Covers corners only \\
+\midrule
+\multicolumn{6}{l}{\textit{Lexicographic baselines}} \\
+Lexicographic (learner) & 40 & 0.165 & 0.851 & 0.024 & Order-dependent \\
+Lexicographic (mission) & 34 & 0.137 & 0.785 & 0.027 & Order-dependent \\
+Lexicographic (market) & 28 & 0.110 & 0.774 & 0.028 & Order-dependent \\
+Lexicographic (university) & 37 & 0.151 & 0.670 & 0.021 & Worst HV \\
+\midrule
+\multicolumn{6}{l}{\textit{$\varepsilon$-constraint baselines (optimize primary, others $\ge$ median)}} \\
+$\varepsilon$-constr.\ (learner) & 40 & 0.165 & 0.851 & 0.023 & Single-obj.\ focus \\
+$\varepsilon$-constr.\ (mission) & 38 & 0.156 & 0.833 & 0.026 & Different frontier \\
+$\varepsilon$-constr.\ (market) & 28 & 0.110 & 0.774 & 0.023 & Misses balanced region \\
+\bottomrule
+\end{tabular}}
+\vspace{1mm}
+{\footnotesize All methods select \MainParetoSize\ items for fair comparison. \MAPE achieves the highest HV and best spread (spacing). Even the best baseline (random scalarization) selects substantially different options (Jaccard = 0.55).}
+\end{table}
+%%% --- END tables/T1_baselines_scalarization.tex ---
+
+%% Tau sweep and encoder ablation tables appear in the main body (Tables~\ref{tab:tau-sweep}, \ref{tab:encoder-ablation}); not duplicated here.
+
+%\subsection{Lens ablation (ADS-Full)}
+%%% --- INLINED from tables/T4_lens_ablation.tex ---
+\begin{table}[!th]
+\centering
+\caption{Effect of Lens Transformation on Pareto Set (unified\_v4, 27,555 courses)}
+\label{tab:lens-ablation}
+{\scriptsize
+\adjustbox{width=.9\linewidth}{
+\begin{tabular}{lrl}
+\toprule
+\textbf{Lens} & \textbf{Pareto Count} & \textbf{Jaccard w/ Identity} \\
+\midrule
+Identity & \MainParetoSize & 1.00 \\
+Diagonal & \MainParetoSize & 1.00 \\
+Learned (OVR-LogReg) & {\LearnedLensParetoSize} & 0.31 \\
+\bottomrule
+\end{tabular}}}
+\end{table}
+%%% --- END tables/T4_lens_ablation.tex ---
+
+%\subsection{Cross-university analysis (ADS-2D)}
+%%% --- INLINED from tables/T5_cross_university.tex ---
+\begin{table}[!th]
+\centering
+\caption{Cross-University Pareto Contribution (7 universities, 3 countries)}
+\label{tab:cross-university}
+\adjustbox{width=.85\linewidth}{
+\begin{tabular}{llrr}
+\toprule
+\textbf{University} & \textbf{Country} & \textbf{Courses} & \textbf{Pareto} \\
+\midrule
+UC Berkeley & USA & 11,076 & 54 \\
+MIT & USA & 6,941 & 37 \\
+KTH & Sweden & 4,728 & 22 \\
+Stanford & USA & 2,663 & 19 \\
+Cornell & USA & 842 & 5 \\
+UIUC & USA & 860 & 3 \\
+Edinburgh & UK & 445 & 1 \\
+\midrule
+\textit{Total} & 3 countries & 27,555 & 141 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+%%% --- END tables/T5_cross_university.tex ---
+
+\input{table_dataset_stats}
+
+%\subsection{Efficiency and scaling (cached embeddings)}
+%%% --- INLINED from tables/T6_efficiency_latency_scaling.tex ---
+\begin{table}[htbp]
+\centering
+\caption{Computational Efficiency on unified\_v4 (28K courses, 7 universities)}
+\label{tab:efficiency}
+\adjustbox{width=.95\linewidth}{
+\begin{tabular}{lrl}
+\toprule
+\textbf{Phase} & \textbf{Time (s)} & \textbf{\% Total} \\
+\midrule
+Load Embeddings & 0.26 & 1.4\% \\
+Load Artifacts & 3.42 & 19.0\% \\
+Compute Centroids & 1.08 & 6.0\% \\
+Compute Scores & 1.62 & 9.0\% \\
+Compute Pareto & 11.62 & 64.6\% \\
+\midrule
+\textbf{Total} & \textbf{18.0} & 100\% \\
+\bottomrule
+\end{tabular}
+\noindent
+\begin{tabular}{lr}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Throughput & 1,818 ops/sec \\
+Scaling & $O(n^{1.2})$ \\
+Projected 50K & 32 s \\
+Projected 100K & 74 s \\
+\bottomrule
+\end{tabular}}
+\end{table}
+%%% --- END tables/T6_efficiency_latency_scaling.tex ---
+
+%\subsection{Robustness and stable core}
+%%% --- INLINED from tables/T7_stability_core.tex ---
+\begin{table}[htbp]
+\centering
+\caption{Stability Analysis and Robust Core (unified\_v4)}
+\label{tab:stability}
+\adjustbox{width=.8\linewidth}{
+\begin{tabular}{lrl}
+\toprule
+\textbf{Metric} & \textbf{Value} & \textbf{Notes} \\
+\midrule
+\multicolumn{3}{l}{\textit{Score Perturbation (ADS-Full, 141 options)}} \\
+Jaccard @ $\varepsilon$=0.01 & 0.068 & $\pm$0.009 \\
+Jaccard @ $\varepsilon$=0.02 & 0.062 & $\pm$0.011 \\
+Jaccard @ $\varepsilon$=0.05 & 0.041 & $\pm$0.013 \\
+Jaccard @ $\varepsilon$=0.10 & 0.012 & $\pm$0.008 \\
+\midrule
+\multicolumn{3}{l}{\textit{Seed Stability (3 seeds)}} \\
+Cross-seed Jaccard & 1.000 & Deterministic \\
+\midrule
+\multicolumn{3}{l}{\textit{Stable Core}} \\
+Core @ $p$=0.50 (ADS-Full) & $\approx$12 & Estimated \\
+\bottomrule
+\end{tabular}}
+\end{table}
+%%% --- END tables/T7_stability_core.tex ---
+
+%\subsection{Qualitative edge cases (ADS-2D)}
+%%% --- INLINED from tables/T8_edge_cases.tex ---
+\begin{table*}[htbp]
+\centering
+\small
+\caption{Qualitative edge cases on the market--mission plane (unified\_v4, 7 universities). Titles are truncated previews from the dataset snapshot.}
+\label{tab:edge-cases}
+\adjustbox{width=.95\linewidth}{
+\begin{tabular}{@{}llrr@{}}
+\toprule
+{\bf Case} & {\bf University (course preview)} & {\bf Market} & {\bf Mission} \\
+\midrule
+Max market & Cornell (Data Science for All: Computational Analytics. Department: Computer Science.) & 0.514 & 0.301 \\
+Max mission & Stanford (Leadership and Social Impact. School of Business. Focuses on building...) & 0.329 & 0.645 \\
+Balanced (US) & UC Berkeley (Engineering Leadership: Skills for Discovery and Service. College of...) & 0.466 & 0.529 \\
+International & KTH Sweden (Machine Learning: Advanced Statistical Methods. School of EECS...) & 0.491 & 0.408 \\
+\bottomrule
+\end{tabular}}
+\end{table*}
+%%% --- END tables/T8_edge_cases.tex ---
+
+%\subsection{Example structured explanation output}
+For each feasible Pareto option, \MAPE returns a structured explanation object (not free-form generation) that records stakeholder scores, the dominance-gap feasibility margin, and retrieved evidence from each stakeholder corpus. Figure~\ref{fig:supp-explobj} shows a condensed example for the \textit{max-market} Pareto edge case reported in Table~S8.
+
+\begin{figure*}[h]
+  \centering
+  \small
+  \begin{minipage}{0.96\linewidth}
+\begin{verbatim}
+{
+  "option": {
+    "id": "course:MIT:1286086e7beb",
+    "title": "Common Experience in Operations Research",
+    "university": "MIT"
+  },
+  "scores": { "market": 0.501, "mission": 0.356 },
+  "dominance_gap": 0.145,
+  "tau": 0.25,
+  "feasible": true,
+  "evidence": {
+    "market_top1": {
+      "id": "onet:15-2031.00",
+      "cosine": 0.609,
+      "preview": "Operations Research Analysts: Formulate and apply mathematical modeling 
+      and other optimizing methods to develop and interpret information that assists 
+      management with decisionmaking, policy formulatio"
+    }
+  },
+  "text_preview": "Provides students with experience working in teams on a data-driven ML 
+  project. After a week of classes that cover a range of tools (Keras, Google Collab, etc.) 
+  and deep learning technologies,..."
+}
+\end{verbatim}
+  \end{minipage}
+  \caption{Example (abridged) explanation object returned by \MAPE for one Pareto-optimal option in ADS-2D. Values are rounded for readability; the full run logs retain exact scores and provenance identifiers.}
+  \label{fig:supp-explobj}
+\end{figure*}
+
+%% Figures F1, F2, F4 appear in the main body (Figures~\ref{fig:scatter2d}, \ref{fig:tau-sweep}, \ref{fig:stability}); not duplicated here.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.98\linewidth]{figures/F5_cross_university_overlap.png}
+  \caption{Cross-university overlap (ADS-2D): UC Berkeley vs. MIT Pareto sets are disjoint in the pooled target setting.}
+  \label{fig:supp-crossuni}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.98\linewidth]{figures/F6_scaling_curve.png}
+  \caption{Runtime scaling vs. number of course options (cached encodings).}
+  \label{fig:supp-scaling}
+\end{figure}
+
+\section{Mission corpus expansion: \NumMissionsExpanded mission statements}
+\label{sec:supp-mission56}
+The main paper reports results on a \texttt{unified\_v4} mission target set of {\NumMissionsMain} institution-level mission statements (one per university), which mirrors how governance is typically expressed (high-level, auditable targets). Here we include a robustness check that expands the mission target corpus to {\NumMissionsExpanded} mission statements collected at university/school/department levels (MIT: 14; UC Berkeley: 20; ASU: 22). This yields a total of {\NumArtifactsMission} artefacts (\NumCourses courses + \NumOccupations job roles + \NumMissionsExpanded missions).
+
+Note: in this expansion, ASU contributes mission texts but no course options in the current snapshot (Pareto counts for ASU courses are therefore 0). This is useful for testing mission-target diversity, but it does not evaluate ASU course options.
+
+%\subsection{Encoder ablation (mission56)}
+%%% --- INLINED from mission56/tables/T3_encoder_ablation.tex ---
+\begin{table}[h]
+\centering
+\caption{Encoder Ablation: Pareto Set Size Across Seeds}
+\label{tab:mission56-encoder}
+\adjustbox{width=\linewidth}{
+\begin{tabular}{lrrrrrr}
+\toprule
+{\bf Encoder} & {\bf Dim} & {\bf Seed 0} & {\bf Seed 1} & {\bf Seed 2} & {\bf Mean} & {\bf Std} \\
+\midrule
+MiniLM & 384 & 81 & 81 & 81 & 81 & 0 \\
+MPNet & 768 & 30 & 30 & 30 & 30 & 0 \\
+\midrule
+Stub (random) & 384 & 2 & -- & -- & 2 & -- \\
+\bottomrule
+\end{tabular}}
+\end{table}
+%%% --- END mission56/tables/T3_encoder_ablation.tex ---
+
+%\subsection{Lens ablation (mission56)}
+%%% --- INLINED from mission56/tables/T4_lens_ablation.tex ---
+\begin{table}[htbp]
+\centering
+\caption{Lens ablation with expanded mission corpus (56 missions).}
+\label{tab:mission56-lens}
+\adjustbox{width=\linewidth}{
+\begin{tabular}{lrl}
+\toprule
+\textbf{Lens} & \textbf{Pareto Count} & \textbf{Jaccard w/ Identity} \\
+\midrule
+Identity & 81 & 1.00 \\
+Diagonal & 81 & 1.00 \\
+Learned (OVR-LogReg) & 170 & --- \\
+\bottomrule
+\end{tabular}}
+\end{table}
+%%% --- END mission56/tables/T4_lens_ablation.tex ---
+
+%\subsection{Cross-university analysis (mission56)}
+%%% --- INLINED from mission56/tables/T5_cross_university.tex ---
+\begin{table}[h]
+\centering
+\caption{Cross-University Pareto Analysis}
+\label{tab:mission56-crossuni}
+\adjustbox{width=.9\linewidth}{
+\begin{tabular}{lrrrrr}
+\toprule
+{\bf University} & {\bf Courses} & {\bf Missions} & {\bf Pareto} & {\bf In Full} & {\bf Jaccard} \\
+\midrule
+UC Berkeley & 11,113 & 20 & 9 & 4 & 0.286 \\
+MIT & 6,944 & 14 & 12 & 5 & 0.312 \\
+ASU & 0 & 22 & 0 & 0 & 0.000 \\
+\midrule
+Full (pooled) & 18,057 & 56 & 9 & -- & -- \\
+\bottomrule
+\end{tabular}}
+\end{table}
+%%% --- END mission56/tables/T5_cross_university.tex ---
+
+%\subsection{Figures (mission56)}
+\begin{figure}[th]
+  \centering
+  \includegraphics[width=0.98\linewidth]{mission56/figures/pareto_scatter.png}
+  \caption{Market - mission Pareto scatter under the expanded 56-mission corpus.}
+  \label{fig:mission56-scatter}
+\end{figure}
+
+\begin{figure}[!th]
+  \centering
+  \includegraphics[width=0.9\linewidth]{mission56/figures/pareto_radar.png}
+  \caption{Radar visualization of representative Pareto options under the expanded 56-mission corpus.}
+  \label{fig:mission56-radar}
+  \vspace{-3mm}
+\end{figure}
+
+\section{O*NET time travel: market drift audit}
+\label{sec:supp-time-travel}
+One of the core design claims of \ADS is that \emph{stakeholder targets are explicit, inspectable inputs}\, and therefore can be \emph{updated} when the external world changes. In practice, labour-market signals drift over time: occupation profiles, hot technologies, and emerging tasks evolve faster than university curricula. To test whether \ADS/\MAPE makes such drift visible (rather than silently baking it into a single score), we rerun {ADS-2D (market+mission)} while holding the course corpus fixed and swapping the market target corpus to different historical O*NET releases.
+
+We use four releases spanning three years: v26.3 (2022-05), v27.3 (2023-05), v28.1 (2023-11), and v30.0 (2025-08). Each release contains \NumOccupations occupations (same definitions), but differs in associated signals (e.g., hot technologies and emerging tasks). We run 3 seeds (0,1,2) with MiniLM SBERT and $\tau{=}0.25$.
+
+%\subsection{E1: Market drift across O*NET releases}
+%%% --- INLINED from time_travel/latex/T_drift_summary.tex ---
+\begin{table}[t]
+\centering
+\small
+\caption{Market drift experiment results. Pareto set statistics computed over 3 seeds with $\tau=0.25$. Centroid drift is cosine distance from 2022 baseline.}
+\label{tab:market_drift}
+\adjustbox{width=.9\linewidth}{
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+{\bf O*NET Version} & {\bf Release} & {\bf Pareto Size} & {\bf Feasible} & {\bf Centroid Drift} \\
+\midrule
+26.3 & 2022-05 & 29.0$\pm$0.0 & 100.0\% & --- \\
+27.3 & 2023-05 & 29.0$\pm$0.0 & 100.0\% & 0.0011 \\
+28.1 & 2023-11 & 30.0$\pm$0.0 & 100.0\% & 0.0013 \\
+30.0 & 2025-08 & 30.0$\pm$0.0 & 100.0\% & 0.0018 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+%%% --- END time_travel/latex/T_drift_summary.tex ---
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.98\linewidth]{time_travel/figures/market_drift_heatmap.png}
+  \caption{Market drift exposed by \ADS/\MAPE. Heatmap shows Jaccard overlap of Pareto sets across O*NET releases in ADS-2D with fixed course corpus and $\tau{=}0.25$. Comparing 2022 vs. 2025 yields Jaccard \MarketDriftJaccard (\MarketDriftTurnover turnover), i.e., a measurable change in surfaced Pareto options due solely to changing market targets.}
+  \label{fig:supp-market-drift-heatmap}
+\end{figure}
+
+%%% --- INLINED from time_travel/latex/T_jaccard_matrix.tex ---
+\begin{table}[t]
+\centering
+\small
+\caption{Pareto set stability across O*NET versions (Jaccard similarity). Values closer to 1 indicate more stable recommendations.}
+\label{tab:jaccard_matrix}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+ & 26.3 & 27.3 & 28.1 & 30.0 \\
+\midrule
+26.3 & \textbf{1.00} & 1.00 & 0.97 & 0.97 \\
+27.3 & 1.00 & \textbf{1.00} & 0.97 & 0.97 \\
+28.1 & 0.97 & 0.97 & \textbf{1.00} & 1.00 \\
+30.0 & 0.97 & 0.97 & 1.00 & \textbf{1.00} \\
+\bottomrule
+\end{tabular}
+\end{table}
+%%% --- END time_travel/latex/T_jaccard_matrix.tex ---
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\linewidth]{time_travel/figures/centroid_drift_timeline.png}
+  \caption{Centroid drift of market targets across O*NET releases. Even when the course corpus is unchanged, the market centroid moves measurably (cosine distance up to \MarketDriftCentroid), explaining the observed turnover in Pareto membership.}
+  \label{fig:supp-centroid-drift}
+\end{figure}
+
+%\subsection{E2: Governance sensitivity under market drift}
+%%% --- INLINED from time_travel/latex/T_governance_drift.tex ---
+\begin{table}[t]
+\centering
+\small
+\caption{Governance sensitivity under market drift. Pareto set size and feasibility at different $\tau$ thresholds for 2022 vs.\ 2025 market signals.}
+\label{tab:governance_drift}
+\begin{tabular}{@{}ccccc@{}}
+\toprule
+& \multicolumn{2}{c}{\bf O*NET 26.3 (2022)} & \multicolumn{2}{c}{\bf O*NET 30.0 (2025)} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+$\tau$ & Pareto & Feasible & Pareto & Feasible \\
+\midrule
+0.05 & 24 & 79.9\% & 25 & 80.0\% \\
+0.1 & 29 & 98.2\% & 30 & 98.2\% \\
+0.25 & 29 & 100.0\% & 30 & 100.0\% \\
+0.5 & 29 & 100.0\% & 30 & 100.0\% \\
+1.0 & 29 & 100.0\% & 30 & 100.0\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+%%% --- END time_travel/latex/T_governance_drift.tex ---
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.98\linewidth]{time_travel/figures/tau_sensitivity_comparison.png}
+  \caption{Governance parameter stability under market drift. Feasible ratio and feasible Pareto size curves vs. $\tau$ are qualitatively consistent across O*NET 2022 vs. 2025, suggesting that $\tau$ acts as a stable governance knob even as market targets evolve.}
+  \label{fig:supp-tau-sensitivity}
+\end{figure}
+
+%\subsection{E3: Technology signal evolution (hot technologies)}
+%%% --- INLINED from time_travel/latex/T_tech_evolution.tex ---
+\begin{table}[t]
+\centering
+\small
+\caption{Technology signal evolution in O*NET (2022--2025). Hot technologies reflect emerging tools and platforms in the labor market.}
+\label{tab:tech_evolution}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+{\bf O*NET Version} & {\bf Release Date} & {\bf Hot Technologies} \\
+\midrule
+26.3 & 2022-05 & 446 \\
+27.3 & 2023-05 & 119 \\
+28.1 & 2023-11 & 128 \\
+30.0 & 2025-08 & 133 \\
+\midrule
+New since 2022 & --- & +51 \\
+Removed since 2022 & --- & $-$364 \\
+\bottomrule
+\end{tabular}
+\end{table}
+%%% --- END time_travel/latex/T_tech_evolution.tex ---
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\linewidth]{time_travel/figures/tech_evolution.png}
+  \caption{Evolution of unique hot technologies in O*NET. Between 2022 and 2025, we observe \MarketDriftNewTech new and \MarketDriftRemovedTech removed technologies (Table~\ref{tab:tech_evolution}), highlighting why market targets should be treated as updatable, auditable inputs in governance-oriented systems.}
+  \label{fig:supp-tech-evolution}
+\end{figure}
+
+\paragraph{Reproducibility.} The full time-travel artifact pack (tables, figures, and a per-run \texttt{results.json}) is included under \texttt{time\_travel/}.
+
+\section{\MAPE method details}
+\label{sec:supp-method-details}
+
+This section provides the full formalism for the \MAPE reference baseline summarized in Section~\ref{sec:method}.
+
+\paragraph{Embedding.}
+A pretrained sentence encoder $r:\mathcal{T}\to\mathbb{R}^d$ maps each text artifact (course description, occupation profile, mission statement) to a dense vector. We use MiniLM (384-dim) by default with MPNet (768-dim) for ablation. Embeddings are L2-normalized before scoring.
+
+\paragraph{Stakeholder-specific scoring.}
+For each stakeholder $a\in\mathcal{A}$, let $T_a=\{t_1^a,\dots,t_{n_a}^a\}$ denote the target corpus (e.g., O*NET occupations for market, mission statements for mission). The target centroid is $\mu_a = \frac{1}{n_a}\sum_{j} r(t_j^a)$, and the per-option score is:
+\begin{equation}
+  s_a(x) = \cos\bigl(L_a(r(x)),\; L_a(\mu_a)\bigr),
+\end{equation}
+where $L_a:\mathbb{R}^d\to\mathbb{R}^d$ is a stakeholder-specific \emph{lens} (see Section~\ref{sec:supp-lenses} below).
+
+\paragraph{Z-score calibration.}
+Raw cosine scores have different distributions across stakeholders. We standardize:
+\begin{equation}
+  \tilde{s}_a(x) = \frac{s_a(x) - \bar{s}_a}{\sigma_a}, \qquad
+  \bar{s}_a = \frac{1}{|\mathcal{X}|}\sum_{x\in\mathcal{X}} s_a(x).
+\end{equation}
+All subsequent operations (dominance, Pareto computation, HV) use z-scored values.
+
+\paragraph{Dominance gap and feasibility.}
+The balanced dominance gap measures the worst-case score imbalance:
+\begin{equation}
+  g(x) = \max_{a,b\in\mathcal{A}} \bigl(\tilde{s}_a(x) - \tilde{s}_b(x)\bigr).
+\end{equation}
+The feasible set is $\mathcal{X}_\tau = \{x\in\mathcal{X} : g(x)\le\tau\}$.
+
+\paragraph{Pareto computation.}
+We compute the exact Pareto front via pairwise dominance over z-scored objective vectors:
+$x$ dominates $y$ iff $\tilde{s}_a(x)\ge\tilde{s}_a(y)$ for all $a$ and $\tilde{s}_a(x)>\tilde{s}_a(y)$ for at least one $a$. The feasible Pareto set is:
+\begin{equation}
+  \mathcal{P}_\tau = \{x\in\mathcal{X}_\tau : \nexists\, y\in\mathcal{X}_\tau \text{ s.t.\ } \mathbf{\tilde{s}}(y)\succ\mathbf{\tilde{s}}(x)\}.
+\end{equation}
+Exhaustive enumeration is exact and tractable for finite catalogues ($\mathcal{O}(n^2 m)$ for $n$ options, $m$ objectives); NSGA-II comparison confirms this is faster and provably optimal (Table~\ref{tab:nsga2}).
+
+\paragraph{Retrieval-grounded explanations.}
+For each Pareto-optimal $x$ and each stakeholder $a$, \MAPE returns:
+(i)~the z-scored objective vector $\tilde{\mathbf{s}}(x)$,
+(ii)~the dominance gap $g(x)$,
+(iii)~the $k$ nearest target artifacts $\mathrm{argmax}_{t\in T_a} \cos(r(x), r(t))$ as evidence, and
+(iv)~a stakeholder-typed label (``market-strong'', ``mission-aligned'', etc.) derived from score ranks.
+
+\paragraph{Algorithm summary.}
+\begin{enumerate}
+  \item Embed all options $\mathcal{X}$ and all target corpora $\{T_a\}$ with encoder $r$.
+  \item Compute per-stakeholder scores $s_a(x)$ for all $x\in\mathcal{X}$, $a\in\mathcal{A}$.
+  \item Z-score calibrate: $\tilde{s}_a(x)$.
+  \item Filter by dominance gap: $\mathcal{X}_\tau$.
+  \item Compute exact Pareto front: $\mathcal{P}_\tau$.
+  \item Generate retrieval-grounded explanations for each $x\in\mathcal{P}_\tau$.
+\end{enumerate}
+
+Steps 1--2 dominate runtime (embedding is cached); steps 3--6 complete in $<$1s for 33K options. Total wall-clock: {\MainRuntimeSec}s with cached embeddings.
+
+
+\section{Lens variants}
+\label{sec:supp-lenses}
+\subsection{Identity and diagonal lenses}
+In the prototype, a lens $L_a:\mathbb{R}^d\to\mathbb{R}^d$ is a linear reweighting of embedding dimensions.
+The identity lens is $L_a(v)=v$.
+A diagonal lens is $L_a(v)=\mathrm{diag}(\ell_a)\,v$, where $\ell_a\in\mathbb{R}_{\ge 0}^d$.
+Diagonal lenses are easy to audit and can be interpreted as feature importances over embedding dimensions.
+
+\subsection{Learned diagonal lenses (prototype)}
+The learned diagonal lens emphasizes dimensions predictive of whether a text belongs to a stakeholder corpus.
+A lightweight implementation trains a one-vs-rest logistic regression classifier on embeddings to separate stakeholder target texts from background texts.
+Let $w_a\in\mathbb{R}^d$ denote the learned weight vector. We form a nonnegative diagonal weight vector by $\ell_a = |w_a|$ (or a clipped/normalized variant), and set $L_a(v)=\mathrm{diag}(\ell_a)\,v$.
+{Note:} this is an interpretable lens; richer lens learning (e.g., low-rank or neural transforms) is possible but not required for the ADS formalism.
+
+\section{Pathway (sequence) scoring variants}
+The main paper focuses on option-level evaluation ($T=1$). For multi-step pathways $\pi=(x_1,\dots,x_T)$, the prototype supports several aggregation choices:
+\begin{itemize}
+  \item {Profile aggregation:} form $v_\pi = \frac{1}{T}\sum_{t=1}^T v_{x_t}$ and compute $s_a(\pi)=\cos(L_a(v_\pi),L_a(\mu_a))$.
+  \item {Score aggregation:} compute per-step scores $s_a(x_t)$ and aggregate $s_a(\pi)=\sum_t w_t s_a(x_t)$ with optional discounting.
+  \item {Constraint-aware aggregation:} require feasibility at each step (or constrain cumulative dominance gap).
+\end{itemize}
+These variants separate representation effects (embedding + lenses) from planning effects (search under prerequisites).
+
+\section{Dominance / autonomy-drift constraints}
+The main paper uses a dominance-gap constraint $g(x)=s_{\text{market}}(x)-\max_{b\ne \text{market}} s_b(x)$.
+Alternative constraints that can be substituted without changing the rest of the pipeline include:
+\begin{itemize}
+  \item {Max-gap across all stakeholders:} $g(x)=\max_{a,b}(s_a(x)-s_b(x))$.
+  \item {Market-vs-others average:} $g(x)=s_{\text{market}}(x)-\frac{1}{m-1}\sum_{a\ne \text{market}} s_a(x)$.
+  \item {Weighted dominance:} $g(x)=s_{\text{market}}(x)-\sum_{a\ne \text{market}} \lambda_a s_a(x)$ with governance weights $\lambda_a$.
+\end{itemize}
+
+\section{Stability metrics and perturbations}
+\label{sec:supp-stability}
+\subsection{Set overlap}
+Given two Pareto sets $\mathcal{P}$ and $\mathcal{P}'$, we measure overlap with the Jaccard index
+\begin{equation}
+  J(\mathcal{P},\mathcal{P}') = \frac{|\mathcal{P}\cap\mathcal{P}'|}{|\mathcal{P}\cup\mathcal{P}'|}.
+\end{equation}
+
+\subsection{Perturbation procedures}
+We apply three perturbation families:
+(i) {embedding/score noise:} add small isotropic noise before normalization;
+(ii) {target perturbation:} resample a fraction of the target corpus and recompute $\mu_a$;
+(iii) {lens noise:} perturb diagonal weights $\ell_a$ by multiplicative noise.
+
+\subsection{Bootstrap robust Pareto core}
+To quantify which Pareto members are stable versus boundary-sensitive, we run $B = 100$ bootstrap rounds with Gaussian noise $\varepsilon \sim \mathcal{N}(0, 0.01^2)$ added to every $z$-scored coordinate. For each round we recompute the Pareto front and count per-course membership frequency $f_i$.
+
+\textit{Note:} The bootstrap analysis uses the unconstrained Pareto set (without $\tau$ filter) to measure inherent frontier stability; the main-text results apply $\tau = 0.25$. This explains the larger base sizes here (169 MiniLM, 79 MPNet) compared to the $\tau$-filtered main results ({\MainParetoSize} MiniLM, {\MPNetParetoSize} MPNet).
+
+\paragraph{MiniLM encoder.} The unperturbed Pareto set contains 169 courses (mean perturbed size 120, mean Jaccard with base $= 0.661$). The robust core ($f_i > 0.90$): 80 courses retaining $>$99.9\% of hypervolume. At $f_i > 0.50$: 98 courses with 100\% HV retention.
+
+\paragraph{MPNet encoder.} More stable: base front 79 courses, mean Jaccard $= 0.895$, robust core ($f_i > 0.90$): 61 courses retaining 98.0\% of HV.
+
+\paragraph{Encoder-ensemble core.} Intersecting both $>$90\% cores yields 10 courses spanning 6/7 universities (MIT, UC Berkeley, Stanford, Cornell, KTH, Edinburgh). These represent the most robustly optimal trade-offs across both perturbation \emph{and} encoder choice. The low Jaccard previously reported (0.068 at $\varepsilon = 0.01$) reflects boundary churn, not instability of the actionable core.
+
+\subsection{Extrinsic validation details}
+Three automated proxy checks validate that Pareto scores reflect educational and labor-market structure:
+
+\paragraph{Pareto-frontier compactness.} Pareto-optimal courses form a compact efficient frontier in the 4D objective space: 37\% lower mean pairwise Euclidean distance and 84\% smaller bounding-box volume than 1,000 random samples of equal size ($p < 0.001$, Cohen's $|d| = 8.6$).
+
+\paragraph{Objective specialization.} Despite compactness, Pareto courses span all 4/4 stakeholder objectives with maximum single-objective concentration of 75\% and normalized Shannon entropy $H = 0.58$ (vs.\ 91\% concentration and $H = 0.27$ for random, $p < 0.001$). Per-objective breakdown: university=78, mission=12, learner=11, market=3.
+
+\paragraph{Market--O*NET alignment.} Spearman $\rho = 0.571$ ($p \approx 0$) between market score and best-match O*NET occupation similarity. Top-quartile courses: mean best-match $= 0.505$; bottom-quartile: $0.342$ (+47.6\% gap), with monotonic decrease across all four quartiles. This indicates market scores capture occupational structure.
+
+\paragraph{Expert annotation protocol (future work).} We propose a structured annotation study: 3--5 domain experts (curriculum designers, career counselors) independently rate 50 Pareto-optimal and 50 randomly selected non-Pareto courses on three 5-point Likert scales (overall quality, perceived stakeholder trade-off clarity, real-world alignment) in a blinded, randomized design. Inter-rater reliability (Krippendorff's $\alpha$) and mean rating differences provide human-grounded validation. The benchmark releases annotation templates for community adoption.
+
+\subsection{NSGA-II comparison}
+\label{sec:supp-nsga2}
+To validate exhaustive Pareto enumeration against the standard evolutionary MOO algorithm, we implement NSGA-II~\cite{deb2002nsga2} (population 300, generations 300) adapted for a finite catalogue.
+
+\begin{table}[htbp]
+\centering
+\caption{Exhaustive enumeration vs.\ NSGA-II on unified\_v4 ($n{=}32{,}728$, $m{=}4$). Enumeration is exact and 33$\times$ faster for finite catalogues.}
+\label{tab:nsga2}
+\begin{tabular}{lccccc}
+\toprule
+Method & $|\mathcal{P}|$ & HV & Spacing & Time (s) & Recall \\
+\midrule
+Exact enumeration & 272 & 0.0094 & 0.028 & 29.9 & 1.00 \\
+NSGA-II & 222 & 0.0092 & 0.031 & 1000.3 & 0.72 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+NSGA-II recovers 72\% of the exact front (Jaccard$=$0.65, HV ratio$=$0.97) but is 33$\times$ slower. All NSGA-II-only solutions are dominated by the exact front, confirming exhaustive enumeration is provably optimal for finite decision sets.
+
+\section{Dataset provenance and strict mode}
+\subsection{Provenance manifests and hashing}
+To support auditability and reproducibility, we maintain a provenance manifest for each dataset snapshot.
+For every retrieved artefact we record at minimum:
+(i) a stable identifier, (ii) source URL, (iii) snapshot timestamp, (iv) a content hash of the raw text, and (v) parsing/extraction rules.
+
+\subsection{Strict validation checks}
+All experiments are run in a strict mode that validates:
+(i) schema completeness (required fields present),
+(ii) minimum text length / non-empty artefacts,
+(iii) deduplication of near-identical artefacts,
+and (iv) basic PII screening to exclude names/emails/phone numbers.
+
+\section{Task-agnostic benchmark protocol}
+\label{sec:supp-benchmark-protocol}
+
+\paragraph{Motivation.}
+A benchmark coupled to a single formalism limits external participation and reproducibility.
+We decouple the evaluation from \ADS by specifying three tasks purely in terms of observable inputs (course text artifacts, stakeholder target corpora) and outputs (ranked course IDs with optional per-course score vectors).
+Any method---embedding-based, feature-engineered, or LLM-based---can produce a conforming submission without importing ADS code.
+
+\paragraph{Task A: Multi-Stakeholder Course Ranking.}
+\textit{Input:} Course text corpus $\mathcal{C}$, stakeholder target corpora $\{T_k\}_{k=1}^{m}$.
+\textit{Output:} Ordered list of course IDs with optional per-course score vectors.
+\textit{Metrics:} Coverage (fraction of objective-space grid cells occupied), diversity (mean pairwise distance), objective balance (normalized Shannon entropy), external alignment (precision, recall, F1, Jaccard against reference Pareto set).
+
+\paragraph{Task B: Stakeholder Trade-off Discovery.}
+\textit{Input:} Same as Task~A.
+\textit{Output:} Set of course IDs representing distinct stakeholder trade-offs.
+\textit{Metrics:} Hypervolume (HV, $\mathbf{r} = \mathbf{0}$), spacing (mean nearest-neighbor distance; lower = more uniform), spread (bounding-box volume), Pareto precision (fraction on true front), dominance resistance (fraction non-dominated within submission).
+
+\paragraph{Task C: Robust Recommendation.}
+\textit{Input:} Same as Task~A, plus perturbation protocol ($\sigma$, weight jitter).
+\textit{Output:} Primary submission plus $\geq 2$ perturbation-run submissions.
+\textit{Metrics:} Bootstrap Jaccard, HV retention ($\min/\max$), rank stability (Spearman), core stable fraction ($\geq 80\%$ of runs).
+
+\paragraph{Submission format.}
+Submissions are JSON files with fields: \texttt{method\_name}, \texttt{task} (A/B/C/all), \texttt{ranked\_courses} (list of IDs), \texttt{scores} (optional dict of ID $\to$ objective vector), and \texttt{perturbation\_runs} (required for Task~C).
+The evaluation script (\texttt{benchmark\_eval.py}) depends only on NumPy and the Python standard library.
+
+\paragraph{External baseline results.}
+To validate the protocol's method-agnosticism, we implemented three non-ADS baselines using only \texttt{scikit-learn} (zero ADS imports): TF-IDF + cosine similarity, a BM25 approximation, and random selection.
+
+\begin{table}[htbp]
+\centering
+\caption{Benchmark evaluation: non-ADS baselines on unified\_v4
+  (50 courses selected). All methods use the task-agnostic JSON format.}
+\label{tab:external-baselines}
+\small
+\begin{tabular}{l l ccc}
+\toprule
+\textbf{Task} & \textbf{Metric} & \textbf{TF-IDF} & \textbf{BM25} & \textbf{Random} \\
+\midrule
+  A & Coverage $\uparrow$ & 0.030 & 0.032 & 0.024 \\
+   & Obj.\ Balance $\uparrow$ & 0.953 & 0.930 & 0.857 \\
+  \midrule
+  B & Hypervolume $\uparrow$ & 0.296 & 0.255 & 0.080 \\
+   & Pareto Prec.\ $\uparrow$ & 0.520 & 0.300 & 0.020 \\
+   & Dom.\ Resistance $\uparrow$ & 0.520 & 0.300 & 0.140 \\
+  \midrule
+  C & HV Retention $\uparrow$ & 0.832 & 0.828 & 0.394 \\
+   & Core Stable $\uparrow$ & 0.162 & 0.295 & 0.000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Metrics discriminate meaningfully: TF-IDF outperforms random 3.7$\times$ on HV and 26$\times$ on Pareto precision. BM25 falls between the two, as expected.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{figures/baseline_comparison.pdf}
+  \caption{External baseline comparison on Tasks A and B. TF-IDF achieves 3.7$\times$ random on HV and 26$\times$ on Pareto precision, confirming the benchmark discriminates meaningfully between methods.}
+  \label{fig:baseline-comparison}
+\end{figure}
+
+\subsection{Encoder-consensus Pareto front}
+\label{sec:supp-encoder-consensus}
+
+\begin{table}[htbp]
+\centering\small
+\caption{Encoder-consensus Pareto fronts. Majority ($\geq$2/3) provides a stable reference.}
+\label{tab:encoder-consensus}
+\begin{tabular}{lccc}
+\toprule
+Front & Size & HV & Mean Jaccard \\
+\midrule
+  MiniLM (individual) & 224 & 0.0094 & --- \\
+  MPNet (individual) & 112 & 0.0136 & --- \\
+  BGE-small (individual) & 135 & 0.0845 & --- \\
+\midrule
+  Intersection & 1 & 0.0000 & 0.01 \\
+  Majority ($\geq$2/3) & 31 & 0.0056 & 0.13 \\
+  Union & 439 & 0.0094 & 0.36 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Pairwise encoder Jaccard: MiniLM vs.\ MPNet = 0.047; MiniLM vs.\ BGE-small = 0.038; MPNet vs.\ BGE-small = 0.021. The low pairwise overlap confirms that encoder choice substantially affects which courses are identified as Pareto-optimal. The majority-consensus front ($\geq$2/3 encoders agree) provides a stable reference set of 31 courses with 3.7$\times$ higher mean Jaccard than individual pairwise comparisons.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.85\linewidth]{figures/encoder_venn.pdf}
+  \caption{Encoder-consensus Venn diagram. Of 439 union courses, only 1 is Pareto-optimal under all 3 encoders (intersection). The majority front (31 courses, shaded overlap regions) provides a stable reference.}
+  \label{fig:encoder-venn}
+\end{figure}
+
+\section{Real-data grounding of objectives}
+\label{sec:supp-real-grounding}
+
+We replace the two synthetic objectives (learner and university/curriculum) with real-data-grounded targets and validate that the Pareto front structure is robust.
+
+\paragraph{Learner personas derived from O*NET.}
+Each persona is the embedding centroid of related O*NET occupations:
+\begin{table}[htbp]
+\centering
+\small
+\caption{Learner personas grounded in O*NET occupation data.}
+\label{tab:real-learner-personas}
+\begin{tabular}{lcc}
+\toprule
+Persona & Source Occupations & Mean Pareto Size \\
+\midrule
+Data Science Career Switcher & 38 & 101 \\
+Public Policy Researcher & 22 & 107 \\
+Sustainability Engineer & 45 & 127 \\
+Biomedical Innovator & 17 & 159 \\
+Software Product Leader & 7 & 135 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Curriculum targets.}
+\begin{table}[htbp]
+\centering
+\small
+\caption{University curriculum targets and mean Pareto structure.}
+\label{tab:real-university-targets}
+\begin{tabular}{lcc}
+\toprule
+Target & Mean Pareto Size & Mean HV \\
+\midrule
+MIT & 86 & 0.101 \\
+UC Berkeley & 96 & 0.104 \\
+Stanford & 86 & 0.103 \\
+UIUC & 134 & 0.098 \\
+Cornell & 148 & 0.100 \\
+KTH & 161 & 0.095 \\
+Edinburgh & 177 & 0.080 \\
+College Scorecard & 117 & 0.052 \\
+\midrule
+Synthetic (baseline) & 272 & 0.009 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Structural validation.}
+Across 40 configurations (5 personas $\times$ 8 curriculum targets), mean Pareto size = 126 $\pm$ 41 (synthetic: 272), mean HV = 0.092 $\pm$ 0.017 (synthetic: 0.009). HV ratio (real/synthetic) = 10.2$\times$ ($0.092/0.009$). Mean Jaccard between synthetic and real Pareto sets = 0.15 $\pm$ 0.03. Pareto size ranges from 69 to 224, indicating trade-off structure is robust to target construction. The synthetic baseline's lower HV reflects its random learner vector (essentially noise), while O*NET-grounded personas provide meaningful semantic signal.
+
+%%% --- Datasheet for Datasets ---
+\input{datasheet}
+
+%%% --- INLINED from related_work_map ---
+% Extended related work map (supplementary)
+
+\section{Extended related work map}
+\label{sec:rw-extended}
+
+This section provides an expanded map of related work for Agent--Didactic Spaces (ADS).
+The main paper includes a compact related-work section; here we add more context to help reviewers assess where ADS sits relative to existing literature.
+We organize the works into six groups: (i) LLM-based educational assistants and agentic tutoring, (ii) educational recommender systems and learning paths, (iii) student modelling and knowledge tracing, (iv) multi-stakeholder recommendation and fairness-aware evaluation, (v) multi-objective optimization and multi-objective RL, and (vi) contestable AI and counterfactual recourse.
+
+\subsection{LLM-based educational assistants and agentic tutoring}
+\label{sec:rw-llm-edu}
+
+Recent surveys describe the rapidly expanding design space for large language models (LLMs) in education \cite{wang2024llmedu,chu2024llmeduSurvey} and discuss their role in ``Education 4.0'' settings \cite{caccavale2024education4}.
+In parallel, there is active work on pedagogically grounded evaluation criteria and taxonomies for AI-based tutors and educational agents \cite{maurya2025taxonomy,maurya2025pedagogy}.
+These lines of work are complementary to ADS: they primarily study \emph{interaction-time} tutoring quality and learning outcomes, whereas ADS targets \emph{pre-deployment} evaluation and governance of candidate educational pathways/resources under multiple stakeholder objectives.
+
+A representative set of agentic education systems includes:
+\begin{itemize}
+    \item {Student simulation and personalized tutoring.} \emph{CoderAgent} simulates student behaviour to support personalized programming instruction \cite{coderagent2025}.
+    \item {Multi-agent pedagogical interaction.} LLM-based collaborative agents with pedagogy-guided interaction modelling have been explored for educational dialogue and group learning settings \cite{collabAgents2025}.
+    \item {Teachable agents and debugging tutors.} Teachable-agent paradigms for teaching programming in the LLM era \cite{teachProg2025} and LLM-based tutoring for hypothesis construction in debugging \cite{ma2023hypocompass} focus on interactive instruction and formative feedback.
+    \item {Assessment and feedback.} LLM-powered automated grading \cite{llmGrading2025} and multimodal tutoring with structured feedback \cite{handByHand2025} demonstrate how LLMs can support assessment and practice.
+    \item {Domain-specific learning experiences.} \emph{LivePoem} illustrates LLM-based support in culturally specific domains (e.g., classical Chinese poetry) \cite{livepoem2025}.
+    \item {Goal-oriented tutoring pipelines.} \emph{GenMentor} proposes a goal-oriented, skill-mapping tutoring pipeline built around an LLM-powered multi-agent framework \cite{wang2025genmentor}.
+    \item {Classroom-level simulation.} \emph{SimClass} explores simulating classroom teaching/learning dynamics with LLM-empowered agents \cite{zhang2024simclass}.
+    \item {Collaborative multimodal student support.} \emph{MultiTutor} studies collaborative LLM agents for multimodal student support \cite{sun2025multitutor}.
+\end{itemize}
+
+\noindent
+These systems generate candidate recommendations but leave implicit how stakeholder trade-offs are resolved. ADS provides an evaluation layer that can score such candidates across explicit objectives with auditable lenses.
+
+\subsection{Educational recommender systems and learning paths}
+\label{sec:rw-ers}
+
+Educational recommender systems (ERS) have a long history of recommending courses, resources, and learning pathways, with surveys highlighting both promise and recurring limitations \cite{shi2020,dasilva2022slrERS,aucancela2023ersslr}.
+A key challenge is that pathway decisions are rarely single-objective: practical deployments must balance learner-centric objectives with institutional and regulatory constraints, and with external signals such as employability.
+
+Within ERS, several directions connect directly to how ADS constructs and evaluates candidate pathways:
+\begin{itemize}
+    \item {Course representation and semantic modelling.} Course embedding approaches study how to represent course content and transaction data for downstream recommendation \cite{jiang2020multifactorCourse2vec,xu2023courseEmbeddings}.
+    \item {Sequence/trajectory recommendation.} Recent models use hierarchical reinforcement learning and structured prerequisite representations to recommend course sequences \cite{hhcor2024} and exploit feedback signals to refine resource recommendations \cite{dfrp2024}.
+    \item {Outcome-aware optimization.} Online Bayesian educational recommenders aim to optimize learning outcomes under uncertainty \cite{ober2025}.
+    \item {Systems-level and agent-based perspectives.} Viewing education as a complex system via computational and agent-based modelling \cite{vulic2024complexEdu,reardon2016abm-education} motivates explicit multi-actor modeling of goals and incentives.
+    \item {Curriculum design constraints.} Engineering education frameworks such as CDIO \cite{crawley2011cdio} and NEET-style reform efforts \cite{crawley2018neet} highlight that curricula are governed by institutional missions and constraints beyond individual preference.
+\end{itemize}
+
+\noindent
+ADS is agnostic to the upstream ERS algorithm; it evaluates candidate pathways under multiple objectives and reports trade-offs as a Pareto set rather than a single score, complementing any of the above approaches.
+
+\subsection{Student modelling and knowledge tracing}
+\label{sec:rw-kt}
+
+A large body of work in educational data mining focuses on modelling learner knowledge state, predicting performance, and providing interpretable signals for intervention.
+Recent IJCAI contributions illustrate several relevant advances:
+\begin{itemize}
+    \item {Explainable knowledge tracing.} Priority-guided explanations for knowledge tracing aim to provide more faithful rationales for predicted mastery \cite{li2025pgexplainkt}.
+    \item {Transfer across courses.} Cross-course knowledge transfer with concept-graph guidance addresses transfer and cold-start issues in knowledge tracing \cite{han2025transkt}.
+    \item {Representation denoising.} Denoised attention and question-augmented representations improve robustness of attention-based knowledge tracing \cite{deng2025denoisekt}.
+    \item {Length generalization.} Linear-bias mechanisms to enhance length generalization in attention-based knowledge tracing \cite{li2024stablekt} address practical deployment where sequences vary.
+    \item {Forgetting and time.} Continuous time-aware neural approaches reconcile cognitive modelling with knowledge forgetting \cite{ma2022ctncm}.
+    \item {Action selection under multi-skill tasks.} Fast action selection formulations combine skill modelling with sequential decision-making \cite{salomons2021bktpomdp}.
+    \item {Performance prediction.} Graph and hypergraph-based contrastive learning approaches predict student performance from structured educational interactions \cite{song2025mhmgcl}.
+\end{itemize}
+
+\noindent
+Predicted mastery, dropout risk, or sequence-length robustness from these models could serve as additional ADS objectives or lens features, but ADS deliberately separates multi-stakeholder evaluation from the choice of learner-state model.
+
+\subsection{Multi-stakeholder recommendation and fairness-aware evaluation}
+\label{sec:rw-ms}
+
+Multi-stakeholder recommendation explicitly models the preferences and utilities of multiple parties.
+Surveys and evaluation frameworks highlight that multi-stakeholder settings require evaluation beyond standard user-centric metrics \cite{abdollahpouri2020multistakeholder,burke2025mseval} and are increasingly discussed under the broader umbrella of trustworthy recommender systems \cite{ge2024trustworthyRS}.
+Explainable recommendation surveys further stress the need for transparency and user understanding in recommendation pipelines \cite{zhang2020explainableRS}.
+
+Fairness and discrimination issues are central in high-stakes recommendation and retrieval, including tutorial-style syntheses for the recsys community \cite{ekstrand2019fairness}.
+Formal fairness notions such as fairness through awareness \cite{dwork2012fairness} and equality of opportunity \cite{hardt2016equality} motivate explicit constraint handling and audits.
+The cost-of-fairness framework formalizes accuracy--equity trade-offs in algorithmic decisions~\cite{corbettdavies2017cost}; pairwise fairness in recommendation ranking~\cite{beutel2019fairness} and fair-division approaches to ranked output~\cite{saito2022fair} provide practical mechanisms.
+In education-specific contexts, work on fairness stability in disentangling educational inequality highlights temporal and structural pitfalls \cite{fairdas2024}.
+Rank aggregation under fairness constraints provides algorithmic tools for combining stakeholder views \cite{fairRankAgg2025}.
+Preference-based fairness certification \cite{prefFairCert2023} and learning-when-to-advise setups \cite{advise2023} motivate evaluation protocols that account for downstream human decision-makers.
+
+Several domains illustrate why multi-stakeholder and fairness-aware evaluation matters:
+\begin{itemize}
+    \item {Job and skill recommendation.} Skills-aware job recommendation and skill extraction/representation methods \cite{giabelli2021skills2job,kara2022skillEmbeddings,leon2024transversalSkills} provide concrete examples of labour-market alignment pipelines. Market-aware skill extraction at scale~\cite{shi2020job2skills} and career-path modelling via hierarchical neural networks~\cite{meng2019career} further demonstrate the richness of labour-market signal.
+    \item {Fairness in job recommendation.} ``Job recommendation for all'' highlights inequity risks and mitigation in employment-facing recommenders \cite{bied2023jobrecforall}. Adapting recommendations to user preference drift~\cite{han2024bistro} illustrates temporal challenges in employment-facing systems.
+    \item {Democracy and robustness.} Robustness of recommendation-like systems in voting advice applications highlights adversarial concerns in civic contexts \cite{berdoz2025democracy}.
+\end{itemize}
+
+\noindent
+ADS instantiates multi-stakeholder evaluation by making corpora and constraints first-class objects. The autonomy threshold $\tau$ encodes policy-level limits on how far recommendations may deviate from a learner's own goals, connecting directly to the fairness-aware mechanisms above.
+
+\subsection{Multi-objective optimization and multi-objective RL}
+\label{sec:rw-moo}
+
+ADS relies on multi-objective reasoning to avoid collapsing educational pathway evaluation into a single scalar score.
+Foundational discussions of multi-objective sequential decision-making \cite{roijers2013survey_mosdm} and algorithmic tools for faster Pareto-coverage computations \cite{roijers2015convex} motivate representing the output as a \emph{set} of trade-off solutions.
+Classical evolutionary approaches such as NSGA-II \cite{deb2002nsga2} and standard references on nonlinear multi-objective optimization \cite{miettinen1999nonlinearMOO} provide algorithmic background; a KDD tutorial surveys multi-objective formulations specifically for recommendation systems~\cite{zheng2021multiobjective}.
+
+Recent work continues to expand the toolset:
+\begin{itemize}
+    \item {Bandit-based Pareto discovery.} Multi-objective neural bandits explore efficient Pareto-front approximation under uncertainty \cite{monb2025}.
+    \item {Equity as a multi-agent, multi-objective problem.} Equity-aware formulations in multi-agent multi-objective RL illustrate how welfare and distributional concerns can be encoded as objectives \cite{equityMAMORL2025}.
+    \item {Normative constraints.} ``Restraining bolts''-style normative constraints in MORL motivate explicit governance parameters for acceptable behaviour \cite{restrainingBolts2025}.
+    \item {Normative multi-agent alignment via evolutionary strategies.} Multi-objective evolutionary strategies for normative multi-agent systems provide another example of multi-value alignment under constraints \cite{riad2025nova}.
+\end{itemize}
+
+\noindent
+ADS builds on this MOO toolbox by combining Pareto-set computation with education-specific stakeholder modelling and the $\tau$-bounded feasibility constraint.
+
+\subsection{Contestable AI, counterfactual explanations, and recourse}
+\label{sec:rw-contestable}
+
+ADS explicitly targets contestability: decisions should be challengeable by affected parties.
+General frameworks for contestable and contesting AI decisions motivate this stance \cite{aler2020contestable,alfrink2023contestable,dignum2025contesting}.
+Counterfactual explanations are one practical mechanism for contestability \cite{wachter2017counterfactual}, while algorithmic recourse formalizes actionable changes to obtain a desired outcome \cite{ustun2019recourse}.
+Robust counterfactual methods address instability under perturbations \cite{robustx2025}.
+For sequential decision-making, counterfactual strategies for MDPs illustrate how ``what-if'' reasoning extends to policies \cite{cfmdp2025}.
+Finally, efficiency-focused methods such as policy-gradient-optimized explainers aim to make explanations computationally feasible \cite{pan2025fex}.
+
+\noindent
+Rather than changing an input to flip a single prediction, ADS exposes the full trade-off set under explicit constraints, making stakeholder disagreements visible and therefore contestable.
+
+\paragraph{Summary.}
+Across these areas, ADS can be viewed as a bridge between (a) education-specific recommenders and learner models, and (b) the broader literature on multi-objective evaluation, fairness, and contestable decision-making.
+The unifying theme is to make stakeholder trade-offs explicit and auditable, rather than implicitly encoded in a single optimization target.
+%%% --- END related_work_map ---
+
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+
+\end{document}

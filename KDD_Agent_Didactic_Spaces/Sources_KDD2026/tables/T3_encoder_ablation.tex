@@ -1,0 +1,15 @@
+\begin{table}[th]
+\centering
+\caption{Encoder ablation (unified\_v4, {\NumUniversities} universities). Results deterministic across {\NumSeedsEvaluated} seeds. Cross-encoder Pareto Jaccard = {\CrossEncoderJaccard}, confirming encoder sensitivity.}
+\label{tab:encoder-ablation}
+\adjustbox{width=.85\linewidth}{
+\begin{tabular}{llrrr}
+\toprule
+\textbf{Encoder} & \textbf{Model} & \textbf{Dim} & \textbf{Pareto} & \textbf{HV} \\
+\midrule
+SBERT-MiniLM & all-MiniLM-L6-v2 & \MiniLMDimension & $\MiniLMParetoSize \pm 0$ & \MiniLMHypervolume \\
+SBERT-MPNet & all-mpnet-base-v2 & \MPNetDimension & $\MPNetParetoSize \pm 0$ & \MPNetHypervolume \\
+Stub (random) & stub-encoder-v0 & 384 & $3 \pm 0$ & --- \\
+\bottomrule
+\end{tabular}}
+\end{table}

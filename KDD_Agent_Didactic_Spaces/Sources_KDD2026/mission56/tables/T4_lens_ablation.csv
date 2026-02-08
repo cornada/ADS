@@ -1,0 +1,4 @@
+Lens,Pareto,Jaccard vs Identity,Notes
+Identity,81,1.00,Baseline
+Diagonal,81,1.00,Same as Identity (expected)
+Learned (OVR),170,TBD,+110% more options

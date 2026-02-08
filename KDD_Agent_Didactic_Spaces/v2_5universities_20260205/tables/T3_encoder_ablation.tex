@@ -1,0 +1,16 @@
+\begin{table}[th]
+\centering
+\caption{Encoder Ablation Study (\NumCourses{} courses, \NumSeedsEvaluated{} seeds each). Pareto sizes vary substantially across encoders ({\EncoderParetoRatio}$\times$ difference), but are perfectly stable across seeds (Jaccard=\SeedStabilityJaccard). Cross-encoder overlap is low (Jaccard=\CrossEncoderJaccard), indicating encoder choice surfaces different trade-offs.}
+\label{tab:encoder-ablation}
+\adjustbox{width=.95\linewidth}{
+\begin{tabular}{llrrr}
+\hline
+\textbf{Encoder} & \textbf{Model} & \textbf{Dim} & \textbf{Pareto} & \textbf{HV} \\
+\hline
+SBERT-MiniLM & all-MiniLM-L6-v2 & \MiniLMDimension & $\MiniLMParetoSize \pm 0$ & \MiniLMHypervolume \\
+SBERT-MPNet & all-mpnet-base-v2 & \MPNetDimension & $\MPNetParetoSize \pm 0$ & \MPNetHypervolume \\
+Stub (random) & stub-encoder-v0 & 384 & $3 \pm 0$ & 0.002 \\
+\hline
+\multicolumn{5}{l}{\small Cross-encoder Jaccard (MiniLM vs MPNet): \CrossEncoderJaccard} \\
+\end{tabular}}
+\end{table}

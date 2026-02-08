@@ -1,0 +1,30 @@
+\begin{table}[htbp]
+\centering
+\caption{Computational Efficiency on unified\_v4 (33K courses, 7 universities)}
+\label{tab:efficiency}
+\adjustbox{width=.95\linewidth}{
+\begin{tabular}{lrl}
+\toprule
+\textbf{Phase} & \textbf{Time (s)} & \textbf{\% Total} \\
+\midrule
+Load Embeddings & 0.26 & 1.4\% \\
+Load Artifacts & 3.42 & 19.0\% \\
+Compute Centroids & 1.08 & 6.0\% \\
+Compute Scores & 1.62 & 9.0\% \\
+Compute Pareto & 11.62 & 64.6\% \\
+\midrule
+\textbf{Total} & \textbf{18.0} & 100\% \\
+\bottomrule
+\end{tabular}
+\noindent
+\begin{tabular}{lr}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Throughput & 1,818 ops/sec \\
+Scaling & $O(n^{1.2})$ \\
+Projected 50K & 32 s \\
+Projected 100K & 74 s \\
+\bottomrule
+\end{tabular}}
+\end{table}

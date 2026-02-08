@@ -1,0 +1,68 @@
+% table_dataset_comparison.tex
+% Dataset comparison table for KDD 2026 Datasets & Benchmarks track
+% Standalone fragment: \input{table_dataset_comparison} in main.tex
+
+\begin{table*}[t]
+\centering
+\footnotesize
+\caption{Comparison of educational datasets and benchmarks.
+  \ADS is the first to combine multi-institutional, multi-national course artifacts
+  with labor-market taxonomies (O*NET) and standardized multi-objective evaluation tasks
+  (multi-stakeholder ranking, trade-off discovery, robust recommendation).}
+\label{tab:dataset-comparison}
+\setlength{\tabcolsep}{4.5pt}
+\begin{tabular}{@{}lcrcccccc@{}}
+\toprule
+\textbf{Dataset} &
+\textbf{Year} &
+\textbf{Scale} &
+\textbf{Primary Unit} &
+\rotatebox{60}{\textbf{Multi-inst.}} &
+\rotatebox{60}{\textbf{Multi-nat.}} &
+\rotatebox{60}{\textbf{Labor mkt.}} &
+\rotatebox{60}{\textbf{MO eval tasks}} &
+\rotatebox{60}{\textbf{Open}} \\
+\midrule
+\multicolumn{9}{@{}l}{\textit{Learner interaction / knowledge tracing}} \\[2pt]
+KDD Cup 2010~\cite{stamper2010kddcup}
+  & 2010 & 809K interactions & student--step & -- & -- & -- & -- & \checkmark \\
+Junyi Academy~\cite{chang2015junyi}
+  & 2015 & 16M interactions & exercises & -- & -- & -- & -- & \checkmark \\
+OULAD~\cite{kuzilek2017oulad}
+  & 2017 & 32K students & student records & -- & -- & -- & -- & \checkmark \\
+EdNet~\cite{choi2020ednet}
+  & 2020 & 131M actions & learner actions & -- & -- & -- & -- & \checkmark \\
+\midrule
+\multicolumn{9}{@{}l}{\textit{MOOC / course-catalog}} \\[2pt]
+MOOCCube~\cite{yu2020mooccube}
+  & 2020 & 706K courses & courses + concepts & \checkmark & \checkmark & -- & -- & Partial \\
+MOOCCubeX~\cite{yu2023mooccubex}
+  & 2023 & 1.5M courses & courses + knowledge & \checkmark & \checkmark & -- & -- & Partial \\
+\midrule
+\multicolumn{9}{@{}l}{\textit{Labor market}} \\[2pt]
+Skills2Job~\cite{giabelli2021skills2job}
+  & 2021 & 3K+ occupations & occupations + skills & -- & -- & \checkmark & -- & \checkmark \\
+\midrule
+\textbf{ADS (ours)}
+  & \textbf{2026}
+  & \textbf{\NumCourses{} + \NumOccupations}
+  & \textbf{courses + occupations}
+  & \textbf{\checkmark\,(7)}
+  & \textbf{\checkmark\,(3)}
+  & \textbf{\checkmark}
+  & \textbf{\checkmark\,(3)}
+  & \textbf{\checkmark} \\
+\bottomrule
+\end{tabular}
+\vspace{1mm}
+
+{\raggedright\scriptsize
+\textit{Multi-inst.}: multiple institutions.
+\textit{Multi-nat.}: multiple countries.
+\textit{Labor mkt.}: labor-market/occupation data integrated.
+\textit{MO eval tasks}: standardized multi-objective evaluation tasks provided.
+ADS totals: \NumCourses{} courses from \NumUniversities{} universities
+(\NumCountries{} countries), \NumOccupations{} O*NET occupations,
+\NumAttributeRecords{} structured records (\NumProcessedRows{} processed rows).
+\par}
+\end{table*}

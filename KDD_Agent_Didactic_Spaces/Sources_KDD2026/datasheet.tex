@@ -1,0 +1,178 @@
+%% Datasheet for Datasets (Gebru et al., 2021)
+%% ADS Cross-National Educational Benchmark (unified_v4)
+%% Include via \input{datasheet} from main paper appendix.
+
+\section{Datasheet for Datasets}
+\label{sec:datasheet}
+
+This datasheet follows the template of Gebru et al.~\cite{gebru2021datasheets}
+and documents the ADS cross-national educational benchmark released with this paper.
+
+% =====================================================================
+\subsection{Motivation}
+% =====================================================================
+
+\paragraph{Why was the dataset created?}
+No existing benchmark combines multi-institutional course artifacts with structured labor-market taxonomies and standardized multi-stakeholder evaluation tasks.
+Learner-interaction datasets (e.g., KDD Cup 2010, EdNet, OULAD) focus on knowledge tracing at a single institution; MOOC-catalog datasets (MOOCCube, MOOCCubeX) cover multiple institutions but lack labor-market integration.
+ADS was created to fill this gap: a cross-national, multi-objective educational benchmark for evaluating trade-offs among learner, institutional, and labor-market stakeholders.
+
+\paragraph{Who created the dataset and on behalf of which entity?}
+The dataset was created by the paper authors as an academic research contribution.
+
+\paragraph{Who funded the creation of the dataset?}
+No external funding was received for the creation of this dataset.
+All data sources are publicly available and were collected using public APIs and catalogs.
+
+% =====================================================================
+\subsection{Composition}
+% =====================================================================
+
+\paragraph{What do the instances represent?}
+The benchmark contains three types of primary text artifacts and two types of structured records:
+\begin{itemize}
+  \item \textbf{Courses} (\NumCourses): educational course descriptions from \NumUniversities{} universities across \NumCountries{} countries (USA, Sweden, UK).
+  \item \textbf{O*NET occupation profiles} (\NumOccupations): occupation descriptions including required skills, tasks, and technologies from the US Department of Labor.
+  \item \textbf{Mission statements} (\NumMissionsExpanded): university mission and vision texts.
+  \item \textbf{College Scorecard programs} (\NumScorecardPrograms): program-level outcome descriptors with median earnings data (US DOE).
+  \item \textbf{Structured attribute/link records} (\NumAttributeRecords): O*NET skills, tasks, technologies, and CIP-SOC crosswalk links.
+\end{itemize}
+
+\paragraph{How many instances are there?}
+The benchmark contains \NumPrimaryArtifacts{} primary text artifacts and \NumProcessedRows{} total processed rows.
+Course counts by university:
+MIT OCW (\NumMIT),
+UC Berkeley (\NumUCB),
+Stanford (\NumStanford),
+UIUC (\NumUIUC),
+Cornell (\NumCornell),
+KTH Sweden (\NumKTH),
+Edinburgh UK (\NumEdinburgh).
+US universities contribute \NumUSCourses{} courses; international universities contribute \NumIntlCourses{} courses.
+
+\paragraph{What data does each instance consist of?}
+Each \emph{course} record contains: \texttt{institution}, \texttt{course\_id}, \texttt{title}, \texttt{description}, \texttt{department}, and \texttt{level} (where available from the source catalog).
+Each \emph{occupation} record contains: \texttt{occupation\_id}, \texttt{title}, \texttt{description}, lists of required skills, tasks, and technologies.
+Each \emph{mission} record contains: \texttt{institution}, \texttt{statement\_text}, and \texttt{source\_url}.
+
+\paragraph{Is there a label or target associated with each instance?}
+No. The benchmark is designed for multi-objective evaluation, not supervised prediction. Evaluation is performed against the Pareto front and benchmark metrics (hypervolume, spacing, coverage).
+
+\paragraph{Is any information missing from individual instances?}
+Some fields are unavailable for certain sources: course \texttt{level} is not available from all university catalogs; \texttt{department} naming conventions vary across institutions.
+International course descriptions (KTH, Edinburgh) are in English but may reflect translation artifacts from the original Swedish or course-catalog conventions.
+
+\paragraph{Are there any errors, sources of noise, or redundancies?}
+Near-duplicate courses (e.g., cross-listed courses) were removed during deduplication. Some course descriptions are short or formulaic (e.g., independent study entries); a minimum text-length filter was applied. O*NET profiles are professionally curated by the US DOL and contain minimal noise.
+
+\paragraph{Does the dataset contain data that might be considered confidential or sensitive?}
+No. All data is drawn from public catalogs, public APIs, and public-domain government sources. A basic PII screening step was applied to exclude any inadvertently included names, emails, or phone numbers.
+
+% =====================================================================
+\subsection{Collection Process}
+% =====================================================================
+
+\paragraph{How was the data associated with each instance acquired?}
+Data was acquired from publicly accessible sources:
+\begin{itemize}
+  \item \textbf{MIT}: MIT OpenCourseWare (OCW) public catalog.
+  \item \textbf{UC Berkeley}: UC Berkeley online course catalog.
+  \item \textbf{Stanford}: Stanford ExploreCourses public API.
+  \item \textbf{UIUC}: UIUC Course Information Suite (CIS) public API.
+  \item \textbf{Cornell}: Cornell Class Roster public API.
+  \item \textbf{KTH}: KTH KOPPS course syllabus public API (Sweden).
+  \item \textbf{Edinburgh}: University of Edinburgh Degree Regulations and Programmes of Study (DRPS) public catalog (UK).
+  \item \textbf{O*NET}: US Department of Labor O*NET public database and API.
+  \item \textbf{College Scorecard}: US Department of Education College Scorecard public API.
+\end{itemize}
+
+\paragraph{What was the collection period?}
+Data was collected between 2024 and 2025. O*NET time-travel versions (2022--2025) are included for market-drift analysis.
+
+\paragraph{Were any ethical review processes conducted?}
+All sources are public and open-access. No human subjects are involved; no IRB review was required. No personally identifiable information about students, instructors, or workers is collected or included.
+
+\paragraph{Was consent obtained?}
+Not applicable. All data consists of publicly published institutional artifacts (course catalogs, government databases).
+
+% =====================================================================
+\subsection{Preprocessing, Cleaning, and Labeling}
+% =====================================================================
+
+\paragraph{What preprocessing and cleaning was done?}
+\begin{enumerate}
+  \item \textbf{Schema validation}: all records validated against a required schema (\texttt{institution}, \texttt{course\_id}, \texttt{title} are mandatory fields).
+  \item \textbf{Deduplication}: near-identical artifacts within each source were removed.
+  \item \textbf{Minimum text length}: artifacts with extremely short or empty descriptions were filtered out.
+  \item \textbf{PII screening}: basic screening to exclude names, email addresses, and phone numbers.
+  \item \textbf{Provenance tracking}: for every artifact, we record a stable identifier, source URL, snapshot timestamp, content hash of the raw text, and parsing/extraction rules.
+\end{enumerate}
+
+\paragraph{Was the raw data saved in addition to the preprocessed data?}
+Yes. Provenance manifests link each processed artifact to its raw source. Content hashes allow verification of data integrity.
+
+\paragraph{Is the software used to preprocess the data available?}
+Yes. Ingestion scripts and validation code are included in the released repository.
+
+% =====================================================================
+\subsection{Uses}
+% =====================================================================
+
+\paragraph{What tasks is the dataset intended for?}
+The benchmark defines three evaluation tasks:
+\begin{itemize}
+  \item \textbf{Task A: Multi-Stakeholder Course Ranking.} Given course text and stakeholder target corpora, produce an ordered list of course IDs. Metrics: coverage, diversity, objective balance.
+  \item \textbf{Task B: Stakeholder Trade-off Discovery.} Identify a set of courses representing distinct stakeholder trade-offs. Metrics: hypervolume, spacing, spread, Pareto precision, dominance resistance.
+  \item \textbf{Task C: Robust Recommendation.} Produce a primary submission plus perturbation-run submissions. Metrics: bootstrap Jaccard, HV retention, rank stability, core stable fraction.
+\end{itemize}
+
+\paragraph{What tasks should the dataset \emph{not} be used for?}
+The dataset is \emph{not} intended for:
+\begin{itemize}
+  \item Knowledge tracing or student performance prediction (no learner interaction data is included).
+  \item Grade prediction or assessment modeling.
+  \item Learner interaction modeling or tutoring system evaluation.
+  \item Making enrollment decisions without human oversight.
+\end{itemize}
+
+\paragraph{Are there tasks for which the dataset should not be used?}
+The dataset should not be used to rank individual students or to automate high-stakes enrollment/admissions decisions. It is a benchmark for evaluating multi-stakeholder trade-off methods, not an operational decision system.
+
+% =====================================================================
+\subsection{Distribution}
+% =====================================================================
+
+\paragraph{How will the dataset be distributed?}
+Upon acceptance, the dataset will be distributed via:
+\begin{itemize}
+  \item \textbf{Zenodo} with a persistent DOI for long-term archival.
+  \item \textbf{HuggingFace Datasets} for programmatic access.
+\end{itemize}
+
+\paragraph{When will the dataset be released?}
+The dataset will be released upon paper acceptance.
+
+\paragraph{What license will the dataset be distributed under?}
+\textbf{CC BY-NC-SA 4.0}. This reflects the most restrictive component license (MIT OCW content is licensed under CC BY-NC-SA 4.0). O*NET data is public domain (US DOL). College Scorecard data is ODC-By (US DOE). University catalog data is from public sources.
+
+\paragraph{Are there any fees or access restrictions?}
+No. The dataset, evaluation script (\texttt{benchmark\_eval.py}, requiring only NumPy and the Python standard library), and ingestion code are freely available.
+
+% =====================================================================
+\subsection{Maintenance}
+% =====================================================================
+
+\paragraph{Who is supporting/hosting/maintaining the dataset?}
+The dataset is maintained by the paper authors. Versioned snapshots are released; the current version is \texttt{unified\_v4}.
+
+\paragraph{How can the owner/curator/manager of the dataset be contacted?}
+Contact information will be provided upon de-anonymization.
+
+\paragraph{Will the dataset be updated?}
+The dataset follows a versioned-snapshot model. The current release (\texttt{unified\_v4}) includes courses from \NumUniversities{} universities. O*NET time-travel versions (2022--2025) are included to support market-drift analysis. Future snapshots may add universities, update course catalogs, or incorporate newer O*NET releases; each snapshot will receive a new version identifier and DOI.
+
+\paragraph{Will older versions continue to be available?}
+Yes. Each versioned snapshot is archived on Zenodo with its own DOI. Previous versions will remain accessible for reproducibility.
+
+\paragraph{How will the dataset be retired?}
+If a version is found to contain errors, a corrected version will be released and the errata will be documented. No version will be silently removed.

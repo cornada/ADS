@@ -1,0 +1,188 @@
+% Shared constants and counts for ADS KDD paper
+% Version: unified_v4 INTERNATIONAL (7 universities, 3 countries)
+% Updated: 2026-02-06 after full international merge
+% Keep these in one place to avoid drifting numbers across main/supp.
+
+% =============================================================================
+% HEADLINE NUMBERS (use these in abstract/intro for impact)
+% =============================================================================
+
+\newcommand{\HeadlineRecords}{175,000}       % ~175K total processed records
+\newcommand{\HeadlineCourses}{32,700}        % ~33K courses (rounded for prose)
+\newcommand{\HeadlineArtifacts}{33,800}      % ~34K text artifacts
+
+% =============================================================================
+% DATASET COMPOSITION (exact numbers for tables)
+% =============================================================================
+
+% --- Primary text artifacts ---
+\newcommand{\NumCourses}{32,728}             % courses from 7 universities (3 countries)
+\newcommand{\NumOccupations}{1,016}          % O*NET occupation profiles
+\newcommand{\NumMissions}{62}                % university mission statements
+\newcommand{\NumScorecardPrograms}{217}      % College Scorecard program outcomes
+\newcommand{\NumArtifacts}{33,806}           % total text artifacts
+
+% --- Structured data (attribute/link records) ---
+\newcommand{\NumAttributeRecords}{140,449}   % O*NET skills/tasks/tech + CIP-SOC + links
+\newcommand{\NumProcessedRows}{175,346}      % total processed rows across all tables
+
+% --- Combined totals ---
+\newcommand{\NumTotalRecords}{175,346}       % headline: all processed data
+
+% --- Aliases for paper consistency ---
+\newcommand{\NumPrograms}{217}               % alias: program descriptors = Scorecard programs
+\newcommand{\NumPrimaryArtifacts}{33,806}    % alias: primary text artifacts
+\newcommand{\NumMissionsMain}{7}             % one mission per university (main eval)
+\newcommand{\NumMissionsExpanded}{62}        % expanded mission corpus
+
+% =============================================================================
+% UNIVERSITIES AND GEOGRAPHY
+% =============================================================================
+
+\newcommand{\NumUniversities}{7}
+\newcommand{\NumCountries}{3}                % USA, Sweden, UK
+
+% Per-university course counts
+\newcommand{\NumMIT}{6,941}                  % MIT OCW courses
+\newcommand{\NumUCB}{11,076}                 % UC Berkeley courses
+\newcommand{\NumStanford}{2,663}             % Stanford ExploreCourses
+\newcommand{\NumUIUC}{860}                   % UIUC CIS courses
+\newcommand{\NumCornell}{842}                % Cornell Class Roster
+\newcommand{\NumKTH}{9,456}                  % KTH KOPPS API (Sweden)
+\newcommand{\NumEdinburgh}{890}              % Edinburgh DRPS (UK)
+
+% US vs International
+\newcommand{\NumUSCourses}{22,382}           % 5 US universities
+\newcommand{\NumIntlCourses}{10,346}         % KTH + Edinburgh
+
+% =============================================================================
+% MAIN EXPERIMENT RESULTS (MiniLM, seed=0, unified_v4 international, tau=0.25)
+% =============================================================================
+
+\newcommand{\MainParetoSize}{158}
+\newcommand{\MainParetoRatio}{0.48\%}        % 158 / 32,728
+\newcommand{\MainHypervolume}{0.134}
+\newcommand{\MainFeasibleRatio}{82.3\%}
+
+% Pareto contribution by university
+\newcommand{\ParetoKTH}{52}                  % KTH leads!
+\newcommand{\ParetoUCB}{41}
+\newcommand{\ParetoMIT}{36}
+\newcommand{\ParetoStanford}{19}
+\newcommand{\ParetoCornell}{5}
+\newcommand{\ParetoUIUC}{3}
+\newcommand{\ParetoEdinburgh}{2}
+
+% Tau sweep results
+\newcommand{\TauTightPareto}{25}             % Pareto at tau=0.05 (tight)
+\newcommand{\TauLoosePareto}{175}            % Pareto at tau=inf (no constraint)
+\newcommand{\TauDefaultCoverage}{90.3\%}     % fraction of unconstrained Pareto kept
+
+% =============================================================================
+% MARKET ALIGNMENT (cross-national analysis)
+% =============================================================================
+
+\newcommand{\AlignMIT}{0.488}
+\newcommand{\AlignStanford}{0.485}
+\newcommand{\AlignCornell}{0.473}
+\newcommand{\AlignUIUC}{0.472}
+\newcommand{\AlignUCB}{0.432}
+\newcommand{\AlignKTH}{0.381}
+\newcommand{\AlignEdinburgh}{0.298}
+
+\newcommand{\AlignUSMean}{0.470}
+\newcommand{\AlignIntlMean}{0.340}
+\newcommand{\AlignGap}{0.130}                % US - International gap
+
+% =============================================================================
+% BASELINE COMPARISON
+% =============================================================================
+
+\newcommand{\BestBaselineMethod}{weighted\_sum\_equal}
+\newcommand{\BestBaselineOverlap}{15}        % out of 158 Pareto
+\newcommand{\BestBaselineJaccard}{0.095}
+\newcommand{\ParetoVsBaselineRatio}{10.5}    % 158 / 15 = 10.5x more options
+\newcommand{\BaselineOptima}{15}             % unique optima from all baselines
+
+% Runtime and scaling
+\newcommand{\MainRuntimeSec}{18}             % seconds with cached embeddings (33K options)
+\newcommand{\ScalingExponent}{1.2}           % empirical O(n^x) scaling
+
+% =============================================================================
+% ENCODER COMPARISON
+% =============================================================================
+
+\newcommand{\MiniLMParetoSize}{158}
+\newcommand{\MiniLMHypervolume}{0.134}
+\newcommand{\MiniLMDimension}{384}
+
+\newcommand{\MPNetParetoSize}{62}
+\newcommand{\MPNetHypervolume}{0.142}
+\newcommand{\MPNetDimension}{768}
+
+\newcommand{\CrossEncoderJaccard}{0.052}     % MiniLM vs MPNet Pareto overlap
+\newcommand{\EncoderParetoRatio}{2.5}        % 158 / 62 = 2.5x difference
+
+% =============================================================================
+% SEED STABILITY
+% =============================================================================
+
+\newcommand{\SeedStabilityJaccard}{1.000}    % identical across seeds 0,1,2
+\newcommand{\NumSeedsEvaluated}{3}
+
+% =============================================================================
+% CROSS-UNIVERSITY ANALYSIS
+% =============================================================================
+
+\newcommand{\CrossUniversityJaccard}{0.000}  % pairwise Pareto overlap = zero
+\newcommand{\NumUnisContributing}{7}         % all 7 contribute to Pareto!
+
+% =============================================================================
+% O*NET TIME-TRAVEL (market drift 2022→2025)
+% =============================================================================
+
+\newcommand{\MarketDriftJaccard}{0.967}
+\newcommand{\MarketDriftTurnover}{3\%}
+\newcommand{\MarketDriftCentroid}{0.0018}
+\newcommand{\MarketDriftParetoMin}{29}
+\newcommand{\MarketDriftParetoMax}{30}
+\newcommand{\MarketDriftNewTech}{51}
+\newcommand{\MarketDriftRemovedTech}{364}
+
+% =============================================================================
+% GOAL SENSITIVITY ANALYSIS
+% =============================================================================
+
+\newcommand{\GoalCareerPareto}{142}
+\newcommand{\GoalResearchPareto}{98}
+\newcommand{\GoalBalancedPareto}{118}
+\newcommand{\GoalSocialPareto}{105}
+\newcommand{\GoalMinJaccard}{0.38}
+\newcommand{\GoalMaxJaccard}{0.58}
+\newcommand{\GoalMeanJaccard}{0.48}
+
+% =============================================================================
+% OBJECTIVE SPECIALIZATION (cross-national analysis)
+% =============================================================================
+
+\newcommand{\USParetoCount}{104}
+\newcommand{\IntlParetoCount}{54}
+\newcommand{\USLearnerMean}{0.443}
+\newcommand{\IntlLearnerMean}{0.522}
+\newcommand{\LearnerGap}{0.079}               % +17.8% relative gain for international
+\newcommand{\LearnerGapPercent}{17.8\%}
+\newcommand{\KTHLearnerTopDecile}{18}         % KTH courses in top 10% on learner
+
+% =============================================================================
+% DATA SOURCES & LICENSES
+% =============================================================================
+
+% MIT OCW: CC BY-NC-SA 4.0
+% UC Berkeley: public catalog
+% Stanford ExploreCourses: public API
+% UIUC CIS: public API
+% Cornell Class Roster: public API
+% KTH KOPPS: public API (Sweden)
+% Edinburgh DRPS: public catalog (UK)
+% O*NET: public domain (US DOL)
+% College Scorecard: ODC-By (US DOE)

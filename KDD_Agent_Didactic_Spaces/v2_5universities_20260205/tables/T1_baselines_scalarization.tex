@@ -1,0 +1,23 @@
+\begin{table}[htbp]
+\centering
+\caption{Baseline Comparison (\NumCourses{} courses, 4 objectives). Pareto discovers {\ParetoVsBaselineRatio}$\times$ more trade-off options than scalarization baselines. Best baseline (weighted\_sum\_equal) achieves Jaccard=\BestBaselineJaccard{} overlap with Pareto.}
+\label{tab:baselines}
+\adjustbox{width=0.95\linewidth}{
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Method} & \textbf{Solutions} & \textbf{Overlap} & \textbf{Jaccard} \\
+\midrule
+\textbf{ADS-Pareto (Full)} & \MainParetoSize & --- & 1.000 \\
+\midrule
+weighted\_sum\_equal & 10 & \BestBaselineOverlap & \BestBaselineJaccard \\
+random\_scalarization & 9 & 9 & 0.113 \\
+lexicographic\_mission & 9 & 9 & 0.113 \\
+lexicographic\_university & 7 & 7 & 0.085 \\
+lexicographic\_learner & 6 & 6 & 0.072 \\
+weighted\_sum\_grid & 4 & 4 & 0.047 \\
+lexicographic\_market & 4 & 4 & 0.047 \\
+\midrule
+No Constraint ($\tau$=$\infty$) & \TauLoosePareto & --- & --- \\
+\bottomrule
+\end{tabular}}
+\end{table}

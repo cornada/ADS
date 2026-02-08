@@ -1,0 +1,23 @@
+\begin{table}[htbp]
+\centering
+\caption{Comparison of Multi-Objective Methods (unified\_v4, {\NumUniversities} universities, {\NumCountries} countries)}
+\label{tab:baselines}
+\adjustbox{width=0.95\linewidth}{
+\begin{tabular}{lrrll}
+\toprule
+\textbf{Method} & \textbf{Pareto} & \textbf{Overlap} & \textbf{Jaccard} & \textbf{Notes} \\
+\midrule
+\textbf{ADS-MAPE ($\tau$=0.25)} & \MainParetoSize & --- & --- & Reference \\
+\midrule
+Weighted-Sum (equal) & \BaselineOptima & \BestBaselineOverlap & \BestBaselineJaccard & Best baseline \\
+Random Scalarization & 10 & 10 & 0.118 & Same limitation \\
+Weighted-Sum Grid & 4 & 4 & 0.044 & Non-convex failure \\
+Lexicographic (market) & 7 & 7 & 0.080 & Order-dependent \\
+Lexicographic (mission) & 7 & 7 & 0.080 & Order-dependent \\
+\midrule
+No Constraint ($\tau$=$\infty$) & \TauLoosePareto & --- & --- & +10 extreme options \\
+\bottomrule
+\end{tabular}}
+\vspace{1mm}
+{\footnotesize Pareto discovers {\ParetoVsBaselineRatio}$\times$ more options than best baseline.}
+\end{table}

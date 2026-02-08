@@ -1,0 +1,18 @@
+\begin{table}[htbp]
+\centering
+\caption{Effect of Autonomy Constraint $\tau$ on Pareto Set Size (\NumCourses{} courses). The default $\tau{=}0.25$ retains \TauDefaultCoverage{} of the unconstrained Pareto set while filtering market-dominant options.}
+\label{tab:tau-sweep}
+\adjustbox{width=.95\linewidth}{{\scriptsize
+\begin{tabular}{lll|lll}
+\hline
+\textbf{$\tau$} & \textbf{Pareto} & \textbf{\% of Max} & \textbf{$\tau$} & \textbf{Pareto} & \textbf{\% of Max} \\
+\hline
+0.05 & \TauTightPareto & 15.8\% & \textbf{0.25} & \textbf{\MainParetoSize} & \textbf{\TauDefaultCoverage} \\
+0.10 & 38 & 40.0\% & 0.30 & 85 & 89.5\% \\
+0.15 & 52 & 54.7\% & 0.50 & 93 & 97.9\% \\
+0.20 & 67 & 70.5\% & $\infty$ & \TauLoosePareto & 100.0\%
+\end{tabular}
+}
+}
+\vspace{-3mm}
+\end{table}

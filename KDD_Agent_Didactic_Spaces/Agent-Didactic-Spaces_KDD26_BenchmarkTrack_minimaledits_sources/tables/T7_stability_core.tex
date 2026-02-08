@@ -1,0 +1,24 @@
+\begin{table}[htbp]
+\centering
+\caption{Stability Analysis and Robust Core}
+\label{tab:stability}
+\adjustbox{width=.8\linewidth}{
+\begin{tabular}{lrl}
+\toprule
+\textbf{Metric} & \textbf{Value} & \textbf{Notes} \\
+\midrule
+\multicolumn{3}{l}{\textit{Score Perturbation (ADS-Full, 103 options)}} \\
+Jaccard @ $\varepsilon$=0.01 & 0.071 & $\pm$0.008 \\
+Jaccard @ $\varepsilon$=0.02 & 0.068 & $\pm$0.012 \\
+Jaccard @ $\varepsilon$=0.05 & 0.043 & $\pm$0.014 \\
+Jaccard @ $\varepsilon$=0.10 & 0.014 & $\pm$0.010 \\
+\midrule
+\multicolumn{3}{l}{\textit{Target Bootstrap (ADS-2D, 11 options)}} \\
+Market-only stable & 11/11 & 100\% \\
+Combined stable & 9/11 & 82\% \\
+\midrule
+\multicolumn{3}{l}{\textit{Stable Core}} \\
+Core @ $p$=0.50 (ADS-Full) & $\approx$7 & Estimated \\
+\bottomrule
+\end{tabular}}
+\end{table}

@@ -101,9 +101,20 @@ Desktop.ini
 # Paper artifacts (generated, large)
 paper_artifacts/
 
-# Paper drafts and KDD submission materials
+# Paper drafts (IJCAI legacy)
 paper/
-KDD_Agent_Didactic_Spaces/
+
+# KDD submission: track sources, ignore build artifacts
+KDD_Agent_Didactic_Spaces/**/*.aux
+KDD_Agent_Didactic_Spaces/**/*.bbl
+KDD_Agent_Didactic_Spaces/**/*.blg
+KDD_Agent_Didactic_Spaces/**/*.fdb_latexmk
+KDD_Agent_Didactic_Spaces/**/*.fls
+KDD_Agent_Didactic_Spaces/**/*.log
+KDD_Agent_Didactic_Spaces/**/*.out
+KDD_Agent_Didactic_Spaces/**/*.pdf
+KDD_Agent_Didactic_Spaces/**/*.synctex.gz
+KDD_Agent_Didactic_Spaces/*.zip
 
 # Internal issue tracking
 issues/

@@ -1,0 +1,16 @@
+\begin{table}[h]
+\centering
+\caption{Encoder Ablation: Pareto Set Size Across Seeds}
+\label{tab:mission56-encoder}
+\adjustbox{width=\linewidth}{
+\begin{tabular}{lrrrrrr}
+\toprule
+{\bf Encoder} & {\bf Dim} & {\bf Seed 0} & {\bf Seed 1} & {\bf Seed 2} & {\bf Mean} & {\bf Std} \\
+\midrule
+MiniLM & 384 & 81 & 81 & 81 & 81 & 0 \\
+MPNet & 768 & 30 & 30 & 30 & 30 & 0 \\
+\midrule
+Stub (random) & 384 & 2 & -- & -- & 2 & -- \\
+\bottomrule
+\end{tabular}}
+\end{table}

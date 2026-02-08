@@ -1,0 +1,14 @@
+\begin{table}[th]
+\centering
+\caption{Encoder Ablation Study on Dataset (3 seeds each)}
+\label{tab:encoder-ablation}
+\adjustbox{width=.8\linewidth}{
+\begin{tabular}{llrr}
+\hline
+\textbf{Encoder} & \textbf{Model} & \textbf{Dim} & \textbf{Pareto} \\
+\hline
+SBERT-MiniLM & all-MiniLM-L6-v2 & 384 & $103 \pm 0$ \\
+SBERT-MPNet & all-mpnet-base-v2 & 768 & $40 \pm 0$ \\
+Stub (random) & stub-encoder-v0 & 384 & $3 \pm 0$ 
+\end{tabular}}
+\end{table}
