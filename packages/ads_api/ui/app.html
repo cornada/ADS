@@ -6,6 +6,9 @@
   <title>ADS — Agent-Didactic Spaces</title>
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
+  <script src="https://unpkg.com/dagre@0.8.5/dist/dagre.min.js"></script>
+  <script src="https://unpkg.com/cytoscape-dagre@2.5.0/cytoscape-dagre.js"></script>
   <style>
     :root {
       --bg: #0f172a; --bg2: #1e293b; --bg3: #334155;
@@ -102,6 +105,12 @@
     .comp-bar-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
     /* Loading */
     .loading { text-align: center; padding: 40px; color: var(--text3); }
+    /* Graph container */
+    #cy-container { width: 100%; height: 520px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); }
+    .graph-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; font-size: 0.75rem; color: var(--text2); }
+    .graph-legend-item { display: flex; align-items: center; gap: 6px; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .node-info { margin-top: 12px; padding: 12px; background: var(--bg3); border-radius: var(--radius); font-size: 0.8rem; }
     /* Responsive */
     @media (max-width: 768px) {
       .sidebar { width: 60px; }
@@ -651,6 +660,90 @@
         </template>
 
         <!-- ==================== ANALYTICS ==================== -->
+        <!-- ── Learning Tracks (Prerequisite Graph) ── -->
+        <template v-if="currentTab === 'graph'">
+          <div class="card">
+            <div class="card-title">Prerequisite Graph Explorer</div>
+            <p style="font-size:0.8rem;color:var(--text2);margin-bottom:12px">
+              Visualize course prerequisite DAGs for MISIS programs. Select a program to see how courses connect.
+            </p>
+            <div class="control-row">
+              <div class="ctrl-group">
+                <div class="ctrl-label">FGOS Program</div>
+                <select v-model="graphProgram" @change="loadGraph">
+                  <option value="">Select program...</option>
+                  <option v-for="p in graphPrograms" :key="p.fgos_code"
+                    :value="p.fgos_code"
+                    v-text="p.fgos_code + ' (' + p.edge_count + ' edges)'"></option>
+                </select>
+              </div>
+              <div class="ctrl-group">
+                <div class="ctrl-label">Year</div>
+                <select v-model="graphYear" @change="loadGraph">
+                  <option value="">All years</option>
+                  <option v-for="y in graphYears" :key="y" :value="y" v-text="y"></option>
+                </select>
+              </div>
+              <div class="ctrl-group">
+                <div class="ctrl-label">Layout</div>
+                <select v-model="graphLayout" @change="applyGraphLayout">
+                  <option value="dagre">Hierarchical (dagre)</option>
+                  <option value="breadthfirst">Breadth-first</option>
+                  <option value="cose">Force-directed (CoSE)</option>
+                  <option value="circle">Circle</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" @click="loadGraphPrograms" v-if="!graphPrograms.length">
+                Load Programs
+              </button>
+            </div>
+          </div>
+
+          <template v-if="graphStats">
+            <div class="metric-grid">
+              <div class="metric">
+                <div class="metric-value blue" v-text="graphStats.nodes"></div>
+                <div class="metric-label">Courses</div>
+              </div>
+              <div class="metric">
+                <div class="metric-value green" v-text="graphStats.edges"></div>
+                <div class="metric-label">Prerequisites</div>
+              </div>
+              <div class="metric">
+                <div class="metric-value yellow" v-text="graphStats.roots"></div>
+                <div class="metric-label">Foundation (no prereqs)</div>
+              </div>
+              <div class="metric">
+                <div class="metric-value purple" v-text="graphStats.leaves"></div>
+                <div class="metric-label">Terminal (no dependants)</div>
+              </div>
+            </div>
+          </template>
+
+          <div class="card">
+            <div id="cy-container"></div>
+            <div class="graph-legend">
+              <div class="graph-legend-item"><div class="legend-dot" style="background:#22c55e"></div>Foundation course (no prereqs)</div>
+              <div class="graph-legend-item"><div class="legend-dot" style="background:#3b82f6"></div>Intermediate course</div>
+              <div class="graph-legend-item"><div class="legend-dot" style="background:#a855f7"></div>Terminal course (no dependants)</div>
+              <div class="graph-legend-item"><div class="legend-dot" style="background:#eab308"></div>Hub course (high connectivity)</div>
+            </div>
+          </div>
+
+          <div class="card node-info" v-if="selectedNode">
+            <div class="card-title">Selected: {{ selectedNode.label }}</div>
+            <div style="display:flex;gap:24px;font-size:0.8rem;">
+              <div><strong>Prerequisite for:</strong> {{ selectedNode.out_degree }} courses</div>
+              <div><strong>Requires:</strong> {{ selectedNode.in_degree }} prerequisites</div>
+              <div><strong>Role:</strong>
+                <span v-if="selectedNode.is_root" style="color:var(--green)">Foundation</span>
+                <span v-else-if="selectedNode.is_leaf" style="color:var(--purple)">Terminal</span>
+                <span v-else style="color:var(--accent)">Intermediate</span>
+              </div>
+            </div>
+          </div>
+        </template>
+
         <template v-if="currentTab === 'analytics'">
           <div class="card">
             <div class="card-title">Temporal Analysis</div>
@@ -717,6 +810,7 @@ createApp({
       { id: 'assessment', label: 'Assessment (CAT)', icon: '\u2714' },
       { id: 'career', label: 'Career Path', icon: '\u2192' },
       { id: 'federation', label: 'Federation', icon: '\u2605' },
+      { id: 'graph', label: 'Learning Tracks', icon: '\u2B95' },
       { id: 'analytics', label: 'Analytics', icon: '\u2261' },
     ];
 
@@ -1194,6 +1288,176 @@ createApp({
       return 'var(--red)';
     }
 
+    // ── Graph (Prerequisite DAG) ──
+    const graphPrograms = ref([]);
+    const graphProgram = ref('');
+    const graphYear = ref('');
+    const graphYears = ref(['2024', '2025']);
+    const graphLayout = ref('dagre');
+    const graphStats = ref(null);
+    const selectedNode = ref(null);
+    let cyInstance = null;
+
+    async function loadGraphPrograms() {
+      try {
+        const resp = await fetch('/graph/programs');
+        if (resp.ok) {
+          graphPrograms.value = await resp.json();
+          // Extract unique years
+          const yrs = new Set();
+          graphPrograms.value.forEach(p => p.years.forEach(y => yrs.add(y)));
+          graphYears.value = [...yrs].sort();
+        }
+      } catch (e) { console.error('Failed to load graph programs:', e); }
+    }
+
+    async function loadGraph() {
+      if (!graphProgram.value) return;
+      try {
+        let url = `/graph/prerequisites?fgos_code=${encodeURIComponent(graphProgram.value)}`;
+        if (graphYear.value) url += `&year=${graphYear.value}`;
+        const resp = await fetch(url);
+        if (!resp.ok) return;
+        const data = await resp.json();
+        graphStats.value = data.stats;
+        selectedNode.value = null;
+        await nextTick();
+        renderGraph(data.elements);
+      } catch (e) { console.error('Failed to load graph:', e); }
+    }
+
+    function renderGraph(elements) {
+      const container = document.getElementById('cy-container');
+      if (!container) return;
+
+      if (cyInstance) { cyInstance.destroy(); cyInstance = null; }
+
+      cyInstance = cytoscape({
+        container,
+        elements: {
+          nodes: elements.nodes,
+          edges: elements.edges,
+        },
+        style: [
+          {
+            selector: 'node',
+            style: {
+              'label': 'data(label)',
+              'font-size': '9px',
+              'text-wrap': 'ellipsis',
+              'text-max-width': '100px',
+              'color': '#f1f5f9',
+              'text-outline-color': '#0f172a',
+              'text-outline-width': 1.5,
+              'background-color': function(ele) {
+                const d = ele.data();
+                if (d.in_degree + d.out_degree >= 8) return '#eab308'; // Hub
+                if (d.is_root) return '#22c55e'; // Foundation
+                if (d.is_leaf) return '#a855f7'; // Terminal
+                return '#3b82f6'; // Intermediate
+              },
+              'width': function(ele) {
+                return Math.max(20, Math.min(50, 15 + (ele.data().in_degree + ele.data().out_degree) * 3));
+              },
+              'height': function(ele) {
+                return Math.max(20, Math.min(50, 15 + (ele.data().in_degree + ele.data().out_degree) * 3));
+              },
+              'border-width': 1.5,
+              'border-color': '#334155',
+            }
+          },
+          {
+            selector: 'edge',
+            style: {
+              'width': 1.5,
+              'line-color': '#475569',
+              'target-arrow-color': '#475569',
+              'target-arrow-shape': 'triangle',
+              'curve-style': 'bezier',
+              'arrow-scale': 0.8,
+              'opacity': 0.7,
+            }
+          },
+          {
+            selector: 'node:selected',
+            style: {
+              'border-width': 3,
+              'border-color': '#f1f5f9',
+              'background-color': '#ef4444',
+            }
+          },
+          {
+            selector: '.highlighted',
+            style: {
+              'background-color': '#ef4444',
+              'line-color': '#ef4444',
+              'target-arrow-color': '#ef4444',
+              'opacity': 1,
+              'width': function(ele) {
+                if (ele.isEdge()) return 2.5;
+                return Math.max(25, Math.min(55, 20 + (ele.data().in_degree + ele.data().out_degree) * 3));
+              },
+              'height': function(ele) {
+                if (ele.isEdge()) return 2.5;
+                return Math.max(25, Math.min(55, 20 + (ele.data().in_degree + ele.data().out_degree) * 3));
+              },
+            }
+          },
+          {
+            selector: '.faded',
+            style: { 'opacity': 0.15 }
+          }
+        ],
+        layout: getLayoutConfig(),
+        minZoom: 0.2,
+        maxZoom: 3,
+      });
+
+      // Click handler: highlight predecessors and successors
+      cyInstance.on('tap', 'node', function(evt) {
+        const node = evt.target;
+        selectedNode.value = node.data();
+
+        // Reset
+        cyInstance.elements().removeClass('highlighted faded');
+
+        // Highlight neighborhood
+        const predecessors = node.predecessors();
+        const successors = node.successors();
+        const neighborhood = predecessors.union(successors).union(node);
+        cyInstance.elements().addClass('faded');
+        neighborhood.removeClass('faded').addClass('highlighted');
+      });
+
+      // Click on background: reset
+      cyInstance.on('tap', function(evt) {
+        if (evt.target === cyInstance) {
+          cyInstance.elements().removeClass('highlighted faded');
+          selectedNode.value = null;
+        }
+      });
+    }
+
+    function getLayoutConfig() {
+      const l = graphLayout.value;
+      if (l === 'dagre') return { name: 'dagre', rankDir: 'TB', nodeSep: 40, rankSep: 60, animate: false };
+      if (l === 'breadthfirst') return { name: 'breadthfirst', directed: true, spacingFactor: 1.2, animate: false };
+      if (l === 'cose') return { name: 'cose', animate: false, nodeOverlap: 20, idealEdgeLength: 80 };
+      return { name: 'circle', animate: false };
+    }
+
+    function applyGraphLayout() {
+      if (!cyInstance) return;
+      cyInstance.layout(getLayoutConfig()).run();
+    }
+
+    // Auto-load programs when switching to graph tab
+    watch(currentTab, (val) => {
+      if (val === 'graph' && graphPrograms.value.length === 0) {
+        loadGraphPrograms();
+      }
+    });
+
     // ── Init ──
     onMounted(async () => {
       try {
@@ -1244,6 +1508,8 @@ createApp({
       careerConfig, careerResult, computeCareerPath,
       fedTab, fedPareto, fedGaps, complianceReport, loadFederatedPareto, checkCompliance,
       temporalData, loadTemporalOverview,
+      graphPrograms, graphProgram, graphYear, graphYears, graphLayout, graphStats, selectedNode,
+      loadGraphPrograms, loadGraph, applyGraphLayout,
       apiEndpoints, barColor
     };
   }

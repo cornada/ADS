@@ -8,7 +8,7 @@ from pathlib import Path
 
 from ads_api.routes import (
     evaluate, pareto, telemetry, dashboard,
-    courses, learner, assessment, temporal, transport, policy,
+    courses, learner, assessment, temporal, transport, policy, graph,
 )
 
 app = FastAPI(title="ADS API", version="0.2.0", description="Agent-Didactic Spaces API")
@@ -32,6 +32,7 @@ app.include_router(assessment.router, prefix="/assessment", tags=["assessment"])
 app.include_router(temporal.router, prefix="/temporal", tags=["temporal"])
 app.include_router(transport.router, prefix="/transport", tags=["transport"])
 app.include_router(policy.router, prefix="/policy", tags=["policy"])
+app.include_router(graph.router, prefix="/graph", tags=["graph"])
 
 # Serve static UI files
 UI_DIR = Path(__file__).parent / "ui"

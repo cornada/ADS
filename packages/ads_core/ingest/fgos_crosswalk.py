@@ -218,6 +218,207 @@ def run_crosswalk(
     return xwalk_path
 
 
+# ============================================================================
+# Two-hop crosswalk: FGOS → ISCED → CIP → SOC → O*NET
+# ============================================================================
+
+# FGOS area prefix → ISCED-F 2013 broad field code
+# Based on UNESCO ISCED-F classification and Russian FGOS structure
+FGOS_TO_ISCED = {
+    "01": "05",  # Math → Natural sciences, mathematics and statistics
+    "03": "05",  # Physics → Natural sciences
+    "09": "06",  # CS/IT → Information and Communication Technologies
+    "10": "06",  # Information security → ICT
+    "11": "07",  # Electronics → Engineering, manufacturing
+    "12": "07",  # Photonics → Engineering
+    "13": "07",  # Electrical engineering → Engineering
+    "15": "07",  # Mechanical engineering → Engineering
+    "18": "07",  # Chemical technology → Engineering
+    "20": "05",  # Ecology → Natural sciences
+    "21": "07",  # Mining → Engineering
+    "22": "07",  # Metallurgy → Engineering
+    "27": "07",  # Quality management → Engineering
+    "28": "07",  # Nanotechnology → Engineering
+    "29": "07",  # Nuclear engineering → Engineering
+    "38": "04",  # Economics → Business, administration
+    "45": "02",  # Linguistics → Arts and humanities
+}
+
+# ISCED broad field → CIP 2-digit series (NCES classification)
+# Based on NCES ISCED↔CIP crosswalk
+ISCED_TO_CIP = {
+    "02": ["16", "23", "24", "38", "39"],  # Arts & humanities → Languages, English, Liberal arts, Philosophy, Theology
+    "03": ["22", "42", "44", "45"],  # Social sciences → Law, Psychology, Public admin, Social sciences
+    "04": ["52", "30"],  # Business → Business/management, Multi/interdisciplinary
+    "05": ["26", "27", "40", "41"],  # Natural sciences → Biology, Mathematics, Physical sciences, Science tech
+    "06": ["11"],  # ICT → Computer and Information Sciences
+    "07": ["14", "15"],  # Engineering → Engineering, Engineering technologies
+}
+
+# CIP 2-digit → SOC major group (BLS crosswalk)
+# Based on BLS CIP-SOC crosswalk 2020
+CIP_TO_SOC = {
+    "11": ["15-0000"],  # Computer science → Computer and Mathematical
+    "14": ["17-0000"],  # Engineering → Architecture and Engineering
+    "15": ["17-0000"],  # Engineering tech → Architecture and Engineering
+    "16": ["25-0000", "27-0000"],  # Languages → Education, Arts/Media
+    "22": ["23-0000"],  # Law → Legal
+    "23": ["25-0000", "27-0000"],  # English → Education, Arts
+    "26": ["19-0000"],  # Biology → Life/Physical/Social Science
+    "27": ["15-0000"],  # Mathematics → Computer and Mathematical
+    "30": ["19-0000", "25-0000"],  # Multi/interdisciplinary → Science, Education
+    "38": ["25-0000"],  # Philosophy → Education
+    "40": ["19-0000"],  # Physical sciences → Life/Physical/Social Science
+    "41": ["19-0000"],  # Science technologies → Life/Physical/Social Science
+    "42": ["19-0000", "21-0000"],  # Psychology → Science, Community/Social
+    "44": ["21-0000"],  # Public admin → Community and Social Service
+    "45": ["19-0000"],  # Social sciences → Life/Physical/Social Science
+    "52": ["11-0000", "13-0000"],  # Business → Management, Business/Financial
+}
+
+# SOC major group → O*NET occupation family prefix
+SOC_TO_ONET_PREFIX = {
+    "11-0000": "11-",  # Management
+    "13-0000": "13-",  # Business and Financial Operations
+    "15-0000": "15-",  # Computer and Mathematical
+    "17-0000": "17-",  # Architecture and Engineering
+    "19-0000": "19-",  # Life, Physical, and Social Science
+    "21-0000": "21-",  # Community and Social Service
+    "23-0000": "23-",  # Legal
+    "25-0000": "25-",  # Educational Instruction and Library
+    "27-0000": "27-",  # Arts, Design, Entertainment, Sports, and Media
+}
+
+
+def fgos_to_international(fgos_code: str) -> Dict[str, Any]:
+    """Map a single FGOS code through the full crosswalk chain.
+
+    Returns dict with all intermediate codes:
+    {fgos, isced, cip_codes, soc_codes, onet_prefixes}
+    """
+    prefix = fgos_code.split(".")[0]
+    level_code = fgos_code.split(".")[1] if "." in fgos_code else "03"
+    level = FGOS_LEVELS.get(level_code, f"L{level_code}")
+
+    result = {
+        "fgos_code": fgos_code,
+        "fgos_level": level,
+        "fgos_area_prefix": prefix,
+        "isced_code": None,
+        "cip_codes": [],
+        "soc_codes": [],
+        "onet_prefixes": [],
+    }
+
+    # Hop 1: FGOS → ISCED
+    isced = FGOS_TO_ISCED.get(prefix)
+    if not isced:
+        return result
+    result["isced_code"] = isced
+
+    # Hop 2: ISCED → CIP
+    cip_codes = ISCED_TO_CIP.get(isced, [])
+    result["cip_codes"] = cip_codes
+
+    # Hop 3: CIP → SOC
+    soc_codes = set()
+    for cip in cip_codes:
+        for soc in CIP_TO_SOC.get(cip, []):
+            soc_codes.add(soc)
+    result["soc_codes"] = sorted(soc_codes)
+
+    # Hop 4: SOC → O*NET prefix
+    onet_prefixes = set()
+    for soc in soc_codes:
+        pfx = SOC_TO_ONET_PREFIX.get(soc)
+        if pfx:
+            onet_prefixes.add(pfx)
+    result["onet_prefixes"] = sorted(onet_prefixes)
+
+    return result
+
+
+def build_international_crosswalk(
+    fgos_codes: List[str],
+    *,
+    verbose: bool = True,
+) -> List[Dict[str, Any]]:
+    """Build full FGOS→ISCED→CIP→SOC→O*NET crosswalk for a list of FGOS codes."""
+    rows = []
+    for fgos in sorted(set(fgos_codes)):
+        mapping = fgos_to_international(fgos)
+        rows.append(mapping)
+
+    if verbose:
+        mapped = sum(1 for r in rows if r["isced_code"])
+        with_soc = sum(1 for r in rows if r["soc_codes"])
+        logger.info("International crosswalk: %d FGOS codes → %d with ISCED → %d with SOC",
+                     len(rows), mapped, with_soc)
+    return rows
+
+
+def save_international_crosswalk(
+    rows: List[Dict[str, Any]],
+    output_dir: Path,
+) -> Path:
+    """Save international crosswalk to JSON and CSV."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # JSON (full detail)
+    json_path = output_dir / "fgos_international_crosswalk.json"
+    json_path.write_text(json.dumps(rows, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    # CSV (flat, one row per FGOS→SOC pair)
+    csv_path = output_dir / "fgos_to_soc.csv"
+    fields = ["fgos_code", "fgos_level", "isced_code", "cip_code", "soc_code", "onet_prefix"]
+    with csv_path.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fields)
+        writer.writeheader()
+        for row in rows:
+            if not row["soc_codes"]:
+                writer.writerow({
+                    "fgos_code": row["fgos_code"], "fgos_level": row["fgos_level"],
+                    "isced_code": row["isced_code"] or "", "cip_code": "", "soc_code": "", "onet_prefix": "",
+                })
+            for soc in row["soc_codes"]:
+                onet = SOC_TO_ONET_PREFIX.get(soc, "")
+                for cip in row["cip_codes"]:
+                    if soc in CIP_TO_SOC.get(cip, []):
+                        writer.writerow({
+                            "fgos_code": row["fgos_code"], "fgos_level": row["fgos_level"],
+                            "isced_code": row["isced_code"], "cip_code": cip,
+                            "soc_code": soc, "onet_prefix": onet,
+                        })
+
+    logger.info("Saved: %s, %s", json_path, csv_path)
+    return json_path
+
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     run_crosswalk()
+
+    # Also build international crosswalk if MISIS data exists
+    courses_path = _REPO_ROOT / "data" / "raw" / "misis" / "courses.csv"
+    if courses_path.exists():
+        import re
+        fgos_codes = set()
+        with courses_path.open("r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                text = f"{row.get('description', '')} {row.get('department', '')}"
+                codes = re.findall(r"\d{2}\.\d{2}\.\d{2}", text)
+                fgos_codes.update(codes)
+
+        if fgos_codes:
+            out_dir = _REPO_ROOT / "data" / "processed" / "crosswalks"
+            rows = build_international_crosswalk(list(fgos_codes), verbose=True)
+            save_international_crosswalk(rows, out_dir)
+            print(f"\nInternational crosswalk: {len(rows)} FGOS codes mapped")
+    else:
+        # Demo with known MISIS FGOS codes
+        demo_codes = ["09.04.01", "09.03.01", "22.04.01", "01.03.04", "38.04.02"]
+        print("\nDemo international crosswalk:")
+        for code in demo_codes:
+            m = fgos_to_international(code)
+            print(f"  {code} → ISCED:{m['isced_code']} → CIP:{m['cip_codes']} → SOC:{m['soc_codes']}")

@@ -197,7 +197,9 @@ def run_dataset(
     # 2) Compute embeddings
     enc = _select_encoder(embedding_cfg)
     texts = [a.text for a in artifacts]
-    cache = DiskEmbeddingCache(root=out_dir / "cache_embeddings", model_id=enc.model_id)
+    # Shared global cache: embeddings persist across experiment runs
+    global_cache = Path.home() / ".cache" / "ads" / "embeddings"
+    cache = DiskEmbeddingCache(root=global_cache, model_id=enc.model_id)
     vecs = cache.get_or_compute(texts, enc.encode, verbose=True)
 
     id2vec = {artifacts[i].artifact_id: vecs[i] for i in range(len(artifacts))}
