@@ -6,9 +6,12 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pathlib import Path
 
-from ads_api.routes import evaluate, pareto, telemetry, dashboard
+from ads_api.routes import (
+    evaluate, pareto, telemetry, dashboard,
+    courses, learner, assessment, temporal, transport, policy,
+)
 
-app = FastAPI(title="ADS API", version="0.1.0", description="Agent-Didactic Spaces API")
+app = FastAPI(title="ADS API", version="0.2.0", description="Agent-Didactic Spaces API")
 
 # CORS for local development
 app.add_middleware(
@@ -23,6 +26,12 @@ app.include_router(evaluate.router, prefix="/evaluate", tags=["evaluate"])
 app.include_router(pareto.router, prefix="/pareto", tags=["pareto"])
 app.include_router(telemetry.router, prefix="/telemetry", tags=["telemetry"])
 app.include_router(dashboard.router, prefix="/dashboard", tags=["dashboard"])
+app.include_router(courses.router, prefix="/courses", tags=["courses"])
+app.include_router(learner.router, prefix="/learner", tags=["learner"])
+app.include_router(assessment.router, prefix="/assessment", tags=["assessment"])
+app.include_router(temporal.router, prefix="/temporal", tags=["temporal"])
+app.include_router(transport.router, prefix="/transport", tags=["transport"])
+app.include_router(policy.router, prefix="/policy", tags=["policy"])
 
 # Serve static UI files
 UI_DIR = Path(__file__).parent / "ui"
