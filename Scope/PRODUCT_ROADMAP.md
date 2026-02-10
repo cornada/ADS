@@ -234,10 +234,10 @@ packages/ads_core/temporal/
 
 ---
 
-## Phase 2: Advanced Analytics (+2-4 months)
+## Phase 2: Advanced Analytics (+2-4 months) ✅ COMPLETE
 **Goal:** Углубить математический аппарат, подготовить фундамент для runtime.
 
-### 2.1 Topological Data Analysis (Persistent Homology)
+### 2.1 Topological Data Analysis (Persistent Homology) — ✅ DONE
 **Что:** TDA на cloud of course embeddings — найти "петли", "ветвления", "бутылочные горлышки" в curriculum space.
 
 **Зачем:**
@@ -262,9 +262,17 @@ packages/ads_core/topology/
 
 **Effort:** 1-2 недели
 
+**Results (2026-02-10):**
+- `persistent_homology.py`: compute_persistence(), compare_topologies(), reduce_embeddings()
+- PCA→10-15d reduction for tractability, ripser for Vietoris-Rips filtration
+- Persistence diagrams, barcodes, Betti numbers (β₀, β₁), persistence entropy
+- Wasserstein/bottleneck distances for cross-space comparison
+- 17 unit tests in `tests/test_persistent_homology.py`
+- Report: `experiments/reports/tda_analysis/`
+
 ---
 
-### 2.2 Information Bottleneck / MDL
+### 2.2 Information Bottleneck / MDL — ✅ DONE
 **Что:** Формализовать lens-трансформацию как информационное сжатие. IB отвечает на вопрос: "сколько предсказательной информации теряется при переходе от полного описания курса к его позиции в objective space?"
 
 **Зачем:**
@@ -283,9 +291,17 @@ packages/ads_core/lenses/information_bottleneck.py
 
 **Effort:** 1-2 недели (теория) + зависит от downstream task definition
 
+**Results (2026-02-10):**
+- `information_bottleneck.py`: IB framework for lens evaluation
+- KSG k-NN mutual information estimator, Kozachenko-Leonenko entropy
+- compute_ib_point(), compute_ib_curve() with elbow detection
+- evaluate_lens_ib() for specific diagonal lens evaluation
+- Downstream task proxy: FGOS classification (categorical)
+- 12 unit tests in `tests/test_information_bottleneck.py`
+
 ---
 
-### 2.3 Causal Foundations (Observational)
+### 2.3 Causal Foundations (Observational) — ✅ DONE
 **Что:** Не полный causal inference (нет interventions), а causal *reasoning* framework: DAG of assumptions, sensitivity analysis, bounding.
 
 **Зачем:**
@@ -304,6 +320,16 @@ packages/ads_core/causal/
 ФГОС changes (2020→2024) = natural experiment: programs *вынуждены* менять curriculum. Это quasi-random shock. Diff-in-diff: compare programs that changed early vs late.
 
 **Effort:** 2-3 недели
+
+**Results (2026-02-10):**
+- `dag_assumptions.py`: 8-node causal DAG (FGOS → curriculum → market_fit)
+- `sensitivity_analysis.py`: E-values, Rosenbaum bounds, Manski partial identification
+- `natural_experiments.py`: Diff-in-Diff for FGOS revision as natural experiment
+- 23 FGOS change events detected, DiD for n_courses/credits/competencies
+- Honest null results: ATT not significant (p>0.05) — FGOS revision effects are heterogeneous
+- E-values 1.15-1.66 (fragile to confounding) — correctly flagging observational limitations
+- 33 unit tests in `tests/test_causal.py`
+- Report: `experiments/reports/causal_analysis/`
 
 ---
 

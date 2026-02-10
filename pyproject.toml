@@ -30,6 +30,9 @@ exp = [
   "pdfplumber>=0.10",
   "POT>=0.9",
   "ruptures>=1.1",
+  "ripser>=0.6",
+  "persim>=0.3",
+  "umap-learn>=0.5",
 ]
 # Optional embedding runtime (downloads models on first use)
 embed = ["sentence-transformers>=2.2", "torch>=2.0"]
