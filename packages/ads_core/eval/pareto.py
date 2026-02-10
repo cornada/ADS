@@ -298,6 +298,58 @@ def _hypervolume_monte_carlo(points: np.ndarray, n_samples: int = 10000) -> floa
     return float(dominated_count / n_samples * box_volume)
 
 
+def constrained_pareto_front(
+    items: List[Dict[str, float]],
+    keys: Sequence[str],
+    feasibility: List[bool],
+) -> ParetoResult:
+    """Compute Pareto front restricted to feasible solutions.
+
+    This enables comparing the unconstrained front (all solutions)
+    with the constrained front (only feasible ones) to quantify
+    the "price of constraints".
+
+    Args:
+        items: List of solutions with objective values
+        keys: Objective names to consider
+        feasibility: Boolean mask — True if the solution satisfies all constraints
+
+    Returns:
+        ParetoResult containing only feasible Pareto-optimal solutions
+    """
+    # Filter to feasible items
+    feasible_items = []
+    feasible_original_idx = []
+    for i, (item, feas) in enumerate(zip(items, feasibility)):
+        if feas:
+            feasible_items.append(item)
+            feasible_original_idx.append(i)
+
+    if not feasible_items:
+        return ParetoResult(
+            indices=[],
+            solutions=[],
+            keys=list(keys),
+            total_count=len(items),
+            feasible_count=0,
+            metadata={"constrained": True},
+        )
+
+    # Compute Pareto front among feasible items
+    pareto_idx = pareto_front(feasible_items, keys)
+    pareto_original = [feasible_original_idx[i] for i in pareto_idx]
+    pareto_solutions = [feasible_items[i] for i in pareto_idx]
+
+    return ParetoResult(
+        indices=pareto_original,
+        solutions=pareto_solutions,
+        keys=list(keys),
+        total_count=len(items),
+        feasible_count=len(feasible_items),
+        metadata={"constrained": True},
+    )
+
+
 def compare_pareto_fronts(
     front_a: List[Dict[str, float]],
     front_b: List[Dict[str, float]],

@@ -109,10 +109,10 @@ ADS — **система, которая переводит образовате
 
 ---
 
-## Phase 1: Mathematical Foundations (+2-8 weeks)
+## Phase 1: Mathematical Foundations (+2-8 weeks) ✅ COMPLETE
 **Goal:** Добавить новые математические инструменты на **существующих данных**.
 
-### 1.1 Optimal Transport (Wasserstein) — ПРИОРИТЕТ #1
+### 1.1 Optimal Transport (Wasserstein) — ✅ DONE
 **Что:** Curriculum distribution ↔ Job market distribution как задача перевозки массы.
 
 **Зачем:**
@@ -136,9 +136,14 @@ packages/ads_core/eval/optimal_transport.py
 
 **Effort:** 3-5 дней
 
+**Results (2026-02-10):**
+- MISIS→HeadHunter: W=0.644, MISIS→ProfStandart: W=0.616, MISIS→ESCO: W=0.574
+- 19 figures, HTML report, JSON summary in `experiments/reports/ot_analysis/`
+- 16 unit tests in `tests/test_optimal_transport.py`
+
 ---
 
-### 1.2 Prerequisite Graphs & DAG Analysis — ПРИОРИТЕТ #2
+### 1.2 Prerequisite Graphs & DAG Analysis — ✅ DONE
 **Что:** Построить directed acyclic graph из prerequisite chains, найти критические пути, bottleneck courses, alternative routes.
 
 **Зачем:**
@@ -164,9 +169,15 @@ packages/ads_core/graph/
 
 **Effort:** 5-7 дней
 
+**Results (2026-02-10):**
+- 1,166 nodes, 13,792 edges, 31 cycles removed, 27-hop longest path
+- DAG vs embedding correlation: r=0.158, 35 hidden connections found
+- 9 figures, HTML report in `experiments/reports/dag_analysis/`
+- 16 unit tests in `tests/test_prerequisite_dag.py`
+
 ---
 
-### 1.3 Constrained Pareto — РАСШИРЕНИЕ
+### 1.3 Constrained Pareto — ✅ DONE
 **Что:** Добавить hard constraints к multi-objective optimization: minimum trust, maximum workload, prerequisite completion.
 
 **Зачем:**
@@ -187,9 +198,14 @@ packages/ads_core/eval/pareto.py — добавить:
 
 **Effort:** 2-3 дня
 
+**Results (2026-02-10):**
+- WorkloadConstraint, PrerequisiteConstraint, DiversityConstraint added
+- constrained_pareto_front() with "price of constraints" quantification
+- HV loss from prerequisites: 12.3%, 6 figures in `experiments/reports/constrained_pareto/`
+
 ---
 
-### 1.4 Change-Point Detection — РАСШИРЕНИЕ
+### 1.4 Change-Point Detection — ✅ DONE
 **Что:** Обнаружение "скачков режима" в temporal trajectory of courses/programs.
 
 **Зачем:**
@@ -208,6 +224,13 @@ packages/ads_core/temporal/
 **Зависимости:** `ruptures`
 
 **Effort:** 2 дня
+
+**Results (2026-02-10):**
+- 29 FGOS programs analyzed (3-5 years each), 16 with changepoints
+- Consensus years: 2024 (34 CPs), 2023 (18 CPs) — FGOS revision detected
+- KernelCPD for short series + permutation testing for significance
+- 22 unit tests in `tests/test_changepoint.py`
+- Report: `experiments/reports/changepoint_analysis/`
 
 ---
 

@@ -242,3 +242,134 @@ def relaxed_autonomy_config(tau: float = 0.5) -> ConstraintConfig:
 def no_constraints_config() -> ConstraintConfig:
     """No constraints - pure Pareto optimization."""
     return ConstraintConfig(enable_autonomy=False)
+
+
+# ============================================================================
+# Extended Constraint Types (Phase 1.3)
+# ============================================================================
+
+@dataclass
+class WorkloadConstraint:
+    """Enforce maximum credit workload per semester/selection.
+
+    In curriculum planning, students have a limited budget of credits.
+    This constraint filters out selections that exceed the budget.
+
+    Attributes:
+        max_credits: maximum total credits allowed
+        credit_key: metadata key storing credit count per course
+    """
+
+    max_credits: float = 30.0
+    credit_key: str = "credits_zet"
+
+    def evaluate(self, courses: List[Dict[str, Any]]) -> ConstraintResult:
+        """Check if a set of courses fits within credit budget."""
+        total = sum(c.get(self.credit_key, 0) or 0 for c in courses)
+        feasible = total <= self.max_credits
+        violations = {}
+        if not feasible:
+            violations["workload"] = {
+                "total_credits": total,
+                "max_credits": self.max_credits,
+                "exceeded_by": total - self.max_credits,
+            }
+        return ConstraintResult(
+            feasible=feasible,
+            violations=violations,
+            metadata={"total_credits": total},
+        )
+
+
+@dataclass
+class PrerequisiteConstraint:
+    """Enforce prerequisite completion.
+
+    Given a set of completed courses and a prerequisite DAG,
+    checks that all prerequisites for selected courses are satisfied.
+
+    Attributes:
+        prerequisite_map: dict mapping course_name → list of prerequisite names
+    """
+
+    prerequisite_map: Dict[str, List[str]] = field(default_factory=dict)
+
+    @classmethod
+    def from_dataframe(cls, df, course_col="course_name", prereq_col="prerequisite_name"):
+        """Build from a prerequisites dataframe."""
+        prereq_map: Dict[str, List[str]] = {}
+        for _, row in df.iterrows():
+            course = str(row[course_col]).strip()
+            prereq = str(row[prereq_col]).strip()
+            if course and prereq and course != prereq:
+                prereq_map.setdefault(course, []).append(prereq)
+        return cls(prerequisite_map=prereq_map)
+
+    def evaluate(
+        self,
+        selected: List[str],
+        completed: Optional[List[str]] = None,
+    ) -> ConstraintResult:
+        """Check prerequisite satisfaction for selected courses.
+
+        Args:
+            selected: courses the student wants to take
+            completed: courses already completed (default: empty)
+
+        Returns:
+            ConstraintResult with list of unmet prerequisites
+        """
+        completed_set = set(completed) if completed else set()
+        # Courses being taken simultaneously can satisfy each other
+        available = completed_set | set(selected)
+
+        violations = {}
+        for course in selected:
+            prereqs = self.prerequisite_map.get(course, [])
+            unmet = [p for p in prereqs if p not in available]
+            if unmet:
+                violations[course] = unmet
+
+        feasible = len(violations) == 0
+        return ConstraintResult(
+            feasible=feasible,
+            violations={"unmet_prerequisites": violations} if violations else {},
+            metadata={
+                "n_selected": len(selected),
+                "n_completed": len(completed_set),
+                "n_violations": len(violations),
+            },
+        )
+
+
+@dataclass
+class DiversityConstraint:
+    """Enforce diversity across FGOS directions or departments.
+
+    Prevents selections that are too concentrated in one area.
+
+    Attributes:
+        group_key: metadata key for grouping (e.g., "fgos_code", "department")
+        max_from_same_group: max courses from the same group
+    """
+
+    group_key: str = "fgos_code"
+    max_from_same_group: int = 5
+
+    def evaluate(self, courses: List[Dict[str, Any]]) -> ConstraintResult:
+        """Check diversity of course selection."""
+        from collections import Counter
+        groups = Counter(c.get(self.group_key, "unknown") for c in courses)
+        violations = {}
+        for group, count in groups.items():
+            if count > self.max_from_same_group:
+                violations[group] = {
+                    "count": count,
+                    "max_allowed": self.max_from_same_group,
+                }
+        feasible = len(violations) == 0
+        return ConstraintResult(
+            feasible=feasible,
+            violations={"diversity": violations} if violations else {},
+            metadata={"n_groups": len(groups), "group_counts": dict(groups)},
+        )
