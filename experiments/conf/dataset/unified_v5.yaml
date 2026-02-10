@@ -1,0 +1,6 @@
+# unified_v5: Full cross-national dataset with 3 labor markets
+# 8 universities: MIT, UC Berkeley, Stanford, UIUC, Cornell (US) + KTH (SE) + Edinburgh (UK) + MISIS (RU)
+# 3 labor markets: O*NET (US), Profstandart+HeadHunter (RU), ESCO (EU)
+
+id: unified_v5
+strict_data: false

@@ -124,6 +124,7 @@ def _get_target_artifacts(
         "mission": [ArtifactType.MISSION],
         "university": [ArtifactType.COURSE],
         "outcomes": [ArtifactType.OUTCOME_MAJOR, ArtifactType.OUTCOME_SUMMARY],
+        "competency": [ArtifactType.COMPETENCY],
     }
 
     target_types = type_map.get(target_type, [])
@@ -137,6 +138,8 @@ def _create_learner_profile(dataset_id: str) -> str:
         "mit": "MIT student interested in algorithms, machine learning, and systems.",
         "ucb": "UC Berkeley student interested in computer science and data science.",
         "asu": "ASU student interested in engineering and technology careers.",
+        "misis": "MISIS student interested in materials science, metallurgy, and IT.",
+        "unified_v5": "Student interested in technology, engineering, and career success.",
     }
     return profiles.get(dataset_id, "Student interested in technology and career success.")
 
@@ -239,6 +242,13 @@ def run_dataset(
         learner_text = _create_learner_profile(dataset_id)
         learner_v = enc.encode([learner_text])[0]
         target_centroids["learner"] = learner_v / (np.linalg.norm(learner_v) + 1e-8)
+
+    # Competency target (FGOS competency requirements)
+    if "competency" in objectives:
+        comp_arts = _get_target_artifacts(artifacts, "competency")
+        if comp_arts:
+            comp_vs = [id2vec[a.artifact_id] for a in comp_arts]
+            target_centroids["competency"] = centroid(comp_vs)
 
     # 5) Get options (courses for evaluation)
     option_arts = [a for a in artifacts if a.type == ArtifactType.COURSE]

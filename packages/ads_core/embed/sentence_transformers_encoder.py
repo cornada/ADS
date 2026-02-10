@@ -95,10 +95,11 @@ class SentenceTransformersEncoder(Encoder):
         if not texts:
             return np.zeros((0, self._dim), dtype=np.float32)
 
+        show_bar = len(texts) > 100
         vecs = self._model.encode(
             texts,
             normalize_embeddings=self._normalize,
-            show_progress_bar=False,
+            show_progress_bar=show_bar,
             batch_size=self._batch_size,
         )
         return np.asarray(vecs, dtype=np.float32)

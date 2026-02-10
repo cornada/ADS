@@ -72,6 +72,20 @@ DATASET_REGISTRY: Dict[str, Dict[str, Any]] = {
         "loader": "jsonl",
         "artifacts_path": "data/processed/unified_v4/artifacts.jsonl",
     },
+    "unified_v5": {
+        "name": "Unified V5 (8 Universities + 3 Labor Markets)",
+        "institution": "MULTI",
+        "description": "8 universities (US/SE/UK/RU) + O*NET + Profstandart + HeadHunter + ESCO + MISIS competencies",
+        "loader": "jsonl",
+        "artifacts_path": "data/processed/unified_v5/artifacts.jsonl",
+    },
+    "misis": {
+        "name": "MISIS (NUST MISIS)",
+        "institution": "MISIS",
+        "description": "NUST MISIS courses with FGOS competencies and Russian labor market",
+        "loader": "jsonl",
+        "artifacts_path": "data/raw/misis/artifacts.jsonl",
+    },
 }
 
 
