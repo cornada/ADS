@@ -249,16 +249,33 @@
             </div>
           </div>
 
-          <div class="card">
-            <div class="card-title">Pareto Front</div>
+          <div class="card" v-if="paretoData">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+              <div class="card-title" style="margin-bottom:0">Pareto Front</div>
+              <div class="subtabs" style="margin-bottom:0">
+                <button class="subtab" :class="{ active: paretoView === '2d' }" @click="paretoView = '2d'; renderParetoChart()">2D</button>
+                <button class="subtab" :class="{ active: paretoView === '3d' }" @click="paretoView = '3d'; renderParetoChart()" :disabled="paretoData.objective_keys.length < 3">3D</button>
+                <button class="subtab" :class="{ active: paretoView === 'parallel' }" @click="paretoView = 'parallel'; renderParetoChart()">Parallel</button>
+              </div>
+            </div>
             <div id="pareto-scatter" class="chart-box"></div>
           </div>
 
+          <!-- Radar comparison -->
+          <div class="card" v-if="compareList.length > 0 && paretoData">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+              <div class="card-title" style="margin-bottom:0">Course Comparison ({{ compareList.length }})</div>
+              <button class="btn btn-sm" style="background:var(--bg3);color:var(--text2);width:auto" @click="compareList = []">Clear</button>
+            </div>
+            <div id="radar-compare" class="chart-box"></div>
+          </div>
+
           <div class="card" v-if="paretoData">
-            <div class="card-title">Options Table</div>
+            <div class="card-title">Options Table <span style="font-size:0.65rem;color:var(--text3);text-transform:none;letter-spacing:0">(click row for detail, shift+click to compare)</span></div>
             <table class="tbl">
               <thead>
                 <tr>
+                  <th style="width:30px"></th>
                   <th>Course</th><th>Status</th>
                   <th v-for="k in paretoData.objective_keys" :key="k" v-text="k"></th>
                   <th>Drift</th>
@@ -266,7 +283,10 @@
               </thead>
               <tbody>
                 <tr v-for="opt in sortedParetoOptions" :key="opt.option_id"
-                    @click="selectedOption = opt" style="cursor:pointer">
+                    @click.exact="selectCourse(opt)" @click.shift="toggleCompare(opt)"
+                    style="cursor:pointer"
+                    :style="selectedOption && selectedOption.option_id === opt.option_id ? 'background:var(--bg3)' : ''">
+                  <td><input type="checkbox" :checked="compareList.some(c => c.option_id === opt.option_id)" @click.stop="toggleCompare(opt)" style="accent-color:var(--accent)"></td>
                   <td class="mono" v-text="opt.option_id.replace('course:','')"></td>
                   <td>
                     <span v-if="opt.is_pareto" class="tag tag-pareto">Pareto</span>
@@ -279,6 +299,32 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+
+          <!-- Detail panel -->
+          <div class="card" v-if="selectedOption && paretoData" style="border-color:var(--accent)">
+            <div class="card-title">Course Detail</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+              <div>
+                <p style="font-size:0.8rem;margin-bottom:8px"><strong>ID:</strong> <span class="mono" v-text="selectedOption.option_id"></span></p>
+                <p style="font-size:0.8rem;margin-bottom:8px"><strong>Status:</strong>
+                  <span v-if="selectedOption.is_pareto" class="tag tag-pareto">Pareto Optimal</span>
+                  <span v-else-if="!selectedOption.feasible" class="tag tag-infeasible">Infeasible</span>
+                  <span v-else class="tag tag-feasible">Feasible</span>
+                </p>
+                <p style="font-size:0.8rem;margin-bottom:8px"><strong>Autonomy Drift:</strong> <span class="mono" v-text="selectedOption.autonomy_drift.toFixed(4)"></span></p>
+                <div v-for="k in paretoData.objective_keys" :key="k" class="comp-bar-wrap">
+                  <div class="comp-bar-label">
+                    <span v-text="k"></span>
+                    <span class="mono" v-text="(selectedOption.objectives[k] || 0).toFixed(3)"></span>
+                  </div>
+                  <div class="comp-bar-track">
+                    <div class="comp-bar-fill" :style="{ width: ((selectedOption.objectives[k] || 0) * 100) + '%', background: barColor(selectedOption.objectives[k] || 0) }"></div>
+                  </div>
+                </div>
+              </div>
+              <div id="detail-radar" style="min-height:250px"></div>
+            </div>
           </div>
         </template>
 
@@ -695,6 +741,8 @@ createApp({
     const paretoData = ref(null);
     const paretoLoading = ref(false);
     const selectedOption = ref(null);
+    const paretoView = ref('2d');
+    const compareList = ref([]);
 
     const sortedParetoOptions = computed(() => {
       if (!paretoData.value) return [];
@@ -706,6 +754,18 @@ createApp({
       });
       return opts;
     });
+
+    function selectCourse(opt) {
+      selectedOption.value = opt;
+      nextTick(() => renderDetailRadar(opt));
+    }
+
+    function toggleCompare(opt) {
+      const idx = compareList.value.findIndex(c => c.option_id === opt.option_id);
+      if (idx >= 0) { compareList.value.splice(idx, 1); }
+      else if (compareList.value.length < 6) { compareList.value.push(opt); }
+      nextTick(() => renderCompareRadar());
+    }
 
     async function loadPareto() {
       paretoLoading.value = true;
@@ -724,6 +784,8 @@ createApp({
         paretoData.value = await resp.json();
         overview.value.totalCourses = paretoData.value.stats.total_options;
         overview.value.paretoSize = paretoData.value.stats.pareto_count;
+        compareList.value = [];
+        selectedOption.value = null;
         await nextTick();
         renderParetoChart();
       } catch (e) { console.error('Pareto load error:', e); }
@@ -733,24 +795,96 @@ createApp({
     function renderParetoChart() {
       const d = paretoData.value;
       if (!d || d.objective_keys.length < 2) return;
-      const xk = d.objective_keys[0], yk = d.objective_keys[1];
+      const keys = d.objective_keys;
       const pareto = d.options.filter(o => o.is_pareto);
       const other = d.options.filter(o => !o.is_pareto);
-      const traces = [
-        { x: other.map(o => o.objectives[xk] || 0), y: other.map(o => o.objectives[yk] || 0),
-          text: other.map(o => o.option_id), mode: 'markers', name: 'Other',
-          marker: { size: 9, color: other.map(o => o.feasible ? '#475569' : '#f87171'), line: { width: 1, color: '#334155' } },
-          hovertemplate: '%{text}<br>' + xk + ': %{x:.3f}<br>' + yk + ': %{y:.3f}<extra></extra>' },
-        { x: pareto.map(o => o.objectives[xk] || 0), y: pareto.map(o => o.objectives[yk] || 0),
-          text: pareto.map(o => o.option_id), mode: 'markers', name: 'Pareto',
-          marker: { size: 13, color: '#22c55e', symbol: 'star', line: { width: 2, color: '#166534' } },
-          hovertemplate: '%{text}<br>' + xk + ': %{x:.3f}<br>' + yk + ': %{y:.3f}<extra></extra>' }
-      ];
-      const layout = { xaxis: { title: xk, color: '#94a3b8', gridcolor: '#1e293b' },
-        yaxis: { title: yk, color: '#94a3b8', gridcolor: '#1e293b' },
-        paper_bgcolor: '#1e293b', plot_bgcolor: '#0f172a', font: { color: '#f1f5f9' },
-        showlegend: true, legend: { x: 0, y: 1.1, orientation: 'h' }, margin: { t: 30, r: 20, b: 50, l: 60 } };
-      Plotly.newPlot('pareto-scatter', traces, layout, { responsive: true });
+      const darkLayout = { paper_bgcolor: '#1e293b', plot_bgcolor: '#0f172a', font: { color: '#f1f5f9' } };
+
+      if (paretoView.value === '3d' && keys.length >= 3) {
+        // 3D scatter
+        const xk = keys[0], yk = keys[1], zk = keys[2];
+        const traces = [
+          { x: other.map(o => o.objectives[xk]||0), y: other.map(o => o.objectives[yk]||0), z: other.map(o => o.objectives[zk]||0),
+            text: other.map(o => o.option_id), mode: 'markers', type: 'scatter3d', name: 'Other',
+            marker: { size: 4, color: other.map(o => o.feasible ? '#475569' : '#f87171'), opacity: 0.7 } },
+          { x: pareto.map(o => o.objectives[xk]||0), y: pareto.map(o => o.objectives[yk]||0), z: pareto.map(o => o.objectives[zk]||0),
+            text: pareto.map(o => o.option_id), mode: 'markers', type: 'scatter3d', name: 'Pareto',
+            marker: { size: 7, color: '#22c55e', symbol: 'diamond', opacity: 1, line: { width: 1, color: '#166534' } } }
+        ];
+        const layout = { ...darkLayout, scene: {
+            xaxis: { title: xk, color: '#94a3b8', gridcolor: '#1e293b', backgroundcolor: '#0f172a' },
+            yaxis: { title: yk, color: '#94a3b8', gridcolor: '#1e293b', backgroundcolor: '#0f172a' },
+            zaxis: { title: zk, color: '#94a3b8', gridcolor: '#1e293b', backgroundcolor: '#0f172a' },
+            bgcolor: '#0f172a' },
+          showlegend: true, legend: { x: 0, y: 1.1, orientation: 'h' }, margin: { t: 20, r: 10, b: 10, l: 10 } };
+        Plotly.newPlot('pareto-scatter', traces, layout, { responsive: true });
+
+      } else if (paretoView.value === 'parallel') {
+        // Parallel coordinates
+        const allOpts = d.options;
+        const dims = keys.map(k => ({
+          label: k, values: allOpts.map(o => o.objectives[k] || 0), range: [0, 1]
+        }));
+        dims.push({ label: 'drift', values: allOpts.map(o => o.autonomy_drift), range: [0, 0.5] });
+        const colorVals = allOpts.map(o => o.is_pareto ? 1 : 0);
+        const traces = [{ type: 'parcoords', line: { color: colorVals, colorscale: [[0, '#475569'], [1, '#22c55e']], showscale: false }, dimensions: dims }];
+        const layout = { ...darkLayout, margin: { t: 40, r: 40, b: 30, l: 40 } };
+        Plotly.newPlot('pareto-scatter', traces, layout, { responsive: true });
+
+      } else {
+        // 2D scatter (default)
+        const xk = keys[0], yk = keys[1];
+        const traces = [
+          { x: other.map(o => o.objectives[xk]||0), y: other.map(o => o.objectives[yk]||0),
+            text: other.map(o => o.option_id), mode: 'markers', name: 'Other',
+            marker: { size: 9, color: other.map(o => o.feasible ? '#475569' : '#f87171'), line: { width: 1, color: '#334155' } },
+            hovertemplate: '%{text}<br>'+xk+': %{x:.3f}<br>'+yk+': %{y:.3f}<extra></extra>' },
+          { x: pareto.map(o => o.objectives[xk]||0), y: pareto.map(o => o.objectives[yk]||0),
+            text: pareto.map(o => o.option_id), mode: 'markers', name: 'Pareto',
+            marker: { size: 13, color: '#22c55e', symbol: 'star', line: { width: 2, color: '#166534' } },
+            hovertemplate: '%{text}<br>'+xk+': %{x:.3f}<br>'+yk+': %{y:.3f}<extra></extra>' }
+        ];
+        const layout = { ...darkLayout, xaxis: { title: xk, color: '#94a3b8', gridcolor: '#1e293b' },
+          yaxis: { title: yk, color: '#94a3b8', gridcolor: '#1e293b' },
+          showlegend: true, legend: { x: 0, y: 1.1, orientation: 'h' }, margin: { t: 30, r: 20, b: 50, l: 60 } };
+        Plotly.newPlot('pareto-scatter', traces, layout, { responsive: true });
+      }
+    }
+
+    function renderDetailRadar(opt) {
+      const d = paretoData.value;
+      if (!d || !opt) return;
+      const el = document.getElementById('detail-radar');
+      if (!el) return;
+      const keys = d.objective_keys;
+      const vals = keys.map(k => opt.objectives[k] || 0);
+      const traces = [{ type: 'scatterpolar', r: [...vals, vals[0]], theta: [...keys, keys[0]],
+        fill: 'toself', fillcolor: 'rgba(59,130,246,0.2)', line: { color: '#3b82f6', width: 2 },
+        name: opt.option_id.replace('course:','') }];
+      const layout = { polar: { bgcolor: '#0f172a', radialaxis: { visible: true, range: [0, 1], color: '#64748b', gridcolor: '#1e293b' },
+        angularaxis: { color: '#94a3b8' } }, paper_bgcolor: '#1e293b', font: { color: '#f1f5f9', size: 11 },
+        showlegend: false, margin: { t: 30, r: 30, b: 30, l: 30 }, height: 250 };
+      Plotly.newPlot(el, traces, layout, { responsive: true });
+    }
+
+    function renderCompareRadar() {
+      const d = paretoData.value;
+      if (!d || compareList.value.length === 0) return;
+      const el = document.getElementById('radar-compare');
+      if (!el) return;
+      const keys = d.objective_keys;
+      const colors = ['#3b82f6', '#22c55e', '#a855f7', '#eab308', '#ef4444', '#06b6d4'];
+      const traces = compareList.value.map((opt, i) => {
+        const vals = keys.map(k => opt.objectives[k] || 0);
+        return { type: 'scatterpolar', r: [...vals, vals[0]], theta: [...keys, keys[0]],
+          fill: 'toself', fillcolor: colors[i % colors.length] + '22',
+          line: { color: colors[i % colors.length], width: 2 },
+          name: opt.option_id.replace('course:','') };
+      });
+      const layout = { polar: { bgcolor: '#0f172a', radialaxis: { visible: true, range: [0, 1], color: '#64748b', gridcolor: '#1e293b' },
+        angularaxis: { color: '#94a3b8' } }, paper_bgcolor: '#1e293b', font: { color: '#f1f5f9', size: 11 },
+        showlegend: true, legend: { x: 0.5, xanchor: 'center', y: -0.1, orientation: 'h' }, margin: { t: 40, r: 40, b: 60, l: 40 } };
+      Plotly.newPlot(el, traces, layout, { responsive: true });
     }
 
     // ── Learner ──
@@ -1104,6 +1238,7 @@ createApp({
       currentTab, apiStatus, tabs, activeTab,
       overview, phases,
       objectiveOptions, paretoConfig, paretoData, paretoLoading, selectedOption, sortedParetoOptions, loadPareto,
+      paretoView, compareList, selectCourse, toggleCompare, renderParetoChart,
       learnerForm, learnerState, obsValues, learnerHistory, registerLearner, loadLearnerState, submitObservation,
       catForm, catSession, catAbilityHistory, startCAT, respondCAT,
       careerConfig, careerResult, computeCareerPath,
