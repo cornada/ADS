@@ -46,8 +46,20 @@ def health():
 
 @app.get("/")
 def index():
-    """Serve the dashboard UI."""
+    """Serve the main SPA."""
+    app_file = UI_DIR / "app.html"
+    if app_file.exists():
+        return FileResponse(app_file)
     index_file = UI_DIR / "index.html"
     if index_file.exists():
         return FileResponse(index_file)
-    return {"message": "ADS API", "docs": "/docs", "dashboard": "/static/index.html"}
+    return {"message": "ADS API", "docs": "/docs"}
+
+
+@app.get("/classic")
+def classic_dashboard():
+    """Serve the legacy Pareto-only dashboard."""
+    index_file = UI_DIR / "index.html"
+    if index_file.exists():
+        return FileResponse(index_file)
+    return {"message": "Legacy dashboard not found"}

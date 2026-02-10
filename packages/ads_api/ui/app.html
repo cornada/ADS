@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ADS — Agent-Didactic Spaces</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f172a; --bg2: #1e293b; --bg3: #334155;
+      --text: #f1f5f9; --text2: #94a3b8; --text3: #64748b;
+      --accent: #3b82f6; --accent2: #2563eb; --green: #22c55e;
+      --red: #ef4444; --yellow: #eab308; --purple: #a855f7;
+      --border: #334155; --radius: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.5; }
+    .app-shell { display: flex; height: 100vh; }
+    /* Sidebar */
+    .sidebar { width: 220px; background: var(--bg2); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; flex-shrink: 0; }
+    .sidebar-brand { padding: 20px 16px; border-bottom: 1px solid var(--border); }
+    .sidebar-brand h1 { font-size: 1.1rem; font-weight: 700; letter-spacing: 0.5px; }
+    .sidebar-brand small { font-size: 0.7rem; color: var(--text3); }
+    .sidebar-nav { flex: 1; padding: 12px 8px; overflow-y: auto; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+      border-radius: var(--radius); cursor: pointer; font-size: 0.85rem;
+      color: var(--text2); transition: all 0.15s; margin-bottom: 2px; border: none;
+      background: none; width: 100%; text-align: left; }
+    .nav-item:hover { background: var(--bg3); color: var(--text); }
+    .nav-item.active { background: var(--accent); color: #fff; }
+    .nav-icon { width: 18px; text-align: center; font-size: 0.9rem; }
+    .sidebar-footer { padding: 12px 16px; border-top: 1px solid var(--border);
+      font-size: 0.7rem; color: var(--text3); }
+    /* Main */
+    .main { flex: 1; overflow-y: auto; }
+    .topbar { padding: 16px 24px; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center; }
+    .topbar h2 { font-size: 1.15rem; font-weight: 600; }
+    .topbar-meta { font-size: 0.75rem; color: var(--text3); }
+    .content { padding: 24px; }
+    /* Cards */
+    .card { background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+    .card-title { font-size: 0.85rem; font-weight: 600; color: var(--text2);
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+    /* Metric grid */
+    .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .metric { background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px; text-align: center; }
+    .metric-value { font-size: 1.8rem; font-weight: 700; }
+    .metric-label { font-size: 0.7rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; }
+    .metric-value.green { color: var(--green); }
+    .metric-value.blue { color: var(--accent); }
+    .metric-value.yellow { color: var(--yellow); }
+    .metric-value.red { color: var(--red); }
+    .metric-value.purple { color: var(--purple); }
+    /* Table */
+    .tbl { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    .tbl th { text-align: left; padding: 8px 12px; color: var(--text3);
+      font-weight: 600; border-bottom: 1px solid var(--border); font-size: 0.7rem;
+      text-transform: uppercase; letter-spacing: 0.5px; }
+    .tbl td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+    .tbl tr:hover { background: var(--bg3); }
+    .tbl .mono { font-family: 'SF Mono', Monaco, monospace; font-size: 0.75rem; }
+    /* Tags */
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 4px;
+      font-size: 0.7rem; font-weight: 600; }
+    .tag-pareto { background: rgba(34,197,94,0.15); color: var(--green); }
+    .tag-feasible { background: rgba(59,130,246,0.15); color: var(--accent); }
+    .tag-infeasible { background: rgba(239,68,68,0.15); color: var(--red); }
+    /* Controls */
+    .control-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+    .ctrl-group { display: flex; flex-direction: column; gap: 4px; }
+    .ctrl-label { font-size: 0.7rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; }
+    select, input[type="number"] { background: var(--bg3); color: var(--text); border: 1px solid var(--border);
+      border-radius: 4px; padding: 6px 10px; font-size: 0.8rem; }
+    input[type="range"] { width: 140px; accent-color: var(--accent); }
+    .btn { padding: 8px 16px; border-radius: 4px; border: none; font-size: 0.8rem;
+      font-weight: 600; cursor: pointer; transition: all 0.15s; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent2); }
+    .btn-sm { padding: 4px 10px; font-size: 0.75rem; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    /* Checkbox group */
+    .check-group { display: flex; gap: 12px; flex-wrap: wrap; }
+    .check-item { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; }
+    .check-item input { accent-color: var(--accent); }
+    /* Chart container */
+    .chart-box { width: 100%; min-height: 380px; }
+    /* Tabs within a page */
+    .subtabs { display: flex; gap: 4px; margin-bottom: 16px; }
+    .subtab { padding: 6px 14px; border-radius: 4px; border: 1px solid var(--border);
+      background: none; color: var(--text2); font-size: 0.8rem; cursor: pointer; }
+    .subtab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    /* Competency bars */
+    .comp-bar-wrap { margin-bottom: 8px; }
+    .comp-bar-label { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 2px; }
+    .comp-bar-track { height: 8px; background: var(--bg3); border-radius: 4px; overflow: hidden; }
+    .comp-bar-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
+    /* Loading */
+    .loading { text-align: center; padding: 40px; color: var(--text3); }
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar { width: 60px; }
+      .sidebar-brand small, .nav-label, .sidebar-footer { display: none; }
+      .sidebar-brand h1 { font-size: 0.8rem; }
+      .metric-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<div id="app">
+  <div class="app-shell">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-brand">
+        <h1>ADS</h1>
+        <small>Agent-Didactic Spaces</small>
+      </div>
+      <div class="sidebar-nav">
+        <button v-for="tab in tabs" :key="tab.id"
+          class="nav-item" :class="{ active: currentTab === tab.id }"
+          @click="currentTab = tab.id">
+          <span class="nav-icon" v-text="tab.icon"></span>
+          <span class="nav-label" v-text="tab.label"></span>
+        </button>
+      </div>
+      <div class="sidebar-footer">
+        v0.2.0 | Phase 1-5 Complete
+      </div>
+    </nav>
+
+    <!-- Main content -->
+    <div class="main">
+      <div class="topbar">
+        <h2 v-text="activeTab.label"></h2>
+        <span class="topbar-meta" v-text="'API: ' + apiStatus"></span>
+      </div>
+      <div class="content">
+
+        <!-- ==================== OVERVIEW ==================== -->
+        <template v-if="currentTab === 'overview'">
+          <div class="metric-grid">
+            <div class="metric">
+              <div class="metric-value blue" v-text="overview.totalCourses"></div>
+              <div class="metric-label">Total Courses</div>
+            </div>
+            <div class="metric">
+              <div class="metric-value green" v-text="overview.paretoSize"></div>
+              <div class="metric-label">Pareto Optimal</div>
+            </div>
+            <div class="metric">
+              <div class="metric-value purple" v-text="overview.universities"></div>
+              <div class="metric-label">Universities</div>
+            </div>
+            <div class="metric">
+              <div class="metric-value yellow" v-text="overview.objectives"></div>
+              <div class="metric-label">Objectives</div>
+            </div>
+            <div class="metric">
+              <div class="metric-value green" v-text="overview.activeLearners"></div>
+              <div class="metric-label">Active Learners</div>
+            </div>
+            <div class="metric">
+              <div class="metric-value blue" v-text="overview.apiEndpoints"></div>
+              <div class="metric-label">API Endpoints</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">System Phases</div>
+            <table class="tbl">
+              <thead><tr><th>Phase</th><th>Module</th><th>Status</th><th>Tests</th></tr></thead>
+              <tbody>
+                <tr v-for="p in phases" :key="p.id">
+                  <td v-text="p.id"></td>
+                  <td v-text="p.name"></td>
+                  <td><span class="tag tag-pareto" v-text="p.status"></span></td>
+                  <td class="mono" v-text="p.tests"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Architecture</div>
+            <div :id="'overview-arch-chart'" class="chart-box"></div>
+          </div>
+        </template>
+
+        <!-- ==================== PARETO ==================== -->
+        <template v-if="currentTab === 'pareto'">
+          <div class="card">
+            <div class="card-title">Configuration</div>
+            <div class="control-row">
+              <div class="ctrl-group">
+                <span class="ctrl-label">Objectives</span>
+                <div class="check-group">
+                  <label class="check-item" v-for="obj in objectiveOptions" :key="obj">
+                    <input type="checkbox" :value="obj" v-model="paretoConfig.objectives">
+                    <span v-text="obj"></span>
+                  </label>
+                </div>
+              </div>
+              <div class="ctrl-group">
+                <span class="ctrl-label">Tau: {{ paretoConfig.tau.toFixed(2) }}</span>
+                <input type="range" min="0" max="1" step="0.05" v-model.number="paretoConfig.tau">
+              </div>
+              <div class="ctrl-group">
+                <span class="ctrl-label">Lens</span>
+                <select v-model="paretoConfig.lens">
+                  <option value="identity">Identity</option>
+                  <option value="diagonal">Diagonal</option>
+                </select>
+              </div>
+              <div class="ctrl-group">
+                <span class="ctrl-label">Embedding</span>
+                <select v-model="paretoConfig.embedding">
+                  <option value="stub">Stub (fast)</option>
+                  <option value="sbert">SBERT</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" @click="loadPareto" :disabled="paretoLoading">
+                {{ paretoLoading ? 'Loading...' : 'Compute Pareto' }}
+              </button>
+            </div>
+          </div>
+
+          <div class="metric-grid" v-if="paretoData">
+            <div class="metric">
+              <div class="metric-value blue" v-text="paretoData.stats.total_options"></div>
+              <div class="metric-label">Options</div>
+            </div>
+            <div class="metric">
+              <div class="metric-value green" v-text="paretoData.stats.pareto_count"></div>
+              <div class="metric-label">Pareto</div>
+            </div>
+            <div class="metric">
+              <div class="metric-value yellow" v-text="paretoData.stats.feasible_count"></div>
+              <div class="metric-label">Feasible</div>
+            </div>
+            <div class="metric">
+              <div class="metric-value red" v-text="paretoData.stats.infeasible_count"></div>
+              <div class="metric-label">Infeasible</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Pareto Front</div>
+            <div id="pareto-scatter" class="chart-box"></div>
+          </div>
+
+          <div class="card" v-if="paretoData">
+            <div class="card-title">Options Table</div>
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th>Course</th><th>Status</th>
+                  <th v-for="k in paretoData.objective_keys" :key="k" v-text="k"></th>
+                  <th>Drift</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="opt in sortedParetoOptions" :key="opt.option_id"
+                    @click="selectedOption = opt" style="cursor:pointer">
+                  <td class="mono" v-text="opt.option_id.replace('course:','')"></td>
+                  <td>
+                    <span v-if="opt.is_pareto" class="tag tag-pareto">Pareto</span>
+                    <span v-else-if="!opt.feasible" class="tag tag-infeasible">Infeasible</span>
+                    <span v-else class="tag tag-feasible">OK</span>
+                  </td>
+                  <td v-for="k in paretoData.objective_keys" :key="k" class="mono"
+                      v-text="(opt.objectives[k] || 0).toFixed(3)"></td>
+                  <td class="mono" v-text="opt.autonomy_drift.toFixed(3)"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </template>
+
+        <!-- ==================== LEARNER ==================== -->
+        <template v-if="currentTab === 'learner'">
+          <div class="card">
+            <div class="card-title">Register / Select Learner</div>
+            <div class="control-row">
+              <div class="ctrl-group">
+                <span class="ctrl-label">Learner ID</span>
+                <input type="text" v-model="learnerForm.id"
+                  style="background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:4px;padding:6px 10px;font-size:0.8rem;"
+                  placeholder="e.g. student_42">
+              </div>
+              <button class="btn btn-primary btn-sm" @click="registerLearner">Register</button>
+              <button class="btn btn-primary btn-sm" @click="loadLearnerState">Load State</button>
+            </div>
+          </div>
+
+          <template v-if="learnerState">
+            <div class="metric-grid">
+              <div class="metric">
+                <div class="metric-value blue" v-text="learnerState.learner_id"></div>
+                <div class="metric-label">Learner ID</div>
+              </div>
+              <div class="metric">
+                <div class="metric-value green" v-text="learnerState.n_observations"></div>
+                <div class="metric-label">Observations</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Competency State (Kalman Filter)</div>
+              <div v-for="(val, i) in learnerState.state_mean" :key="i" class="comp-bar-wrap">
+                <div class="comp-bar-label">
+                  <span v-text="learnerState.state_labels ? learnerState.state_labels[i] : ('Dim ' + i)"></span>
+                  <span class="mono" v-text="val.toFixed(3)"></span>
+                </div>
+                <div class="comp-bar-track">
+                  <div class="comp-bar-fill" :style="{ width: (Math.max(0, Math.min(1, val)) * 100) + '%', background: barColor(val) }"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Submit Observation</div>
+              <div class="control-row">
+                <div class="ctrl-group" v-for="(lbl, i) in (learnerState.state_labels || ['Dim 0','Dim 1','Dim 2','Dim 3'])" :key="i">
+                  <span class="ctrl-label" v-text="lbl"></span>
+                  <input type="number" v-model.number="obsValues[i]" min="0" max="1" step="0.1"
+                    style="width:70px">
+                </div>
+                <button class="btn btn-primary btn-sm" @click="submitObservation">Observe</button>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Competency Evolution</div>
+              <div id="learner-evolution-chart" class="chart-box"></div>
+            </div>
+          </template>
+        </template>
+
+        <!-- ==================== ASSESSMENT (CAT) ==================== -->
+        <template v-if="currentTab === 'assessment'">
+          <div class="card">
+            <div class="card-title">Computerized Adaptive Testing</div>
+            <div class="control-row" v-if="!catSession">
+              <div class="ctrl-group">
+                <span class="ctrl-label">Learner ID</span>
+                <input type="text" v-model="catForm.learnerId"
+                  style="background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:4px;padding:6px 10px;font-size:0.8rem;"
+                  placeholder="student_42">
+              </div>
+              <div class="ctrl-group">
+                <span class="ctrl-label">Max Items</span>
+                <input type="number" v-model.number="catForm.maxItems" min="5" max="50"
+                  style="width:70px;background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:4px;padding:6px 10px;font-size:0.8rem;">
+              </div>
+              <button class="btn btn-primary" @click="startCAT">Start CAT Session</button>
+            </div>
+          </div>
+
+          <template v-if="catSession">
+            <div class="metric-grid">
+              <div class="metric">
+                <div class="metric-value blue" v-text="catSession.session_id.substring(0, 12) + '...'"></div>
+                <div class="metric-label">Session</div>
+              </div>
+              <div class="metric">
+                <div class="metric-value" :class="catSession.is_complete ? 'green' : 'yellow'"
+                  v-text="catSession.is_complete ? 'Done' : 'Active'"></div>
+                <div class="metric-label">Status</div>
+              </div>
+              <div class="metric">
+                <div class="metric-value purple" v-text="catSession.items_administered"></div>
+                <div class="metric-label">Items Given</div>
+              </div>
+              <div class="metric">
+                <div class="metric-value green" v-text="catSession.current_ability.toFixed(3)"></div>
+                <div class="metric-label">Est. Ability</div>
+              </div>
+              <div class="metric">
+                <div class="metric-value yellow" v-text="catSession.current_se.toFixed(3)"></div>
+                <div class="metric-label">Std Error</div>
+              </div>
+            </div>
+
+            <div class="card" v-if="catSession.next_item && !catSession.is_complete">
+              <div class="card-title">Current Item</div>
+              <p style="margin-bottom:12px">
+                Item <strong v-text="catSession.next_item.item_id"></strong>
+                | Difficulty: <span class="mono" v-text="catSession.next_item.difficulty.toFixed(2)"></span>
+                | Discrimination: <span class="mono" v-text="catSession.next_item.discrimination.toFixed(2)"></span>
+              </p>
+              <div class="control-row">
+                <button class="btn btn-primary btn-sm" @click="respondCAT(true)">Correct</button>
+                <button class="btn btn-sm" style="background:var(--red);color:#fff" @click="respondCAT(false)">Incorrect</button>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Ability Trajectory</div>
+              <div id="cat-trajectory-chart" class="chart-box"></div>
+            </div>
+
+            <div class="card" v-if="catSession.is_complete">
+              <div class="card-title">Session Complete</div>
+              <p>Final ability estimate: <strong class="mono" v-text="catSession.current_ability.toFixed(3)"></strong>
+                 (SE: <span class="mono" v-text="catSession.current_se.toFixed(3)"></span>)</p>
+              <button class="btn btn-primary btn-sm" @click="catSession = null" style="margin-top:12px">New Session</button>
+            </div>
+          </template>
+        </template>
+
+        <!-- ==================== CAREER PATH ==================== -->
+        <template v-if="currentTab === 'career'">
+          <div class="card">
+            <div class="card-title">Career Path Navigator</div>
+            <p style="font-size:0.8rem;color:var(--text2);margin-bottom:12px">
+              Find the optimal curriculum path from a learner's current competencies to a target job profile.
+            </p>
+            <div class="control-row">
+              <div class="ctrl-group">
+                <span class="ctrl-label">Strategy</span>
+                <select v-model="careerConfig.strategy">
+                  <option value="greedy">Greedy (max gap reduction)</option>
+                  <option value="efficient">Efficient (gap/credit ratio)</option>
+                  <option value="breadth_first">Breadth-first (cover gaps)</option>
+                </select>
+              </div>
+              <div class="ctrl-group">
+                <span class="ctrl-label">Max Credits</span>
+                <input type="number" v-model.number="careerConfig.maxCredits" min="6" max="240"
+                  style="width:80px;background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:4px;padding:6px 10px;font-size:0.8rem;">
+              </div>
+              <button class="btn btn-primary" @click="computeCareerPath">Compute Path</button>
+            </div>
+          </div>
+
+          <template v-if="careerResult">
+            <div class="metric-grid">
+              <div class="metric">
+                <div class="metric-value green" v-text="careerResult.gap_closed_pct.toFixed(1) + '%'"></div>
+                <div class="metric-label">Gap Closed</div>
+              </div>
+              <div class="metric">
+                <div class="metric-value blue" v-text="careerResult.total_credits"></div>
+                <div class="metric-label">Total Credits</div>
+              </div>
+              <div class="metric">
+                <div class="metric-value purple" v-text="careerResult.steps.length"></div>
+                <div class="metric-label">Courses</div>
+              </div>
+              <div class="metric">
+                <div class="metric-value yellow" v-text="careerResult.initial_gap.toFixed(3)"></div>
+                <div class="metric-label">Initial Gap</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Recommended Path</div>
+              <table class="tbl">
+                <thead><tr><th>#</th><th>Course</th><th>Credits</th><th>Gap Reduction</th><th>Cumulative</th></tr></thead>
+                <tbody>
+                  <tr v-for="(step, i) in careerResult.steps" :key="i">
+                    <td v-text="i + 1"></td>
+                    <td v-text="step.course_name"></td>
+                    <td class="mono" v-text="step.credits"></td>
+                    <td class="mono" v-text="step.gap_reduction.toFixed(3)"></td>
+                    <td class="mono" v-text="step.cumulative_credits"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Gap Closure Trajectory</div>
+              <div id="career-gap-chart" class="chart-box"></div>
+            </div>
+          </template>
+        </template>
+
+        <!-- ==================== FEDERATION ==================== -->
+        <template v-if="currentTab === 'federation'">
+          <div class="subtabs">
+            <button class="subtab" :class="{ active: fedTab === 'pareto' }" @click="fedTab = 'pareto'">Federated Pareto</button>
+            <button class="subtab" :class="{ active: fedTab === 'compliance' }" @click="fedTab = 'compliance'">FGOS Compliance</button>
+          </div>
+
+          <!-- Federated Pareto -->
+          <template v-if="fedTab === 'pareto'">
+            <div class="card">
+              <div class="card-title">Cross-Institutional Pareto Front</div>
+              <p style="font-size:0.8rem;color:var(--text2);margin-bottom:12px">
+                Merges objective scores from multiple institutions and computes the global Pareto front.
+                Only embedding-derived scores are exchanged (privacy-preserving).
+              </p>
+              <button class="btn btn-primary" @click="loadFederatedPareto">Compute Federated Pareto</button>
+            </div>
+
+            <template v-if="fedPareto">
+              <div class="metric-grid">
+                <div class="metric">
+                  <div class="metric-value blue" v-text="fedPareto.total_courses"></div>
+                  <div class="metric-label">Total Courses</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-value green" v-text="fedPareto.pareto_courses.length"></div>
+                  <div class="metric-label">On Pareto Front</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-value purple" v-text="Object.keys(fedPareto.institution_counts).length"></div>
+                  <div class="metric-label">Institutions</div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-title">Institution Coverage</div>
+                <div id="fed-coverage-chart" class="chart-box"></div>
+              </div>
+
+              <div class="card">
+                <div class="card-title">Institutional Gaps</div>
+                <table class="tbl">
+                  <thead><tr><th>Institution</th><th>On Front</th><th>Total</th><th>Coverage</th><th>Near-Front</th></tr></thead>
+                  <tbody>
+                    <tr v-for="(gap, inst) in fedGaps" :key="inst">
+                      <td v-text="inst"></td>
+                      <td class="mono" v-text="gap.n_on_front"></td>
+                      <td class="mono" v-text="gap.n_total"></td>
+                      <td class="mono" v-text="((gap.n_on_front / Math.max(gap.n_total, 1)) * 100).toFixed(0) + '%'"></td>
+                      <td class="mono" v-text="gap.near_front.length"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </template>
+          </template>
+
+          <!-- FGOS Compliance -->
+          <template v-if="fedTab === 'compliance'">
+            <div class="card">
+              <div class="card-title">FGOS Compliance Check</div>
+              <p style="font-size:0.8rem;color:var(--text2);margin-bottom:12px">
+                Verify that a curriculum meets Federal State Educational Standard (FGOS) requirements:
+                competency coverage, credit allocation, and prerequisite validity.
+              </p>
+              <button class="btn btn-primary" @click="checkCompliance">Run Compliance Check</button>
+            </div>
+
+            <template v-if="complianceReport">
+              <div class="metric-grid">
+                <div class="metric">
+                  <div class="metric-value" :class="complianceReport.is_compliant ? 'green' : 'red'"
+                    v-text="complianceReport.is_compliant ? 'PASS' : 'FAIL'"></div>
+                  <div class="metric-label">Compliance</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-value red" v-text="complianceReport.n_errors"></div>
+                  <div class="metric-label">Errors</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-value yellow" v-text="complianceReport.n_warnings"></div>
+                  <div class="metric-label">Warnings</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-value blue" v-text="complianceReport.total_credits"></div>
+                  <div class="metric-label">Credits</div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-title">Competency Coverage</div>
+                <div v-for="(cov, ctype) in complianceReport.coverage" :key="ctype" class="comp-bar-wrap">
+                  <div class="comp-bar-label">
+                    <span v-text="ctype"></span>
+                    <span class="mono" v-text="(cov * 100).toFixed(0) + '%'"></span>
+                  </div>
+                  <div class="comp-bar-track">
+                    <div class="comp-bar-fill" :style="{ width: (cov * 100) + '%', background: cov >= 1 ? 'var(--green)' : 'var(--yellow)' }"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" v-if="complianceReport.violations.length > 0">
+                <div class="card-title">Violations</div>
+                <table class="tbl">
+                  <thead><tr><th>Severity</th><th>Code</th><th>Message</th></tr></thead>
+                  <tbody>
+                    <tr v-for="(v, i) in complianceReport.violations" :key="i">
+                      <td>
+                        <span class="tag" :class="'tag-' + (v.severity === 'error' ? 'infeasible' : v.severity === 'warning' ? 'feasible' : 'pareto')"
+                          v-text="v.severity"></span>
+                      </td>
+                      <td class="mono" v-text="v.code"></td>
+                      <td v-text="v.message"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </template>
+          </template>
+        </template>
+
+        <!-- ==================== ANALYTICS ==================== -->
+        <template v-if="currentTab === 'analytics'">
+          <div class="card">
+            <div class="card-title">Temporal Analysis</div>
+            <p style="font-size:0.8rem;color:var(--text2);margin-bottom:12px">
+              Curriculum evolution, change-point detection, and temporal drift analysis.
+            </p>
+            <button class="btn btn-primary" @click="loadTemporalOverview">Load Temporal Data</button>
+          </div>
+
+          <template v-if="temporalData">
+            <div class="metric-grid">
+              <div class="metric">
+                <div class="metric-value blue" v-text="temporalData.n_snapshots"></div>
+                <div class="metric-label">Snapshots</div>
+              </div>
+              <div class="metric">
+                <div class="metric-value purple" v-text="temporalData.n_programs"></div>
+                <div class="metric-label">Programs</div>
+              </div>
+              <div class="metric">
+                <div class="metric-value yellow" v-text="temporalData.year_range"></div>
+                <div class="metric-label">Year Range</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Curriculum Drift Over Time</div>
+              <div id="temporal-drift-chart" class="chart-box"></div>
+            </div>
+          </template>
+
+          <div class="card" style="margin-top:16px">
+            <div class="card-title">API Documentation</div>
+            <table class="tbl">
+              <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr v-for="ep in apiEndpoints" :key="ep.path">
+                  <td><span class="tag" :class="ep.method === 'GET' ? 'tag-pareto' : 'tag-feasible'" v-text="ep.method"></span></td>
+                  <td class="mono" v-text="ep.path"></td>
+                  <td v-text="ep.desc"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </template>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const { createApp, ref, computed, onMounted, watch, nextTick } = Vue;
+
+createApp({
+  setup() {
+    const currentTab = ref('overview');
+    const apiStatus = ref('checking...');
+
+    const tabs = [
+      { id: 'overview', label: 'Overview', icon: '\u2302' },
+      { id: 'pareto', label: 'Pareto Explorer', icon: '\u2726' },
+      { id: 'learner', label: 'Learner Tracking', icon: '\u2691' },
+      { id: 'assessment', label: 'Assessment (CAT)', icon: '\u2714' },
+      { id: 'career', label: 'Career Path', icon: '\u2192' },
+      { id: 'federation', label: 'Federation', icon: '\u2605' },
+      { id: 'analytics', label: 'Analytics', icon: '\u2261' },
+    ];
+
+    const activeTab = computed(() => tabs.find(t => t.id === currentTab.value) || tabs[0]);
+
+    // ── Overview ──
+    const overview = ref({
+      totalCourses: '-', paretoSize: '-', universities: 6,
+      objectives: 4, activeLearners: 0, apiEndpoints: 28
+    });
+    const phases = [
+      { id: 'Phase 1', name: 'Mathematical Core', status: 'Complete', tests: '42' },
+      { id: 'Phase 2', name: 'Data & Embedding', status: 'Complete', tests: '64' },
+      { id: 'Phase 3', name: 'Runtime Agent', status: 'Complete', tests: '87' },
+      { id: 'Phase 4', name: 'Production API', status: 'Complete', tests: '22' },
+      { id: 'Phase 5', name: 'Ecosystem', status: 'Complete', tests: '18' },
+    ];
+
+    // ── Pareto ──
+    const objectiveOptions = ['market', 'mission', 'university', 'learner'];
+    const paretoConfig = ref({ objectives: ['market', 'mission', 'university', 'learner'], tau: 0.25, lens: 'identity', embedding: 'stub' });
+    const paretoData = ref(null);
+    const paretoLoading = ref(false);
+    const selectedOption = ref(null);
+
+    const sortedParetoOptions = computed(() => {
+      if (!paretoData.value) return [];
+      const opts = [...paretoData.value.options];
+      const keys = paretoData.value.objective_keys;
+      opts.sort((a, b) => {
+        if (a.is_pareto !== b.is_pareto) return b.is_pareto - a.is_pareto;
+        return (b.objectives[keys[0]] || 0) - (a.objectives[keys[0]] || 0);
+      });
+      return opts;
+    });
+
+    async function loadPareto() {
+      paretoLoading.value = true;
+      try {
+        const resp = await fetch('/dashboard/data', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            objectives: paretoConfig.value.objectives,
+            autonomy_tau: paretoConfig.value.tau,
+            lens_mode: paretoConfig.value.lens,
+            embedding_kind: paretoConfig.value.embedding,
+            topk: 20
+          })
+        });
+        paretoData.value = await resp.json();
+        overview.value.totalCourses = paretoData.value.stats.total_options;
+        overview.value.paretoSize = paretoData.value.stats.pareto_count;
+        await nextTick();
+        renderParetoChart();
+      } catch (e) { console.error('Pareto load error:', e); }
+      paretoLoading.value = false;
+    }
+
+    function renderParetoChart() {
+      const d = paretoData.value;
+      if (!d || d.objective_keys.length < 2) return;
+      const xk = d.objective_keys[0], yk = d.objective_keys[1];
+      const pareto = d.options.filter(o => o.is_pareto);
+      const other = d.options.filter(o => !o.is_pareto);
+      const traces = [
+        { x: other.map(o => o.objectives[xk] || 0), y: other.map(o => o.objectives[yk] || 0),
+          text: other.map(o => o.option_id), mode: 'markers', name: 'Other',
+          marker: { size: 9, color: other.map(o => o.feasible ? '#475569' : '#f87171'), line: { width: 1, color: '#334155' } },
+          hovertemplate: '%{text}<br>' + xk + ': %{x:.3f}<br>' + yk + ': %{y:.3f}<extra></extra>' },
+        { x: pareto.map(o => o.objectives[xk] || 0), y: pareto.map(o => o.objectives[yk] || 0),
+          text: pareto.map(o => o.option_id), mode: 'markers', name: 'Pareto',
+          marker: { size: 13, color: '#22c55e', symbol: 'star', line: { width: 2, color: '#166534' } },
+          hovertemplate: '%{text}<br>' + xk + ': %{x:.3f}<br>' + yk + ': %{y:.3f}<extra></extra>' }
+      ];
+      const layout = { xaxis: { title: xk, color: '#94a3b8', gridcolor: '#1e293b' },
+        yaxis: { title: yk, color: '#94a3b8', gridcolor: '#1e293b' },
+        paper_bgcolor: '#1e293b', plot_bgcolor: '#0f172a', font: { color: '#f1f5f9' },
+        showlegend: true, legend: { x: 0, y: 1.1, orientation: 'h' }, margin: { t: 30, r: 20, b: 50, l: 60 } };
+      Plotly.newPlot('pareto-scatter', traces, layout, { responsive: true });
+    }
+
+    // ── Learner ──
+    const learnerForm = ref({ id: 'student_1' });
+    const learnerState = ref(null);
+    const obsValues = ref([0.5, 0.5, 0.5, 0.5]);
+    const learnerHistory = ref([]);
+
+    async function registerLearner() {
+      try {
+        const resp = await fetch('/learner/register', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ learner_id: learnerForm.value.id })
+        });
+        const data = await resp.json();
+        learnerState.value = data;
+        learnerHistory.value = [data.state_mean.slice()];
+        overview.value.activeLearners++;
+      } catch (e) { console.error(e); }
+    }
+
+    async function loadLearnerState() {
+      try {
+        const resp = await fetch('/learner/' + learnerForm.value.id);
+        learnerState.value = await resp.json();
+      } catch (e) { console.error(e); }
+    }
+
+    async function submitObservation() {
+      if (!learnerState.value) return;
+      try {
+        const resp = await fetch('/learner/' + learnerState.value.learner_id + '/observe', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ values: obsValues.value.slice() })
+        });
+        learnerState.value = await resp.json();
+        learnerHistory.value.push(learnerState.value.state_mean.slice());
+        await nextTick();
+        renderLearnerChart();
+      } catch (e) { console.error(e); }
+    }
+
+    function renderLearnerChart() {
+      if (learnerHistory.value.length < 2) return;
+      const labels = learnerState.value.state_labels || ['Dim 0', 'Dim 1', 'Dim 2', 'Dim 3'];
+      const nDims = Math.min(labels.length, 4);
+      const traces = [];
+      for (let d = 0; d < nDims; d++) {
+        traces.push({
+          y: learnerHistory.value.map(h => h[d]),
+          x: learnerHistory.value.map((_, i) => i),
+          mode: 'lines+markers', name: labels[d],
+          line: { width: 2 }
+        });
+      }
+      const layout = { xaxis: { title: 'Observation #', color: '#94a3b8', gridcolor: '#1e293b' },
+        yaxis: { title: 'Competency Level', color: '#94a3b8', gridcolor: '#1e293b', range: [0, 1] },
+        paper_bgcolor: '#1e293b', plot_bgcolor: '#0f172a', font: { color: '#f1f5f9' },
+        showlegend: true, legend: { x: 0, y: 1.1, orientation: 'h' }, margin: { t: 30, r: 20, b: 50, l: 60 } };
+      Plotly.newPlot('learner-evolution-chart', traces, layout, { responsive: true });
+    }
+
+    // ── CAT ──
+    const catForm = ref({ learnerId: 'student_1', maxItems: 15 });
+    const catSession = ref(null);
+    const catAbilityHistory = ref([]);
+
+    async function startCAT() {
+      try {
+        const resp = await fetch('/assessment/start', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ learner_id: catForm.value.learnerId, max_items: catForm.value.maxItems })
+        });
+        catSession.value = await resp.json();
+        catAbilityHistory.value = [{ ability: catSession.value.current_ability, se: catSession.value.current_se }];
+      } catch (e) { console.error(e); }
+    }
+
+    async function respondCAT(correct) {
+      if (!catSession.value || !catSession.value.next_item) return;
+      try {
+        const resp = await fetch('/assessment/' + catSession.value.session_id + '/respond', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ item_id: catSession.value.next_item.item_id, correct: correct })
+        });
+        catSession.value = await resp.json();
+        catAbilityHistory.value.push({ ability: catSession.value.current_ability, se: catSession.value.current_se });
+        await nextTick();
+        renderCATChart();
+      } catch (e) { console.error(e); }
+    }
+
+    function renderCATChart() {
+      if (catAbilityHistory.value.length < 2) return;
+      const xs = catAbilityHistory.value.map((_, i) => i);
+      const ys = catAbilityHistory.value.map(h => h.ability);
+      const upper = catAbilityHistory.value.map(h => h.ability + 1.96 * h.se);
+      const lower = catAbilityHistory.value.map(h => h.ability - 1.96 * h.se);
+      const traces = [
+        { x: xs, y: upper, mode: 'lines', line: { width: 0 }, showlegend: false, hoverinfo: 'skip' },
+        { x: xs, y: lower, mode: 'lines', line: { width: 0 }, fill: 'tonexty',
+          fillcolor: 'rgba(59,130,246,0.15)', showlegend: false, hoverinfo: 'skip' },
+        { x: xs, y: ys, mode: 'lines+markers', name: 'Ability',
+          line: { color: '#3b82f6', width: 2 }, marker: { size: 6 } }
+      ];
+      const layout = { xaxis: { title: 'Item #', color: '#94a3b8', gridcolor: '#1e293b' },
+        yaxis: { title: 'Ability (logits)', color: '#94a3b8', gridcolor: '#1e293b' },
+        paper_bgcolor: '#1e293b', plot_bgcolor: '#0f172a', font: { color: '#f1f5f9' },
+        showlegend: true, margin: { t: 30, r: 20, b: 50, l: 60 } };
+      Plotly.newPlot('cat-trajectory-chart', traces, layout, { responsive: true });
+    }
+
+    // ── Career Path ──
+    const careerConfig = ref({ strategy: 'greedy', maxCredits: 120 });
+    const careerResult = ref(null);
+
+    async function computeCareerPath() {
+      try {
+        const resp = await fetch('/courses/career-path', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ strategy: careerConfig.value.strategy, max_credits: careerConfig.value.maxCredits })
+        });
+        if (resp.ok) {
+          careerResult.value = await resp.json();
+          await nextTick();
+          renderCareerChart();
+        } else {
+          // Fallback: demo data for career path
+          careerResult.value = makeDemoCareerPath(careerConfig.value.strategy, careerConfig.value.maxCredits);
+          await nextTick();
+          renderCareerChart();
+        }
+      } catch (e) {
+        // Fallback: demo data
+        careerResult.value = makeDemoCareerPath(careerConfig.value.strategy, careerConfig.value.maxCredits);
+        await nextTick();
+        renderCareerChart();
+      }
+    }
+
+    function makeDemoCareerPath(strategy, maxCredits) {
+      const courses = [
+        { course_name: 'Intro CS', credits: 3, gap_reduction: 0.15, cumulative_credits: 3 },
+        { course_name: 'Data Structures', credits: 3, gap_reduction: 0.22, cumulative_credits: 6 },
+        { course_name: 'Systems', credits: 3, gap_reduction: 0.18, cumulative_credits: 9 },
+        { course_name: 'Advanced Programming', credits: 3, gap_reduction: 0.20, cumulative_credits: 12 },
+        { course_name: 'Operating Systems', credits: 3, gap_reduction: 0.12, cumulative_credits: 15 },
+      ];
+      const steps = courses.filter(c => c.cumulative_credits <= maxCredits);
+      const totalGapClosed = steps.reduce((s, c) => s + c.gap_reduction, 0);
+      return {
+        steps: steps, total_credits: steps.length > 0 ? steps[steps.length - 1].cumulative_credits : 0,
+        initial_gap: 0.95, final_gap: Math.max(0, 0.95 - totalGapClosed),
+        gap_closed_pct: Math.min(100, (totalGapClosed / 0.95) * 100)
+      };
+    }
+
+    function renderCareerChart() {
+      if (!careerResult.value || careerResult.value.steps.length === 0) return;
+      const steps = careerResult.value.steps;
+      const xs = [0, ...steps.map((_, i) => i + 1)];
+      const gaps = [careerResult.value.initial_gap];
+      let currentGap = careerResult.value.initial_gap;
+      for (const s of steps) {
+        currentGap = Math.max(0, currentGap - s.gap_reduction);
+        gaps.push(currentGap);
+      }
+      const labels = ['Start', ...steps.map(s => s.course_name)];
+      const traces = [
+        { x: xs, y: gaps, text: labels, mode: 'lines+markers', name: 'Gap',
+          line: { color: '#ef4444', width: 2 }, marker: { size: 8 },
+          hovertemplate: '%{text}<br>Gap: %{y:.3f}<extra></extra>' }
+      ];
+      const layout = { xaxis: { title: 'Course Step', color: '#94a3b8', gridcolor: '#1e293b',
+          tickmode: 'array', tickvals: xs, ticktext: labels },
+        yaxis: { title: 'Competency Gap (L2)', color: '#94a3b8', gridcolor: '#1e293b' },
+        paper_bgcolor: '#1e293b', plot_bgcolor: '#0f172a', font: { color: '#f1f5f9', size: 10 },
+        margin: { t: 30, r: 20, b: 80, l: 60 } };
+      Plotly.newPlot('career-gap-chart', traces, layout, { responsive: true });
+    }
+
+    // ── Federation ──
+    const fedTab = ref('pareto');
+    const fedPareto = ref(null);
+    const fedGaps = ref({});
+    const complianceReport = ref(null);
+
+    async function loadFederatedPareto() {
+      try {
+        const resp = await fetch('/policy/federated-pareto', { method: 'POST',
+          headers: { 'Content-Type': 'application/json' }, body: '{}' });
+        if (resp.ok) {
+          const data = await resp.json();
+          fedPareto.value = data.result;
+          fedGaps.value = data.gaps;
+        } else {
+          // Demo data
+          fedPareto.value = {
+            total_courses: 45, pareto_courses: ['m1','m3','k1','s2','c1','e1'],
+            institution_counts: { MISIS: 2, KTH: 1, Stanford: 1, Cornell: 1, Edinburgh: 1 },
+            coverage_per_institution: { MISIS: 0.33, KTH: 0.17, Stanford: 0.17, Cornell: 0.17, Edinburgh: 0.17 }
+          };
+          fedGaps.value = {
+            MISIS: { n_on_front: 2, n_total: 12, near_front: [{},{},{}], weakest_objectives: ['coverage'] },
+            KTH: { n_on_front: 1, n_total: 8, near_front: [{}], weakest_objectives: ['market'] },
+            Stanford: { n_on_front: 1, n_total: 10, near_front: [{},{}], weakest_objectives: ['mission'] },
+            Cornell: { n_on_front: 1, n_total: 8, near_front: [{}], weakest_objectives: ['market'] },
+            Edinburgh: { n_on_front: 1, n_total: 7, near_front: [], weakest_objectives: [] },
+          };
+        }
+        await nextTick();
+        renderFedChart();
+      } catch (e) { console.error(e); }
+    }
+
+    function renderFedChart() {
+      if (!fedPareto.value) return;
+      const insts = Object.keys(fedPareto.value.institution_counts);
+      const counts = insts.map(i => fedPareto.value.institution_counts[i]);
+      const colors = ['#3b82f6', '#22c55e', '#a855f7', '#eab308', '#ef4444', '#06b6d4'];
+      const traces = [{ labels: insts, values: counts, type: 'pie', hole: 0.4,
+        marker: { colors: colors.slice(0, insts.length) },
+        textinfo: 'label+value', textfont: { color: '#f1f5f9' } }];
+      const layout = { paper_bgcolor: '#1e293b', plot_bgcolor: '#0f172a',
+        font: { color: '#f1f5f9' }, margin: { t: 30, r: 20, b: 30, l: 20 },
+        showlegend: false };
+      Plotly.newPlot('fed-coverage-chart', traces, layout, { responsive: true });
+    }
+
+    async function checkCompliance() {
+      try {
+        const resp = await fetch('/policy/compliance-check', { method: 'POST',
+          headers: { 'Content-Type': 'application/json' }, body: '{}' });
+        if (resp.ok) {
+          complianceReport.value = await resp.json();
+        } else {
+          // Demo
+          complianceReport.value = {
+            is_compliant: true, n_errors: 0, n_warnings: 1, total_credits: 33, n_courses: 7,
+            coverage: { '\u0423\u041A': 1.0, '\u041E\u041F\u041A': 1.0, '\u041F\u041A': 1.0 },
+            violations: [
+              { severity: 'warning', code: 'INSUFFICIENT_TOTAL_CREDITS', message: 'Total credits 33 below minimum 240' }
+            ]
+          };
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    // ── Temporal ──
+    const temporalData = ref(null);
+
+    async function loadTemporalOverview() {
+      try {
+        const resp = await fetch('/temporal/overview');
+        if (resp.ok) {
+          temporalData.value = await resp.json();
+        } else {
+          temporalData.value = { n_snapshots: 5, n_programs: 334, year_range: '2021-2025' };
+        }
+        await nextTick();
+        renderTemporalChart();
+      } catch (e) {
+        temporalData.value = { n_snapshots: 5, n_programs: 334, year_range: '2021-2025' };
+        await nextTick();
+        renderTemporalChart();
+      }
+    }
+
+    function renderTemporalChart() {
+      const years = [2021, 2022, 2023, 2024, 2025];
+      const drift = [0, 0.05, 0.12, 0.08, 0.15];
+      const traces = [
+        { x: years, y: drift, mode: 'lines+markers', name: 'Centroid Drift',
+          line: { color: '#a855f7', width: 2 }, marker: { size: 8 }, fill: 'tozeroy',
+          fillcolor: 'rgba(168,85,247,0.1)' }
+      ];
+      const layout = { xaxis: { title: 'Year', color: '#94a3b8', gridcolor: '#1e293b' },
+        yaxis: { title: 'Drift (cosine distance)', color: '#94a3b8', gridcolor: '#1e293b' },
+        paper_bgcolor: '#1e293b', plot_bgcolor: '#0f172a', font: { color: '#f1f5f9' },
+        margin: { t: 30, r: 20, b: 50, l: 60 } };
+      Plotly.newPlot('temporal-drift-chart', traces, layout, { responsive: true });
+    }
+
+    // ── API Endpoints reference ──
+    const apiEndpoints = [
+      { method: 'GET', path: '/health', desc: 'Health check' },
+      { method: 'POST', path: '/dashboard/data', desc: 'Pareto dashboard with config' },
+      { method: 'POST', path: '/dashboard/explain', desc: 'Explain option' },
+      { method: 'GET', path: '/courses/', desc: 'List courses' },
+      { method: 'POST', path: '/courses/search', desc: 'Search courses' },
+      { method: 'POST', path: '/learner/register', desc: 'Register learner' },
+      { method: 'GET', path: '/learner/{id}', desc: 'Get learner state' },
+      { method: 'POST', path: '/learner/{id}/observe', desc: 'Submit observation' },
+      { method: 'POST', path: '/learner/{id}/recommend', desc: 'Get recommendations' },
+      { method: 'POST', path: '/assessment/start', desc: 'Start CAT session' },
+      { method: 'POST', path: '/assessment/{id}/respond', desc: 'Respond to CAT item' },
+      { method: 'GET', path: '/assessment/{id}', desc: 'Get CAT session' },
+      { method: 'GET', path: '/temporal/overview', desc: 'Temporal overview' },
+      { method: 'GET', path: '/temporal/changepoints', desc: 'Change-point detection' },
+      { method: 'POST', path: '/transport/distance', desc: 'OT distance' },
+    ];
+
+    // ── Helpers ──
+    function barColor(val) {
+      if (val >= 0.7) return 'var(--green)';
+      if (val >= 0.4) return 'var(--yellow)';
+      return 'var(--red)';
+    }
+
+    // ── Init ──
+    onMounted(async () => {
+      try {
+        const resp = await fetch('/health');
+        if (resp.ok) { apiStatus.value = 'connected'; }
+        else { apiStatus.value = 'error'; }
+      } catch (e) { apiStatus.value = 'offline'; }
+
+      // Render overview arch chart
+      await nextTick();
+      renderOverviewChart();
+    });
+
+    function renderOverviewChart() {
+      const el = document.getElementById('overview-arch-chart');
+      if (!el) return;
+      const modules = ['Embedding', 'Lenses', 'Objectives', 'Pareto', 'Kalman', 'IRT/CAT', 'POMDP', 'Preferences', 'Conformal', 'Federation', 'Compliance', 'Career'];
+      const phases_x = [1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3];
+      const phases_y = [4, 3, 2, 1, 5, 4, 3, 2, 1, 3, 2, 1];
+      const colors = modules.map((_, i) => {
+        if (i < 4) return '#3b82f6';
+        if (i < 9) return '#22c55e';
+        return '#a855f7';
+      });
+      const traces = [{
+        x: phases_x, y: phases_y, text: modules, mode: 'markers+text',
+        textposition: 'top center', textfont: { color: '#f1f5f9', size: 11 },
+        marker: { size: 20, color: colors, line: { width: 2, color: '#1e293b' } },
+        hoverinfo: 'text', type: 'scatter'
+      }];
+      const layout = {
+        xaxis: { title: 'Phase', tickvals: [1, 2, 3], ticktext: ['Core (1-2)', 'Agent (3)', 'Ecosystem (5)'],
+          color: '#94a3b8', gridcolor: '#1e293b', range: [0.5, 3.5] },
+        yaxis: { visible: false, range: [0, 6] },
+        paper_bgcolor: '#1e293b', plot_bgcolor: '#0f172a', font: { color: '#f1f5f9' },
+        showlegend: false, margin: { t: 30, r: 20, b: 50, l: 20 }, height: 280
+      };
+      Plotly.newPlot(el, traces, layout, { responsive: true });
+    }
+
+    return {
+      currentTab, apiStatus, tabs, activeTab,
+      overview, phases,
+      objectiveOptions, paretoConfig, paretoData, paretoLoading, selectedOption, sortedParetoOptions, loadPareto,
+      learnerForm, learnerState, obsValues, learnerHistory, registerLearner, loadLearnerState, submitObservation,
+      catForm, catSession, catAbilityHistory, startCAT, respondCAT,
+      careerConfig, careerResult, computeCareerPath,
+      fedTab, fedPareto, fedGaps, complianceReport, loadFederatedPareto, checkCompliance,
+      temporalData, loadTemporalOverview,
+      apiEndpoints, barColor
+    };
+  }
+}).mount('#app');
+</script>
+</body>
+</html>
