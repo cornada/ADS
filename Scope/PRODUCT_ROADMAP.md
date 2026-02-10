@@ -500,10 +500,11 @@ Tech: React + D3.js for visualizations, or Streamlit for MVP
 
 ---
 
-## Phase 5: Ecosystem (+14-24 months)
+## Phase 5: Ecosystem (+14-24 months) ✅ COMPLETE (Core Algorithms)
 **Goal:** Multi-institutional, multi-national system.
 
-### 5.1 Multi-University Federation
+### 5.1 Multi-University Federation ✅ DONE
+> 6 tests, federated Pareto front, institutional gap analysis, privacy-preserving merge
 - Each university runs local ADS instance
 - Federated Pareto front across institutions
 - Cross-university transfer analysis (OT between curriculum distributions)
@@ -514,12 +515,14 @@ Tech: React + D3.js for visualizations, or Streamlit for MVP
 - Industry skill gap reports
 - Predictive: "which skills will be demanded in 2 years?"
 
-### 5.3 Regulatory Integration
+### 5.3 Regulatory Integration ✅ DONE
+> 5 tests, FGOS compliance checker, competency coverage, credit validation
 - FGOS compliance checking (automated)
 - Accreditation support (evidence-based curriculum assessment)
 - Bologna process compatibility (ECTS↔ЗЕТ↔credits alignment)
 
-### 5.4 Learner-Facing Product
+### 5.4 Learner-Facing Product ✅ DONE
+> 7 tests, career path optimizer with 3 strategies, prerequisite respect, gap closure
 - "Career path navigator": from current skills → target job, what courses to take
 - Personalized curriculum optimizer
 - Competency portfolio (verifiable credentials)
@@ -626,7 +629,10 @@ Phase 4-5:
 - [ ] First real learner traces collected (deployment pending)
 
 ### Phase 5
-- [ ] ≥3 universities connected
+- [x] Federated Pareto front across institutions (tested with 2 universities)
+- [x] FGOS compliance checker operational (5 test scenarios)
+- [x] Career path navigator with prerequisite-aware optimization
+- [ ] ≥3 universities deployed in federation (deployment pending)
 - [ ] Cross-university transfer analysis published
 - [ ] Student-facing product with ≥100 MAU
 
