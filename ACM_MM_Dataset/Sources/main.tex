@@ -38,14 +38,20 @@
 \newcommand{\HeadlineCourses}{27,500}
 
 % Universities
-\newcommand{\NumUniversities}{7}
-\newcommand{\NumCountries}{3}
-\newcommand{\NumCourses}{27,555}
+\newcommand{\NumUniversities}{8}
+\newcommand{\NumCountries}{4}
+\newcommand{\NumCourses}{30,249}
 \newcommand{\NumOccupations}{1,016}
 \newcommand{\NumMissions}{62}
-\newcommand{\NumArtifacts}{28,633}
+\newcommand{\NumArtifacts}{31,327}
 \newcommand{\NumAttributeRecords}{140,449}
-\newcommand{\NumProcessedRows}{169,082}
+\newcommand{\NumProcessedRows}{171,776}
+% MISIS
+\newcommand{\NumMISIS}{2,694}
+\newcommand{\MISISPrograms}{166}
+\newcommand{\MISISYears}{5}
+\newcommand{\MISISPrereqLinks}{99,676}
+\newcommand{\MISISCompetencies}{39}
 
 % Per-university
 \newcommand{\NumMIT}{6,941}
@@ -141,7 +147,7 @@
 %%
 %% Abstract
 \begin{abstract}
-We present \ADSMM, a multimodal cross-national educational resource dataset spanning {\NumCourses} courses from {\NumUniversities} universities across {\NumCountries} countries (USA, Sweden, UK), augmented with structured multimedia resource annotations from MIT OpenCourseWare.
+We present \ADSMM, a multimodal cross-national educational resource dataset spanning {\NumCourses} courses from {\NumUniversities} universities across {\NumCountries} countries (USA, Sweden, UK, Russia), augmented with structured multimedia resource annotations from MIT OpenCourseWare and instructional activity metadata from MISIS.
 Unlike existing educational datasets that treat courses as text-only artifacts, \ADSMM captures the \emph{multimodal structure} of educational resources: which courses include video lectures, audio content, visual galleries, and assessments---enabling cross-modal analysis of how textual course descriptions relate to multimedia instructional design.
 From {\NumOCWFetched} MIT OCW courses, we collect {\NumResourceTypes} distinct resource type annotations: {\OCWMultimediaPercent} include multimedia content (video, audio, or visual), with {\NumOCWVideo} offering video lectures and a mean resource richness of {\MeanRichness}$\pm${\StdRichness}.
 We define three cross-modal evaluation tasks---multimedia richness prediction, resource type classification, and cross-institutional transfer---and provide baselines showing that course text descriptions carry significant predictive signal about multimedia resource structure (Spearman $\rho{=}{\SBERTRichnessRho}$ for richness prediction; macro $F_1{=}{\SBERTMacroF}$ for resource type classification including video $F_1{=}{\SBERTVideoF}$).
@@ -223,7 +229,7 @@ Studies of OER adoption~\cite{tlili2023oerreview} analyze policy and access but 
 The text layer contains {\NumArtifacts} primary text artifacts from {\NumUniversities} universities across {\NumCountries} countries:
 
 \begin{itemize}
-  \item \textbf{Courses} ({\NumCourses}): course descriptions from MIT OCW ({\NumMIT}), UC Berkeley ({\NumUCB}), Stanford ({\NumStanford}), UIUC ({\NumUIUC}), Cornell ({\NumCornell}), KTH Sweden ({\NumKTH}), and University of Edinburgh ({\NumEdinburgh}).
+  \item \textbf{Courses} ({\NumCourses}): course descriptions from MIT OCW ({\NumMIT}), UC Berkeley ({\NumUCB}), Stanford ({\NumStanford}), UIUC ({\NumUIUC}), Cornell ({\NumCornell}), KTH Sweden ({\NumKTH}), University of Edinburgh ({\NumEdinburgh}), and MISIS Russia ({\NumMISIS}).
   \item \textbf{O*NET occupations} ({\NumOccupations}): occupation profiles with required skills, tasks, and technologies from the US Department of Labor~\cite{onet2025}.
   \item \textbf{Mission statements} ({\NumMissions}): university mission and vision texts.
 \end{itemize}
@@ -250,6 +256,7 @@ Table~\ref{tab:dataset_overview} summarizes the dataset composition.
 \quad Cornell & \NumCornell & text & text only & USA\\
 \quad KTH & \NumKTH & text & text only & Sweden\\
 \quad Edinburgh & \NumEdinburgh & text & text only & UK\\
+\quad MISIS & \NumMISIS & text+struct & +activity types & Russia\\
 \midrule
 Occupations (O*NET) & \NumOccupations & text+struct & text only & US DOL\\
 Missions & \NumMissions & text & text only & ---\\
@@ -297,9 +304,10 @@ Of these, {\NumOCWMatched} ({\OCWMatchRate}) match courses in the ADS text corpu
 \subsection{Cross-National Context}
 \label{subsec:cross-national}
 
-A key feature of \ADSMM is the cross-national dimension: MIT OCW multimodal annotations are available for one institution, while textual descriptions exist for all seven universities.
-This creates a natural testbed for \emph{cross-institutional transfer}: can models trained on MIT's multimodal structure predict resource availability at universities without open multimedia data?
-The five US universities share a curricular tradition, while KTH (Sweden) and Edinburgh (UK) provide out-of-distribution test cases.
+A key feature of \ADSMM is the cross-national dimension spanning {\NumCountries} countries with complementary modalities.
+MIT OCW provides multimedia resource annotations; MISIS (Russia) contributes a distinct \emph{instructional activity modality}: each of {\NumMISIS} courses includes structured hours across lectures (83\%), practical sessions (91\%), and laboratory work (22\%), plus {\MISISCompetencies} FGOS competency codes and a prerequisite graph with {\MISISPrereqLinks} links across {\MISISPrograms} programs over {\MISISYears} years.
+This creates a testbed for \emph{cross-institutional transfer}: can models trained on MIT's multimedia structure predict resource availability at universities with different educational traditions?
+The five US universities share a curricular tradition; KTH (Sweden), Edinburgh (UK), and MISIS (Russia) provide out-of-distribution test cases.
 
 
 \section{Cross-Modal Evaluation Tasks}
@@ -437,9 +445,9 @@ The cross-institutional transfer task uses MIT as the only training source, limi
 Course descriptions vary in quality and length across sources.
 
 \paragraph{Geographic and linguistic bias.}
-The dataset has geographic bias: 68\% of courses are from US universities, and all text is English.
+The dataset spans {\NumCountries} countries but remains US-heavy (73\% of courses).
 O*NET reflects US labor market structure.
-International representation (KTH, Edinburgh) is limited to two institutions.
+MISIS course descriptions are bilingual (Russian/English) for international programs; monolingual Russian courses include English-language competency codes but Russian-only descriptions.
 
 \paragraph{Ethical considerations.}
 All data is from public sources (university catalogs, OCW, O*NET).
