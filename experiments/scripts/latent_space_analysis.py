@@ -345,6 +345,24 @@ def main():
     records = [r for r in records if r.get("text", "").strip()]
     logger.info("Records with text: %d", len(records))
 
+    # Stratified subsample for speed if too large
+    import os
+    max_records = int(os.environ.get("ADS_MAX_RECORDS", "0")) or len(records)
+    if max_records < len(records):
+        rng = np.random.RandomState(42)
+        # Stratified: keep proportional representation per institution
+        from collections import defaultdict
+        by_inst = defaultdict(list)
+        for i, r in enumerate(records):
+            by_inst[r.get("institution", "?")].append(i)
+        sampled_idx = []
+        for inst, indices in by_inst.items():
+            n_sample = max(1, int(len(indices) * max_records / len(records)))
+            sampled_idx.extend(rng.choice(indices, size=min(n_sample, len(indices)), replace=False).tolist())
+        rng.shuffle(sampled_idx)
+        records = [records[i] for i in sampled_idx[:max_records]]
+        logger.info("Subsampled to %d records (stratified)", len(records))
+
     # Embed
     texts = [r.get("text", "")[:512] for r in records]  # Truncate for speed
     logger.info("Embedding %d texts...", len(texts))
