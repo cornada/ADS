@@ -1,0 +1,51 @@
+% table_dataset_comparison.tex
+% Dataset comparison for ACM MM 2026 Dataset Track
+% Adds multimodal column to distinguish ADS-MM
+
+\begin{table*}[t]
+\centering
+\footnotesize
+\caption{Comparison of educational datasets. \ADSMM is the first to combine multi-institutional course text with structured multimodal resource annotations and labor-market taxonomies, enabling cross-modal evaluation tasks.}
+\label{tab:dataset-comparison}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lcrccccccc@{}}
+\toprule
+\textbf{Dataset} &
+\textbf{Year} &
+\textbf{Scale} &
+\textbf{Primary Unit} &
+\rotatebox{60}{\textbf{Multi-inst.}} &
+\rotatebox{60}{\textbf{Multi-nat.}} &
+\rotatebox{60}{\textbf{Multimodal}} &
+\rotatebox{60}{\textbf{Labor mkt.}} &
+\rotatebox{60}{\textbf{Cross-modal tasks}} &
+\rotatebox{60}{\textbf{Open}} \\
+\midrule
+\multicolumn{10}{@{}l}{\textit{Learner interaction / knowledge tracing}} \\[2pt]
+KDD Cup 2010~\cite{stamper2010kddcup}
+  & 2010 & 809K interactions & student--step & -- & -- & -- & -- & -- & \checkmark \\
+OULAD~\cite{kuzilek2017oulad}
+  & 2017 & 32K students & student records & -- & -- & -- & -- & -- & \checkmark \\
+EdNet~\cite{choi2020ednet}
+  & 2020 & 131M actions & learner actions & -- & -- & -- & -- & -- & \checkmark \\
+\midrule
+\multicolumn{10}{@{}l}{\textit{MOOC / course-catalog}} \\[2pt]
+MOOCCube~\cite{yu2020mooccube}
+  & 2020 & 706K courses & courses + concepts & \checkmark & \checkmark & -- & -- & -- & Partial \\
+MOOCCubeX~\cite{yu2023mooccubex}
+  & 2023 & 1.5M courses & courses + knowledge & \checkmark & \checkmark & -- & -- & -- & Partial \\
+\midrule
+\multicolumn{10}{@{}l}{\textit{Multimodal educational}} \\[2pt]
+\textbf{ADS-MM (ours)}
+  & \textbf{2026}
+  & \textbf{\NumCourses{} courses}
+  & \textbf{courses + resources}
+  & \textbf{\checkmark\,(7)}
+  & \textbf{\checkmark\,(3)}
+  & \textbf{\checkmark}
+  & \textbf{\checkmark}
+  & \textbf{\checkmark\,(3)}
+  & \textbf{\checkmark} \\
+\bottomrule
+\end{tabular}
+\end{table*}

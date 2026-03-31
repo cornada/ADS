@@ -1,0 +1,20 @@
+{
+  "timestamp": "2026-03-31T15:40:40.862651+00:00",
+  "total_ocw_slugs": 2569,
+  "total_fetched": 1689,
+  "fetch_errors": 0,
+  "ads_matched": 989,
+  "ads_match_rate": "58.6%",
+  "multimodal_stats": {
+    "has_video": 221,
+    "has_video_pct": "13.1%",
+    "has_notes": 1056,
+    "has_notes_pct": "62.5%",
+    "has_image": 1689,
+    "has_image_pct": "100.0%",
+    "has_interactive": 0,
+    "has_assessment": 843,
+    "mean_richness": 1.26,
+    "mean_resource_type_count": 2.67
+  }
+}

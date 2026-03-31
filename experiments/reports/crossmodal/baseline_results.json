@@ -1,0 +1,57 @@
+{
+  "task1_richness": {
+    "dept_prior": {
+      "mae": 0.59,
+      "spearman": 0.43
+    },
+    "tfidf_ridge": {
+      "mae": 0.501,
+      "spearman": 0.612
+    }
+  },
+  "task2_classification": {
+    "majority": {
+      "video_precision": 0.0,
+      "video_recall": 0.0,
+      "video_f1": 0.0,
+      "notes_precision": 0.643,
+      "notes_recall": 1.0,
+      "notes_f1": 0.783,
+      "interactive_precision": 0.0,
+      "interactive_recall": 0.0,
+      "interactive_f1": 0.0,
+      "assessment_precision": 0.0,
+      "assessment_recall": 0.0,
+      "assessment_f1": 0.0,
+      "macro_f1": 0.196
+    },
+    "tfidf_logreg": {
+      "video_precision": 0.0,
+      "video_recall": 0.0,
+      "video_f1": 0.0,
+      "notes_precision": 0.643,
+      "notes_recall": 1.0,
+      "notes_f1": 0.783,
+      "interactive_precision": 0.0,
+      "interactive_recall": 0.0,
+      "interactive_f1": 0.0,
+      "assessment_precision": 0.0,
+      "assessment_recall": 0.0,
+      "assessment_f1": 0.0,
+      "macro_f1": 0.196
+    }
+  },
+  "dataset_stats": {
+    "total_courses": 1218,
+    "video_count": 186,
+    "video_pct": 15.3,
+    "notes_count": 780,
+    "notes_pct": 64.0,
+    "interactive_count": 0,
+    "interactive_pct": 0.0,
+    "assessment_count": 567,
+    "assessment_pct": 46.6,
+    "mean_richness": 1.26,
+    "std_richness": 0.87
+  }
+}

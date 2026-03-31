@@ -1,0 +1,66 @@
+{
+  "task1_richness": {
+    "sbert_ridge": {
+      "mae": 0.505,
+      "spearman": 0.633
+    }
+  },
+  "task2_classification": {
+    "sbert_logreg_balanced": {
+      "video_precision": 0.568,
+      "video_recall": 0.781,
+      "video_f1": 0.658,
+      "notes_precision": 0.838,
+      "notes_recall": 0.822,
+      "notes_f1": 0.83,
+      "interactive_precision": 0.0,
+      "interactive_recall": 0.0,
+      "interactive_f1": 0.0,
+      "assessment_precision": 0.842,
+      "assessment_recall": 0.759,
+      "assessment_f1": 0.798,
+      "macro_f1": 0.572
+    },
+    "sbert_logreg_unbalanced": {
+      "video_precision": 0.618,
+      "video_recall": 0.656,
+      "video_f1": 0.636,
+      "notes_precision": 0.84,
+      "notes_recall": 0.834,
+      "notes_f1": 0.837,
+      "interactive_precision": 0.0,
+      "interactive_recall": 0.0,
+      "interactive_f1": 0.0,
+      "assessment_precision": 0.842,
+      "assessment_recall": 0.759,
+      "assessment_f1": 0.798,
+      "macro_f1": 0.568
+    }
+  },
+  "dataset_stats": {
+    "total_courses": 1218,
+    "train_size": 974,
+    "test_size": 244,
+    "video_count": 186,
+    "video_pct": 15.3,
+    "notes_count": 780,
+    "notes_pct": 64.0,
+    "interactive_count": 0,
+    "interactive_pct": 0.0,
+    "assessment_count": 567,
+    "assessment_pct": 46.6,
+    "mean_richness": 1.26,
+    "std_richness": 0.87
+  },
+  "config": {
+    "encoder": "sbert/all-MiniLM-L6-v2",
+    "feature_desc": "sbert/all-MiniLM-L6-v2",
+    "feature_dim": 384,
+    "has_image_features": false,
+    "image_count": 0,
+    "seed": 42,
+    "has_sklearn": true,
+    "has_sbert": true,
+    "has_pil": true
+  }
+}
