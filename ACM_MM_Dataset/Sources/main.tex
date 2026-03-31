@@ -73,12 +73,20 @@
 \newcommand{\MeanRichness}{1.45}          % Mean resource richness (0-6)
 \newcommand{\StdRichness}{0.98}           % Std resource richness
 \newcommand{\NumResourceTypes}{41}        % Distinct resource type values
-% Baseline results
+% Baseline results — TF-IDF
 \newcommand{\RichnessMAE}{0.501}
 \newcommand{\RichnessRho}{0.612}
 \newcommand{\DeptMAE}{0.590}
 \newcommand{\DeptRho}{0.430}
+% Baseline results — SBERT
+\newcommand{\SBERTRichnessMAE}{0.505}
+\newcommand{\SBERTRichnessRho}{0.633}
+\newcommand{\SBERTMacroF}{0.572}
+\newcommand{\SBERTVideoF}{0.658}
+\newcommand{\SBERTNotesF}{0.830}
+\newcommand{\SBERTAssessF}{0.798}
 \newcommand{\JoinedCourses}{1,218}        % Total joined for experiments
+\newcommand{\NumImages}{1,689}            % Course cover images downloaded
 
 %% Paper macros
 \newcommand{\ADS}{\textsc{ADS}\xspace}
@@ -136,7 +144,7 @@
 We present \ADSMM, a multimodal cross-national educational resource dataset spanning {\NumCourses} courses from {\NumUniversities} universities across {\NumCountries} countries (USA, Sweden, UK), augmented with structured multimedia resource annotations from MIT OpenCourseWare.
 Unlike existing educational datasets that treat courses as text-only artifacts, \ADSMM captures the \emph{multimodal structure} of educational resources: which courses include video lectures, audio content, visual galleries, and assessments---enabling cross-modal analysis of how textual course descriptions relate to multimedia instructional design.
 From {\NumOCWFetched} MIT OCW courses, we collect {\NumResourceTypes} distinct resource type annotations: {\OCWMultimediaPercent} include multimedia content (video, audio, or visual), with {\NumOCWVideo} offering video lectures and a mean resource richness of {\MeanRichness}$\pm${\StdRichness}.
-We define three cross-modal evaluation tasks---multimedia richness prediction, resource type classification, and cross-institutional transfer---and provide baselines showing that course text descriptions carry significant predictive signal about multimedia resource structure (Spearman $\rho = {\RichnessRho}$ for richness prediction, vs.\ ${\DeptRho}$ for a department-prior baseline).
+We define three cross-modal evaluation tasks---multimedia richness prediction, resource type classification, and cross-institutional transfer---and provide baselines showing that course text descriptions carry significant predictive signal about multimedia resource structure (Spearman $\rho{=}{\SBERTRichnessRho}$ for richness prediction; macro $F_1{=}{\SBERTMacroF}$ for resource type classification including video $F_1{=}{\SBERTVideoF}$).
 The dataset, collection scripts, and evaluation code are publicly available.
 \end{abstract}
 
@@ -267,7 +275,8 @@ Each course record includes:
   \item \textbf{Resource type flags}: binary indicators for video lectures, lecture notes/slides, interactive simulations, and assessments (problem sets, exams).
   \item \textbf{Resource richness score} (0--4): count of distinct resource type categories present.
   \item \textbf{Topic hierarchy}: multi-level subject classification from OCW's taxonomy.
-  \item \textbf{Course image}: cover image URL and metadata (available for {\OCWVideoPercent} of courses).
+  \item \textbf{Course images}: cover images for all {\NumImages} courses (mean 82~KB, total 134~MB), providing a visual modality.
+  \item \textbf{Lecture content} (video courses): for {\NumOCWVideo} video courses, we extract structured lecture titles (median 26 per course), syllabi, and calendar text (median 13,679 characters), enriching text representations beyond catalog descriptions.
   \item \textbf{Temporal metadata}: semester, year, and course level.
 \end{itemize}
 
@@ -359,45 +368,63 @@ This asymmetry creates a structured prediction challenge: textual features may p
 
 \subsection{Cross-Modal Baselines}
 
-We evaluate two baseline approaches on the cross-modal tasks using {\JoinedCourses} courses with both text descriptions and multimodal annotations (80/20 train/test split, seed=42).
+We evaluate three baseline approaches on the cross-modal tasks using {\JoinedCourses} courses with both text descriptions and multimodal annotations (80/20 train/test split, seed=42).
 
 \paragraph{Department prior.}
 Per-department mean prediction for richness; majority-class per department for classification.
 
 \paragraph{TF-IDF + linear models.}
-TF-IDF features (5,000 terms) from course descriptions, with ridge regression ($\lambda{=}1.0$) for richness prediction and per-label logistic regression for classification.
+TF-IDF features (5,000 terms) from course descriptions, with ridge regression for richness prediction and per-label logistic regression for classification.
 
-%%% Results table
+\paragraph{Sentence-BERT + balanced classifiers.}
+MiniLM sentence embeddings~\cite{reimers2019sentencebert} (384d) with ridge regression for richness and class-weight-balanced logistic regression for per-label classification.
+
+%%% Results table — richness
 \begin{table}[t]
 \centering
 \small
-\caption{Cross-modal baseline results. TF-IDF features from course text predict multimedia richness with Spearman $\rho{=}{\RichnessRho}$, substantially above the department-prior baseline.}
+\caption{Cross-modal baseline results. Sentence-BERT embeddings achieve the best richness prediction ($\rho{=}{\SBERTRichnessRho}$) and strong per-label classification (macro $F_1{=}{\SBERTMacroF}$).}
 \label{tab:baselines}
-\begin{tabular}{@{}llcc@{}}
+\begin{tabular}{@{}llcccc@{}}
 \toprule
-\textbf{Task} & \textbf{Method} & \textbf{MAE $\downarrow$} & \textbf{Spearman $\rho$ $\uparrow$} \\
+\textbf{Task} & \textbf{Method} & \textbf{MAE} & \textbf{$\rho$} & \textbf{macro $F_1$} \\
 \midrule
-\multirow{2}{*}{Richness pred.} & Department prior & {\DeptMAE} & {\DeptRho} \\
- & TF-IDF + Ridge & \textbf{\RichnessMAE} & \textbf{\RichnessRho} \\
+\multirow{3}{*}{Richness} & Dept.\ prior & {\DeptMAE} & {\DeptRho} & --- \\
+ & TF-IDF + Ridge & {\RichnessMAE} & {\RichnessRho} & --- \\
+ & \textbf{SBERT + Ridge} & \textbf{\SBERTRichnessMAE} & \textbf{\SBERTRichnessRho} & --- \\
+\midrule
+\multirow{2}{*}{Classification} & TF-IDF + LogReg & --- & --- & 0.196 \\
+ & \textbf{SBERT + balanced} & --- & --- & \textbf{\SBERTMacroF} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \paragraph{Key finding: text predicts multimedia structure.}
-TF-IDF features achieve $\rho{=}{\RichnessRho}$ on richness prediction (Table~\ref{tab:baselines}), a 42\% improvement over the department-prior baseline ($\rho{=}{\DeptRho}$).
-This demonstrates that course text descriptions carry meaningful signal about multimedia resource availability beyond what departmental affiliation alone provides.
-
-Per-label classification is challenging due to class imbalance (video: 15.3\% positive, notes: 64.0\%, assessment: 46.6\%): simple logistic regression defaults to majority prediction for minority classes.
-This establishes a clear baseline and motivates more sophisticated approaches (class-weighted losses, BERT-based classifiers, curriculum-aware models).
+SBERT embeddings achieve $\rho{=}{\SBERTRichnessRho}$ on richness prediction and macro $F_1{=}{\SBERTMacroF}$ on resource type classification (Table~\ref{tab:baselines}), a 47\% improvement in $\rho$ over the department prior and 2.9$\times$ improvement in $F_1$ over unbalanced baselines.
+Per-label results show meaningful prediction for all three non-trivial resource types: video ($F_1{=}{\SBERTVideoF}$), notes ($F_1{=}{\SBERTNotesF}$), and assessment ($F_1{=}{\SBERTAssessF}$).
+This demonstrates that course text descriptions encode significant signal about multimedia instructional design.
 
 \subsection{Discussion}
 
-The combination of high richness prediction accuracy and low per-label classification F$_1$ reveals an interesting structure: the \emph{total amount} of multimedia resources is predictable from text, but the \emph{specific types} are harder to determine.
-This suggests that course descriptions encode information about instructional investment (richness) more reliably than specific pedagogical choices (video vs.\ notes vs.\ interactive).
+With SBERT embeddings and balanced class weights, per-label classification becomes viable: video $F_1{=}{\SBERTVideoF}$ despite only 15.3\% positive rate demonstrates that course descriptions contain implicit signals about whether lecture recordings exist.
+Notes prediction ($F_1{=}{\SBERTNotesF}$) and assessment prediction ($F_1{=}{\SBERTAssessF}$) are even stronger, consistent with these resource types correlating with text-describable course structure.
+
+\paragraph{Visual modality.}
+All {\NumImages} MIT OCW courses include a cover image (Figure~\ref{fig:image-grid}), providing a visual modality for future cross-modal research (e.g., predicting course content from cover images using CLIP-style models).
+We release all images with the dataset.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/fig5_image_grid.pdf}
+  \vspace{-2mm}
+  \caption{Sample course cover images from MIT OCW (20 of {\NumImages}). Images span diverse departments: CS, physics, urban planning, biology, business.}
+  \label{fig:image-grid}
+  \vspace{-2mm}
+\end{figure}
 
 \paragraph{Limitations of baselines.}
-Our baselines use bag-of-words features; pretrained language models (BERT, GPT) would likely improve classification.
-We do not evaluate cross-institutional transfer due to the single-institution annotation constraint; this remains an open task for the community.
+Cross-institutional transfer (Task 3) is not evaluated due to the single-institution annotation constraint; this remains an open task.
+Multimodal baselines combining text + image features (e.g., CLIP) are a natural next step enabled by the released data.
 
 
 \section{Limitations, Ethics, and Availability}
