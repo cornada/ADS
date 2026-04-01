@@ -1,0 +1,5 @@
+onet_version,release_date,pareto_size_mean,pareto_size_std,feasible_ratio_mean,n_runs
+26_3,2022-05-26,29.0,0.00,1.000,3
+27_3,2023-05-03,29.0,0.00,1.000,3
+28_1,2023-11-07,30.0,0.00,1.000,3
+30_0,2025-08-18,30.0,0.00,1.000,3

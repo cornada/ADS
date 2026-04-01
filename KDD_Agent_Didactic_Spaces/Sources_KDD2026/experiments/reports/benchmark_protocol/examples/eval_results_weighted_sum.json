@@ -1,0 +1,57 @@
+{
+  "method_name": "weighted_sum_baseline",
+  "tasks": {
+    "A": {
+      "task": "A",
+      "metrics": {
+        "coverage": 0.0576,
+        "diversity": 0.524125,
+        "objective_balance": 0.9993,
+        "external_alignment": {
+          "precision": 1.0,
+          "recall": 0.3247,
+          "f1": 0.4902,
+          "jaccard": 0.3247
+        },
+        "rank_quality_vs_aggregate": 1.0,
+        "selection_size": 50,
+        "valid_fraction": 1.0
+      }
+    },
+    "B": {
+      "task": "B",
+      "metrics": {
+        "hypervolume": 0.025721,
+        "spacing": 0.053152,
+        "spread": 0.414503,
+        "pareto_precision": 1.0,
+        "pareto_recall": 0.3247,
+        "dominance_resistance": 1.0,
+        "objective_balance": 0.9993,
+        "n_trade_off_points": 50
+      }
+    },
+    "C": {
+      "task": "C",
+      "metrics": {
+        "bootstrap_jaccard_mean": 0.4105,
+        "bootstrap_jaccard_std": 0.1774,
+        "hv_retention": 0.6414,
+        "rank_stability_mean": 0.2901,
+        "rank_stability_std": 0.3122,
+        "core_stable_fraction": 0.1942,
+        "core_stable_count": 20,
+        "n_perturbation_runs": 6
+      }
+    }
+  },
+  "summary": {
+    "task_a_coverage": 0.0576,
+    "task_a_diversity": 0.524125,
+    "task_a_balance": 0.9993,
+    "task_b_hypervolume": 0.025721,
+    "task_b_pareto_precision": 1.0,
+    "task_c_jaccard": 0.4105,
+    "task_c_hv_retention": 0.6414
+  }
+}

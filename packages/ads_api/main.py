@@ -6,9 +6,13 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pathlib import Path
 
-from ads_api.routes import evaluate, pareto, telemetry, dashboard
+from ads_api.routes import (
+    evaluate, pareto, telemetry, dashboard,
+    courses, learner, assessment, temporal, transport, policy, graph,
+    compliance, strategy,
+)
 
-app = FastAPI(title="ADS API", version="0.1.0", description="Agent-Didactic Spaces API")
+app = FastAPI(title="ADS API", version="0.2.0", description="Agent-Didactic Spaces API")
 
 # CORS for local development
 app.add_middleware(
@@ -23,6 +27,15 @@ app.include_router(evaluate.router, prefix="/evaluate", tags=["evaluate"])
 app.include_router(pareto.router, prefix="/pareto", tags=["pareto"])
 app.include_router(telemetry.router, prefix="/telemetry", tags=["telemetry"])
 app.include_router(dashboard.router, prefix="/dashboard", tags=["dashboard"])
+app.include_router(courses.router, prefix="/courses", tags=["courses"])
+app.include_router(learner.router, prefix="/learner", tags=["learner"])
+app.include_router(assessment.router, prefix="/assessment", tags=["assessment"])
+app.include_router(temporal.router, prefix="/temporal", tags=["temporal"])
+app.include_router(transport.router, prefix="/transport", tags=["transport"])
+app.include_router(policy.router, prefix="/policy", tags=["policy"])
+app.include_router(graph.router, prefix="/graph", tags=["graph"])
+app.include_router(compliance.router, prefix="/compliance", tags=["compliance"])
+app.include_router(strategy.router, prefix="/strategy", tags=["strategy"])
 
 # Serve static UI files
 UI_DIR = Path(__file__).parent / "ui"
@@ -37,8 +50,20 @@ def health():
 
 @app.get("/")
 def index():
-    """Serve the dashboard UI."""
+    """Serve the main SPA."""
+    app_file = UI_DIR / "app.html"
+    if app_file.exists():
+        return FileResponse(app_file)
     index_file = UI_DIR / "index.html"
     if index_file.exists():
         return FileResponse(index_file)
-    return {"message": "ADS API", "docs": "/docs", "dashboard": "/static/index.html"}
+    return {"message": "ADS API", "docs": "/docs"}
+
+
+@app.get("/classic")
+def classic_dashboard():
+    """Serve the legacy Pareto-only dashboard."""
+    index_file = UI_DIR / "index.html"
+    if index_file.exists():
+        return FileResponse(index_file)
+    return {"message": "Legacy dashboard not found"}

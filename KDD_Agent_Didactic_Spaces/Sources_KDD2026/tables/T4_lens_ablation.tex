@@ -1,0 +1,16 @@
+\begin{table}[!th]
+\centering
+\caption{Effect of Lens Transformation on Pareto Set (unified\_v4, \NumCourses\ courses)}
+\label{tab:lens-ablation}
+{\scriptsize
+\adjustbox{width=.9\linewidth}{
+\begin{tabular}{lrl}
+\toprule
+\textbf{Lens} & \textbf{Pareto Count} & \textbf{Jaccard w/ Identity} \\
+\midrule
+Identity & \MainParetoSize & 1.00 \\
+Diagonal & \MainParetoSize & 1.00 \\
+Learned (OVR-LogReg) & {\LearnedLensParetoSize} & 0.31 \\
+\bottomrule
+\end{tabular}}}
+\end{table}

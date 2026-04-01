@@ -18,6 +18,7 @@ class ArtifactType(str, Enum):
     OUTCOME_MAJOR = "OUTCOME_MAJOR"  # Career outcomes by major (e.g., FDS data)
     OUTCOME_SUMMARY = "OUTCOME_SUMMARY"  # Aggregated outcomes summary (e.g., ASU reports)
     SURVEY_SCHEMA = "SURVEY_SCHEMA"  # Survey instrument schema (e.g., FDS questions)
+    COMPETENCY = "COMPETENCY"  # Formal competency requirement (e.g., FGOS УК/ОПК/ПК)
 
 
 class Artifact(BaseModel):

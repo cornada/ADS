@@ -1,0 +1,23 @@
+\begin{table}[htbp]
+\centering
+\caption{Stability Analysis and Robust Core (unified\_v4)}
+\label{tab:stability}
+\adjustbox{width=.8\linewidth}{
+\begin{tabular}{lrl}
+\toprule
+\textbf{Metric} & \textbf{Value} & \textbf{Notes} \\
+\midrule
+\multicolumn{3}{l}{\textit{Score Perturbation (ADS-Full, 141 options)}} \\
+Jaccard @ $\varepsilon$=0.01 & 0.068 & $\pm$0.009 \\
+Jaccard @ $\varepsilon$=0.02 & 0.062 & $\pm$0.011 \\
+Jaccard @ $\varepsilon$=0.05 & 0.041 & $\pm$0.013 \\
+Jaccard @ $\varepsilon$=0.10 & 0.012 & $\pm$0.008 \\
+\midrule
+\multicolumn{3}{l}{\textit{Seed Stability (3 seeds)}} \\
+Cross-seed Jaccard & 1.000 & Deterministic \\
+\midrule
+\multicolumn{3}{l}{\textit{Stable Core}} \\
+Core @ $p$=0.50 (ADS-Full) & $\approx$12 & Estimated \\
+\bottomrule
+\end{tabular}}
+\end{table}

@@ -1,0 +1,21 @@
+\begin{table}[t]
+\centering
+\small
+\caption{Benchmark scale and composition. We release \textbf{\NumPrimaryArtifacts} primary text artifacts (courses, programs, occupations, mission texts) enriched with \textbf{\NumAttributeRecords} structured attribute/link records, totalling \textbf{\NumProcessedRows} processed rows across all released tables. The main paper runs focus on course-level decisions with \textbf{\NumCourses} course options; mission targets use \NumMissionsMain institution-level statements in \texttt{unified\_v3} and the full \NumMissionsExpanded-text corpus for robustness (Supplement).}
+\label{tab:dataset_overview}
+\adjustbox{width=.9\linewidth}{
+\begin{tabular}{@{}lrrl@{}}
+\hline
+{\bf Component} & {\bf \# items} & {\bf Type}\\
+\hline
+Courses (MIT+UC Berkeley) & \NumCourses & text\\
+Programs (MIT+UC Berkeley+ASU) & \NumPrograms & text\\
+Occupations (O*NET) & \NumOccupations & text\\
+Mission corpus (expanded) & \NumMissionsExpanded & text \\
+\hline
+Attribute/link records & \NumAttributeRecords & structured\\
+Total processed rows (all tables) & \NumProcessedRows & --- \\
+\hline
+\end{tabular}
+}
+\end{table}

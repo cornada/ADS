@@ -1,0 +1,422 @@
+%%%% main.tex
+\typeout{KDD 2026 D&B Track: Agent-Didactic Spaces (unified_v4)}
+
+% KDD 2026 Datasets & Benchmarks Track
+% Version: unified_v4 (7 universities, 3 countries, 175K+ records)
+% - For submission: single-blind (author names visible)
+% - For camera-ready: add DOI and acknowledgements
+
+\documentclass{article}
+\pdfpagewidth=8.5in
+\pdfpageheight=11in
+
+% The file ijcai26.sty is from the IJCAI - ECAI 2026 Author Kit.
+\usepackage{ijcai26}
+\usepackage{adjustbox}
+
+% Standard packages (match IJCAI template)
+\usepackage{times}
+\usepackage{soul}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage[small]{caption}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{amsthm}
+\usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage[switch]{lineno}
+
+% Additional packages (safe)
+\usepackage{xcolor}
+\usepackage{xspace}
+\usepackage{multirow}
+
+% Comment out this line in the camera-ready submission
+\linenumbers
+
+\urlstyle{same}
+
+% PDF Info is REQUIRED.
+% Please leave this \pdfinfo block untouched both for the submission and
+% camera-ready copy. Do not include Title and Author information here.
+\pdfinfo{
+/TemplateVersion (IJCAI.2026.0)
+}
+
+%                           - 
+% Build switches
+%                           - 
+\newif\ifshort      % IJCAI-short (submission) vs full version
+\shortfalse         % default: FULL. Set \shorttrue for IJCAI page-limit build.
+
+\newif\ifdraft      % show TODO markers
+\draftfalse          % set \draftfalse for clean builds
+
+\newcommand{\shortonly}[1]{\ifshort #1\fi}
+\newcommand{\longonly}[1]{\ifshort\else #1\fi}
+\newcommand{\draftonly}[1]{\ifdraft #1\fi}
+
+\ifdraft
+  \newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+\else
+  \newcommand{\todo}[1]{}
+\fi
+
+%                           - 
+% Convenience: robust figure placeholders
+%                           - 
+\newcommand{\maybeincludegraphics}[2][]{%
+  \IfFileExists{#2}{\includegraphics[#1]{#2}}{%
+    \fbox{\parbox[c][0.18\textheight][c]{0.95\linewidth}{\centering Missing figure: \texttt{#2}}}%
+  }%
+}
+
+%                           - 
+% Paper macros
+%                           - 
+\newcommand{\ADS}{\textsc{ADS}\xspace}
+\newcommand{\MAPE}{\textsc{MAPE}\xspace}
+
+% Industry partner is anonymized for double-blind review
+\newcommand{\IndustryPartner}{\textit{industry partner (anonymized)}}
+
+% Shared constants (dataset counts, headline metrics) to prevent number drift
+\input{paper_constants.tex}
+
+\newtheorem{definition}{Definition}
+
+\title{Agent-Didactic Spaces: A Multi-Agent, Multi-Objective Framework for Educational Pathway Evaluation}
+
+% Anonymized submission (double-blind)
+\author{
+Anonymous Author(s)
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Educational pathway systems must balance conflicting stakeholder objectives---learner goals, institutional mission, and labor-market relevance---yet most collapse these into a single score, burying trade-offs and blocking contestation.
+We introduce Agent-Didactic Spaces (\ADS), embedding educational options and stakeholder targets into a shared space with auditable lenses. Multi-Agent Pareto Evaluation (\MAPE) computes stakeholder-specific scores, enforces a tunable dominance constraint~$\tau$, and returns a feasible Pareto set with retrieval-grounded explanations.
+We release an open benchmark comprising {\HeadlineRecords}+ processed records: {\NumCourses} courses from {\NumUniversities} universities across {\NumCountries} countries, {\NumOccupations} O*NET occupations, and {\NumAttributeRecords} structured skill/task links.
+At default $\tau{=}0.25$, \MAPE returns {\MainParetoSize} feasible Pareto options---{\ParetoVsBaselineRatio}$\times$ more than scalarization baselines. Cross-university analysis shows {\NumUnisContributing}/{\NumUniversities} institutions contribute unique Pareto-optimal options. We audit robustness via mission-corpus expansion and market drift across O*NET releases (2022--2025), observing stable governance behaviour. In a practitioner study ($n{=}13$), educators rated Trade-off Transparency at 4.85/5 and Usefulness at 4.38/5.
+\end{abstract}
+
+% Educational pathway recommenders shape what learners study next and, by extension, what educators choose to build. But real pathway decisions are inherently multi-stakeholder: learner goals, institutional mission, labor-market relevance, and governance constraints rarely align. Many systems sidestep this plurality by collapsing everything into a single proxy (e.g., predicted grade, completion, ``fit''). That shortcut buries trade-offs and leaves value judgements difficult to audit and even harder to contest. Motivated by a design-phase collaboration with an \IndustryPartner, we target a concrete governance requirement: make stakeholder trade-offs explicit, inspectable, and tunable.
+
+% We introduce \emph{Agent-Didactic Spaces} (\ADS): a shared embedding space for educational options and stakeholder target corpora, where stakeholders are operationalized as transparent ``agents'' defined by auditable \emph{lenses}. On top of \ADS we define \MAPE (\emph{Multi-Agent Pareto Evaluation}), a feasible multi-objective evaluation engine that (i) computes stakeholder-specific similarity scores, (ii) filters options using a tunable \emph{stakeholder-dominance} (autonomy-drift) constraint, and (iii) returns a feasible Pareto set with retrieval-grounded explanations and lightweight recourse cues.
+
+% We evaluate on an open benchmark built from public university course artifacts and labor-market taxonomies, comprizing {\NumPrimaryArtifacts} primary text artifacts and {\NumAttributeRecords} structured attribute/link records ({\NumProcessedRows} processed rows across all released tables). In the main evaluation snapshot (\texttt{unified\_v3}), \MAPE returns a {\MainParetoSize}-item feasible Pareto set at the default dominance threshold ($\tau{=}0.25$), whereas weighted-sum and random scalarization baselines recover only {\BaselineOptima} unique optima. With cached encodings, the full pipeline runs in {\MainRuntimeSec}s and empirically scales as $\mathcal{O}(n^{\ScalingExponent})$. We further audit target robustness along two real-world axes: (i) mission-target diversity (\NumMissionsMain institution-level mission statements vs. a \NumMissionsExpanded-text mission corpus) and (ii) market drift across four historical O*NET releases (2022 - 2025), where we observe {\MarketDriftTurnover} Pareto turnover (Jaccard \MarketDriftJaccard). Finally, in a practitioner validation study ($n{=}13$), experienced educators rated {Trade-off Transparency} at {4.85/5} and {Usefulness (vs. ranked lists)} at {4.38/5}, supporting Pareto trade-off presentation and the dominance threshold as a governance guardrail.
+
+\section{Introduction}
+
+Educational planning systems   from course recommenders to career-alignment tools   now sit in the loop of curriculum decisions. They guide learners toward \emph{what to learn next} and, indirectly, shape which modules educators choose to create. Yet these choices rarely optimize a single objective. Learners, institutions, labor markets, and governance bodies each bring legitimate   and sometimes conflicting   criteria for what counts as a good pathway.
+
+Despite this, most deployed pipelines still return a single ranked list. They collapse stakeholder objectives into one utility proxy and optimize it. The convenience is obvious; the cost is easier to miss. Two options with similar overall scores can encode very different balances between learner preference, mission alignment, and labor-market relevance. Once these balances are buried, governance becomes brittle: stakeholders cannot audit \emph{which} objectives were prioritized, and learners cannot reason about the opportunity cost of privileging one objective over another.
+
+This leads to a simple question: what would pathway evaluation look like if it refused to scalarize? Early design discussions reframed the governance problem as a shift from scalar grades to a \emph{vector} notion of educational fit: evaluate each option by its alignment with multiple stakeholder ``directions'' (learner, institution, labor market, governance, and mission/values), and surface the resulting trade-offs instead of burying them in a single score.
+
+\ADS/\MAPE is a practical operationalization   and a generalization   of this idea. \ADS makes each stakeholder ``vector'' an auditable object: a target corpus (summarized by a centroid) together with an explicit lens over the embedding space. \MAPE keeps the full vector of stakeholder similarities and surfaces trade-offs by returning a feasible Pareto set rather than a single ranking. The dominance threshold $\tau$ becomes the governance knob implied by the original sketch: tightening $\tau$ filters options that drift too far toward any single non-learner stakeholder, whereas relaxing it permits more aggressive alignment when policy allows. Our experiments instantiate four stakeholders for reproducibility; the fifth ``state/regulator'' stakeholder is represented as another \ADS agent by supplying an additional corpus and lens at deployment time.
+
+We therefore argue that pathway evaluation should preserve stakeholder plurality and make trade-offs inspectable. We introduce \emph{Agent-Didactic Spaces} (\ADS), a representation layer that embeds educational artifacts (courses, program texts, job-role descriptions, learner statements) into a shared space. We operationalize each stakeholder as an \emph{agent}   not an autonomous RL entity, but a transparent evaluation perspective defined by (i) a target corpus, (ii) a simple auditable \emph{lens} over the embedding space, and (iii) optional normative constraints. Building on \ADS, \MAPE computes stakeholder-specific similarity scores, enforces a tunable \emph{stakeholder-dominance} feasibility constraint, and returns a \emph{feasible Pareto set} with retrieval-grounded explanations and lightweight recourse cues. The point is contestation and learner-centred choice, not silent optimization.
+
+\paragraph{What this paper is not.}
+We do \emph{not} present an LLM tutor, and we do not claim causal improvements in learning outcomes. We focus instead on an \emph{evaluation and governance} layer for pathway options using public artifacts and explicit objectives.
+
+\paragraph{Contribution.} The contribution of this paper is as follows
+\begin{itemize}
+  \item \textit{\ADS formalism.} We formalize a shared embedding space for educational options and stakeholder target corpora, and represent stakeholder perspectives as explicit, auditable lenses over that space.
+  \item \textit{\MAPE: feasible Pareto evaluation under stakeholder-dominance constraints.} We introduce a feasibility filter that operationalizes stakeholder dominance risk (autonomy drift) and integrate it into multi-objective Pareto selection.
+  \item \textit{Contestable outputs.} For each feasible Pareto option, we return stakeholder-typed explanations grounded in retrieved target artifacts and lightweight recourse cues for ``what-if'' analysis.
+  \item \textit{Reproducible evaluation protocol.} We specify datasets, baselines, and robustness metrics (including mission-corpus expansion, O*NET time-travel market drift, stability under perturbations, and strict provenance mode) for evaluating whether ADS-style trade-offs are non-trivial and stable.
+  \item \textit{Two-stage stakeholder evaluation.} We report formative stakeholder interviews (n=3) that elicited governance requirements, and a practitioner validation pilot (n=13) with quantitative ratings and qualitative evidence supporting trade-off transparency and usefulness (Supplementary).
+
+\end{itemize}
+
+\paragraph{Paper structure.}
+Section~\ref{sec:related} reviews adjacent work. Sections~\ref{sec:setting} - \ref{sec:method} define \ADS/\MAPE. Section~\ref{sec:collab} reports stakeholder engagement and practitioner validation (including a pilot study). Section~\ref{sec:experiments} specifies datasets, baselines, and evaluation questions. Section~\ref{sec:ethics} discusses limitations, ethics, and reproducibility.
+
+\begin{figure*}[t]
+  \centering
+  \maybeincludegraphics[width=.9\textwidth]{figures/fig1_architecture_comparison.pdf}
+  \vspace{-2mm}
+  \caption{Traditional systems scalarize stakeholder criteria and return a single ranked list. \ADS/\MAPE instead embeds artifacts into a shared space, represents stakeholders as explicit agents (targets + lenses), computes a vector of objective scores, filters options with a stakeholder-dominance feasibility constraint controlled by $\tau$, and returns a feasible Pareto set with grounded explanations and recourse cues.}
+  \label{fig:architecture}
+  \vspace{-2mm}
+\end{figure*}
+
+\section{Related Work and Positioning}
+\label{sec:related}
+\ADS/\MAPE sits at the intersection of four research threads: (i) educational recommenders and pathway planning, (ii) mapping education artifacts to labor-market needs, (iii) multi-objective optimization with normative constraints, and (iv) multi-stakeholder evaluation and contestable AI. We briefly review each line and highlight the gap our framework targets: making stakeholder trade-offs explicit and governable rather than implicitly scalarized.
+
+\subsection{Educational pathway recommendation and course representations}
+Educational recommender systems recommend learning resources, courses, or sequences using learner profiles and structured constraints such as prerequisites. Recent surveys emphasize the diversity of objectives and evaluation practices in this space, and note that many deployed systems still compress evaluation into a scalar proxy.\cite{dasilva2022slrERS,aucancela2023ersslr}
+Learning-path recommendation often relies on structured knowledge representations such as knowledge graphs.\cite{shi2020}
+Course recommendation also appears in mainstream AI venues: for example, IJCAI work explores graph- and reinforcement-learning based formulations for course recommendation and educational resource feedback.\cite{hhcor2024,dfrp2024}
+In parallel, representation-learning approaches such as Course2Vec-style models learn course embeddings from enrolment data to support similarity, prediction, and recommendation.\cite{morsy2019course2vec,jiang2020multifactorCourse2vec,xu2023courseEmbeddings}
+\paragraph{How ADS differs:} rather than producing a single ranked list, \ADS makes stakeholder perspectives explicit and returns a \emph{set} of feasible Pareto options to surface trade-offs.
+Complementary work uses LLM-based educational assistants for tutoring, feedback, and assessment.\cite{coderagent2025,collabAgents2025,llmGrading2025,handByHand2025,livepoem2025} \ADS is orthogonal: it targets multi-stakeholder evaluation and governance of candidate options, before (or alongside) downstream tutoring or delivery.
+
+\subsection{Skills and labor-market alignment}
+Mapping educational content to labor-market needs underpins career-oriented advising and job recommendation. Prior work embeds job offers, skills, and candidates to support matching and recommendation, including graph-based formulations and embedding-based methods~\cite{giabelli2021skills2job,kara2022skillEmbeddings,leon2024transversalSkills}.
+
+\paragraph{How ADS differs:} we treat labor-market alignment as \emph{one stakeholder objective} among others (e.g., mission and learner), not as the sole target to optimize.
+
+\subsection{Multi-objective optimization and normative constraints}
+Pareto optimality and scalarization methods are standard tools for preserving trade-offs in multi-objective optimization.\cite{roijers2013survey_mosdm,deb2002nsga2}
+Recent IJCAI work studies multi-objective learning via scalarization (e.g., random scalarization neural bandits) and normative behaviour constraints in decision-making (e.g., ``restraining bolts'').\cite{monb2025,restrainingBolts2025}
+Multi-agent and multi-objective perspectives also appear in policy settings where equity-related trade-offs matter.\cite{equityMAMORL2025}
+\paragraph{How ADS differs:} we use these tools as an \emph{evaluation layer} for educational pathway options, and we integrate a simple, auditable \emph{feasibility constraint} that limits stakeholder dominance.
+
+\subsection{Multi-stakeholder evaluation and contestable AI}
+Multi-stakeholder recommender evaluation argues that recommender quality cannot be assessed from a single user's perspective alone.\cite{abdollahpouri2020multistakeholder,burke2025mseval,ge2024trustworthyRS}
+Contestable AI frameworks push this further: affected parties should be able to challenge and revise algorithmic decisions, shifting emphasis from prediction accuracy to governance and participation.\cite{aler2020contestable,alfrink2023contestable,dignum2025contesting}
+Explainable recommendation surveys motivate transparency and user understanding in recommendation pipelines.\cite{zhang2020explainableRS}
+Counterfactual explanations and actionable recourse offer concrete ``what-if'' tools for challenge and revision.\cite{wachter2017counterfactual,ustun2019recourse,robustx2025}
+Fairness constraints and stability in ranking/decision pipelines matter when pathway recommendations affect access and opportunity.\cite{ekstrand2019fairness,dwork2012fairness,hardt2016equality,fairRankAgg2025,fairdas2024}
+\paragraph{How ADS differs:} \ADS/\MAPE makes stakeholder objectives explicit look-up objects (targets + lenses), returns auditable trade-offs as feasible Pareto sets, and attaches explanation/recourse objects to each option to support contestation rather than opaque optimization.
+
+\section{Problem Setting}
+\label{sec:setting}
+\paragraph{Options and pathways.}
+Let $\mathcal{X}$ be a set of educational options (courses, modules, projects). A \emph{pathway} is a sequence $\pi=(x_1,\dots,x_T)$ subject to feasibility constraints (e.g., prerequisites), denoted $\pi\in\Pi\subseteq\mathcal{X}^T$. In this paper's experiments we focus on \emph{option-level} evaluation (length-$1$ pathways), and treat multi-step planning as an extension (Appendix in Supplement).
+
+\paragraph{Stakeholder agents.}
+We consider a finite set of stakeholders $\mathcal{A}$ (e.g., learner, institution, labor market, regulator/mission). In \ADS, an ``agent'' is not a learning RL entity; it is a stakeholder perspective parameterized by a lens and a target corpus.
+
+\paragraph{Goal.}
+Given $\mathcal{X}$ (or $\Pi$), the system returns (i) stakeholder-specific scores, (ii) the feasible Pareto set, and (iii) stakeholder-typed explanations that support learner-centred choice and contestation.
+
+\section{Agent-Didactic Spaces and \MAPE}
+\label{sec:method}
+\subsection{Shared representation space}
+Let $\mathcal{T}$ denote text artifacts: course descriptions/syllabi, job-role descriptions, mission statements, learner statements, etc. A representation map  $r:\mathcal{T}\to\mathbb{R}^d$ embeds each artifact into a shared space. For an option $x\in\mathcal{X}$ with artifacts $\mathcal{T}_x$, we form an option profile by mean-pooling and L2-normalization:
+\begin{equation}
+  v_x = \frac{\bar{v}_x}{\|\bar{v}_x\|}, \quad \text{where } \bar{v}_x = \frac{1}{|\mathcal{T}_x|}\sum_{t\in\mathcal{T}_x} r(t).
+\end{equation}
+Similarly, each stakeholder $a$ has a \emph{target corpus} $\mathcal{T}_a$ and a target profile (centroid)
+\begin{equation}
+  \mu_a = \frac{\bar{\mu}_a}{\|\bar{\mu}_a\|_2}, \quad \text{where } \bar{\mu}_a = \frac{1}{|\mathcal{T}_a|}\sum_{t\in\mathcal{T}_a} r(t).
+\end{equation}
+
+\subsection{Stakeholder lenses}
+Each stakeholder $a$ is associated with a lens $L_a$ that reweights or transforms the embedding space, $L_a:\mathbb{R}^d \to \mathbb{R}^d.$
+We focus on auditable linear lenses used in the prototype:
+(i) \emph{identity} $L_a(v)=v$;
+(ii) \emph{diagonal} $L_a(v)=\mathrm{diag}(\ell_a)\,v$ with nonnegative weights $\ell_a$; and
+(iii) \emph{learned diagonal} lenses trained from labeled corpora via one-vs-rest logistic regression on embedding dimensions (details in Supplement).
+
+\subsection{Multi-objective similarity scores}
+\label{subsec:scores}
+For each stakeholder $a$, we define a raw similarity score as cosine similarity after applying the lens:
+\begin{equation}
+  \tilde{s}_a(x) = \frac{L_a(v_x) \cdot L_a(\mu_a)}{\|L_a(v_x)\| \|L_a(\mu_a)\|}.
+\end{equation}
+\paragraph{Cross-stakeholder calibration.}
+Raw cosine similarities are not directly comparable across stakeholders due to differences in target corpus geometry (e.g., mission texts may cluster more tightly than job-role descriptions). We therefore calibrate scores by z-score normalization within each stakeholder:
+\begin{equation}
+  s_a(x) = \frac{\tilde{s}_a(x) - \hat{\mu}_a}{\hat{\sigma}_a},
+\end{equation}
+where $\hat{\mu}_a = \frac{1}{|\mathcal{X}|}\sum_{x \in \mathcal{X}} \tilde{s}_a(x)$ and $\hat{\sigma}_a$ are the empirical mean and standard deviation of raw scores across all options. This ensures that a score of $s_a(x) = 1$ means ``one standard deviation above the mean alignment for stakeholder $a$.''
+Collecting calibrated scores yields a vector-valued evaluation
+\begin{equation}
+  \mathbf{s}(x) = (s_{a_1}(x),\dots,s_{a_m}(x)).
+\end{equation}
+
+For pathways $\pi$, we can aggregate option profiles (e.g., mean pooling) or aggregate per-step scores; in experiments we evaluate options ($T=1$).
+
+\subsection{Normative feasibility: stakeholder-dominance risk (autonomy drift)}
+\label{subsec:constraint}
+Pareto sets preserve trade-offs but do not encode normative constraints. We therefore define a feasibility filter that flags options where \emph{any} stakeholder objective dominates others beyond a threshold $\tau$.
+We define a symmetric dominance-gap score as the maximum pairwise gap:
+\begin{equation}
+  g(x) = \max_{a,b \in \mathcal{A}, a \neq b} \left( s_a(x) - s_b(x) \right),
+\end{equation}
+and call an option feasible if $g(x) \le \tau$. For governance scenarios where a specific stakeholder $a^\star$ (e.g., market) requires additional scrutiny, we define a directed variant:
+\begin{equation}
+  g_{a^\star}(x) = s_{a^\star}(x) - \max_{b\in\mathcal{A}\setminus\{a^\star\}} s_b(x).
+\end{equation}
+In our main experiments we report both: the symmetric $g(x)$ ensures no stakeholder dominates, while $g_{\text{market}}(x)$ addresses the specific governance concern of market capture. An option is feasible under the combined constraint if $\max(g(x), g_{\text{market}}(x)) \le \tau$.
+Intuitively, tightening $\tau$ prevents single-objective recommendations from overwhelming other stakeholder interests.
+
+\subsection{Feasible Pareto set}
+Let $\mathcal{X}_\tau=\{x\in\mathcal{X}: g(x)\le\tau\}$ denote feasible options. For vectors $\mathbf{u},\mathbf{v}\in\mathbb{R}^m$, we say $\mathbf{u}$ \emph{dominates} $\mathbf{v}$ (write $\mathbf{u}\succ \mathbf{v}$) if $u_k\ge v_k$ for all $k$ and $u_k>v_k$ for some $k$. The feasible Pareto set is
+\begin{equation}
+  \mathcal{P}_\tau = \big\{x\in\mathcal{X}_\tau : \nexists y\in\mathcal{X}_\tau \text{ s.t. } \mathbf{s}(y)\succ \mathbf{s}(x)\big\}.
+\end{equation}
+
+\subsection{Explanations and recourse}
+\label{subsec:explain}
+For each $x\in\mathcal{P}_\tau$, \MAPE returns a structured explanation object: stakeholder scores $\mathbf{s}(x)$; the constraint gap $g(x)$; and, for each stakeholder, the nearest target artifacts (top-$k$) under $\cos(L_a(\cdot),L_a(\mu_a))$. This grounds qualitative explanations in retrieved text rather than free-form generation. In addition, we provide lightweight recourse cues by reporting which target artifacts increase a chosen objective the most (e.g., ``which market roles you are closest to'') and by computing score deltas under counterfactual edits (Supplement).
+
+\subsection{Robustness and stability evaluation}
+Because embedding-based scores are sensitive to representation and target choices, we evaluate stability by perturbing embeddings and/or target corpora and recomputing $\mathcal{P}_\tau$. We report set-level overlap (e.g., Jaccard similarity) and within-set rank stability (e.g., Spearman correlation) as a function of perturbation magnitude.
+
+\subsection{Algorithm sketch and implementation mapping}
+Algorithm~\ref{alg:mape} sketches the end-to-end pipeline.
+
+\begin{algorithm}[t]
+\caption{\MAPE in \ADS (prototype pipeline)}
+\label{alg:mape}
+\begin{algorithmic}[1]
+\REQUIRE Option artifacts $\{\mathcal{T}_x\}_{x\in\mathcal{X}}$; stakeholder target corpora $\{\mathcal{T}_a\}_{a\in\mathcal{A}}$; lens specs; dominance threshold $\tau$
+\STATE Embed all artifacts via $r$; aggregate to option profiles $v_x$ and target profiles $\mu_a$
+\STATE Construct stakeholder lenses $L_a$ (identity/diagonal/learned)
+\FOR{each option $x\in\mathcal{X}$}
+  \STATE Compute stakeholder scores $s_a(x)=\cos(L_a(v_x),L_a(\mu_a))$
+  \STATE Compute dominance gap $g(x)$ and feasibility flag $\mathbb{I}[g(x)\le\tau]$
+\ENDFOR
+\STATE Compute feasible Pareto set $\mathcal{P}_\tau$ from $\{\mathbf{s}(x): x\in\mathcal{X}_\tau\}$
+\STATE For each $x\in\mathcal{P}_\tau$, attach explanation + recourse objects (nearest artifacts, score deltas)
+\STATE Optionally: perturb embeddings/targets and recompute stability metrics
+\RETURN $\mathcal{P}_\tau$ with explanations and stability report
+\end{algorithmic}
+\end{algorithm}
+
+\longonly{\paragraph{Implementation mapping.} In the prototype, embeddings are computed with cached encoders; lenses support identity/diagonal and learned diagonal variants; scoring is cosine similarity; feasibility is a thresholded dominance-gap; Pareto is computed on feasible vectors; and stability is evaluated under noise/perturbation sweeps. \draftonly{\todo{Add concrete module paths once repo is frozen.}}}
+
+
+
+
+\section{Stakeholder Engagement and Practitioner Validation}
+\label{sec:collab}
+
+We designed \ADS/\MAPE in conversation with practice. A design-phase partnership with an \IndustryPartner surfaced a recurring governance failure mode: curriculum and pathway choices must balance market relevance with pedagogical integrity, yet teams often negotiate this balance implicitly. Without an explicit representation of trade-offs, it is difficult to justify decisions, document them for accountability, or contest them when stakeholders disagree.
+
+\subsection{Formative stakeholder interviews (partner organization)}
+We conducted semi-structured formative interviews with three senior stakeholders (product leadership, academic affairs leadership, senior instructional designer) to elicit requirements and stress-test early \ADS/\MAPE prototypes (protocol and additional anonymized quotes in Supplementary Material). A lightweight thematic synthesis converged on three recurring needs: (i) make market - pedagogy tensions explicit rather than letting ``whoever has the louder voice that day'' decide; (ii) prefer a Pareto set over a single ranked list, framing the frontier as a \emph{decision map}; and (iii) treat the dominance threshold $\tau$ as a configurable governance guardrail against long-run drift toward purely market-driven design.
+
+\subsection{Practitioner validation study}
+We then asked whether these design choices remain useful for day-to-day practitioners beyond the partner organization. We ran a remote study with 13 experienced educational professionals drawn from a diverse range of institutions (see Supplementary Material for demographics). Participants examined a Pareto frontier visualization, completed a think-aloud protocol, and then filled out a quantitative survey on a 5-point Likert scale.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.98\linewidth]{figures/fig3_verification_status.png}
+  \caption{Results of the practitioner validation study ($n{=}13$). Mean ratings for core hypotheses show strong verification for Trade-off Transparency (4.85) and Usefulness (4.38), with other key hypotheses being supported. Error bars represent standard deviation.}
+  \label{fig:verification}
+\end{figure}
+
+\input{tables/T9_pilot_results.tex}
+
+Figure~\ref{fig:verification} summarizes the main quantitative findings. Participants strongly endorsed the framework's central promise: they rated {Trade-off Transparency} at {4.85/5}, indicating that the frontier makes conflicts in curriculum design visible rather than implicit. They also rated {Usefulness (vs. ranked lists)} at {4.38/5}, suggesting that practitioners prefer Pareto trade-off presentation to a single scalarized ranking.
+
+Ratings for {Clarity} (4.23/5), {Confidence} (3.69/5), and {Actionability} (3.62/5) met the support threshold (means $\ge 3.5$), but Confidence and Actionability remained moderate. In practice, participants wanted stronger ``drill-down'' into the evidence behind individual Pareto points and more interactive support for turning a point into concrete design actions. {Cognitive Load} (3.38/5) did not reach the support threshold. We therefore do not claim that \ADS/\MAPE reduces cognitive effort; instead, it can increase \emph{productive cognitive engagement} by shifting effort from searching to interpreting trade-offs.
+
+Qualitative feedback reinforces this interpretation. Participants described the frontier as a mechanism for reflective governance (P02: \textit{"This is making me realize I've been making these trade-offs unconsciously."}) and accountability (P07: \textit{"If the dean asks why we added this module, I can point to the trade-off analysis."}). Several also linked the approach to reducing costly trial-and-error in curriculum design (P13: \textit{"We discovered it through expensive trial and error. This visualization would have helped us see that earlier."}). One participant (P06) was notably more skeptical, cautioning against reifying embedding similarity as ground truth. We treat this as a boundary condition: \ADS/\MAPE is a governance scaffold for structuring discussion, not a substitute for expert judgement (Supplementary).
+
+\subsection{Implications and next steps}
+Taken together, the formative interviews and practitioner validation support positioning \ADS/\MAPE as an evaluation and governance layer: it externalizes stakeholder trade-offs and makes the choice of guardrails explicit. The next step is to translate transparency into action. Concretely, we plan interactive drill-down into individual Pareto points (retrieved evidence, uncertainty cues, and ``why this point'' explanations), richer control knobs for turning frontier navigation into concrete curriculum edits, integration of operational constraints (time/cost/capacity), and controlled comparisons against ranked-list baselines in realistic course-design tasks. Measuring downstream learner outcomes (retention, completion, job placement) requires longitudinal deployment and remains future work.
+
+
+
+\section{Experiments}
+
+\label{sec:experiments}
+
+The practitioner pilot in Sec.~\ref{sec:collab} tests whether educators find Pareto trade-off presentation useful. The offline experiments below ask a different question: when we apply \ADS/\MAPE to public educational and labor-market artifacts at scale, does it expose a non-trivial, stable trade-off surface or does scalarization already capture everything that matters? We answer by measuring (i) how much of the frontier scalar baselines recover, (ii) how the governance knob $\tau$ reshapes feasibility and Pareto size, (iii) robustness across encoders and perturbations, and (iv) runtime scaling.
+
+\subsection{Dataset, objectives, and provenance}
+\label{subsec:data}
+We evaluate \ADS/\MAPE on an open, provenance-traced benchmark built from {public university course artifacts} and {public labor-market taxonomies} spanning {\NumUniversities} universities across {\NumCountries} countries (USA, Sweden, UK). The released benchmark contains {\NumPrimaryArtifacts} primary text artifacts ({\NumCourses} courses, {\NumPrograms} program outcome descriptors, {\NumOccupations} O*NET occupations, and a {\NumMissionsExpanded}-text mission corpus) and {\NumAttributeRecords} structured attribute/link records (O*NET skills/tasks/technologies, CIP--SOC crosswalk links, and course$\leftrightarrow$occupation links), totalling {\NumProcessedRows} processed rows across all released tables (Table~\ref{tab:dataset_overview}).
+
+The {main evaluation} focuses on course-level decisions: \NumCourses course options and \NumOccupations occupation targets. For the mission objective we use {\NumMissionsMain} institution-level mission statements (one per university) to keep the target set auditable; the Supplement reports two robustness audits: (i) expanding mission targets to the full \NumMissionsExpanded-text mission corpus, and (ii) \emph{market time travel} across four historical O*NET releases (2022 - 2025) to quantify market drift.
+
+\paragraph{Stakeholder objectives.}
+We report results in two evaluation modes:
+(i) {ADS-Full} uses four stakeholder objectives implemented in the prototype (market, mission, university/curriculum, learner persona), and
+(ii) {ADS-2D} uses an interpretable 2-objective slice (market+mission).
+Market and mission objectives are instantiated by target corpora (job roles; mission texts). The university/curriculum and learner objectives use fixed target texts to make the evaluation reproducible; we treat real learner personalization and institutional policy specification as deployment-time inputs (Limitations).
+
+\paragraph{Strict provenance mode.}
+All runs operate in a strict provenance mode: each artifact is traceable to a source identifier and content hash in a dataset manifest; we use public artifacts; and basic validation excludes empty or malformed items.
+
+\input{tables/T0_dataset_overview.tex}
+
+\subsection{Experimental setup}
+We embed artifacts with sentence encoders from \texttt{sentence-transformers}: MiniLM (\texttt{all-MiniLM-L6-v2}, 384d) as the primary encoder and MPNet (\texttt{all-mpnet-base-v2}, 768d) as an ablation. A stub (random) encoder provides a sanity baseline. For each option or target corpus, we mean-pool artifact embeddings and L2-normalize before cosine scoring. Unless stated otherwise, we use identity lenses and the default dominance threshold $\tau{=}0.25$.
+
+\subsection{Baselines and metrics}
+We compare \MAPE to scalarization baselines: weighted-sum maximization over a weight grid, random scalarization (sampling weight vectors), and lexicographic orderings. We report: feasible ratio $|\mathcal{X}_\tau|/|\mathcal{X}|$, feasible Pareto size $|\mathcal{P}_\tau|$, set overlap (Jaccard) under perturbations and across seeds, and runtime scaling (with cached embeddings).
+
+\paragraph{Why we do not compare to SOTA course recommenders.}
+We do not directly compare \MAPE to state-of-the-art course recommenders (e.g., Course2Vec-style models\cite{morsy2019course2vec}) because our framework operates at a different layer of abstraction. \ADS/\MAPE is an evaluation and governance tool for surfacing stakeholder trade-offs among a \emph{given} set of options, not a recommender system for predicting user preferences or generating candidate pathways. Future work could explore integrating \MAPE as a re-ranking or filtering stage on top of a traditional recommender.
+
+\subsection{Key results}
+\paragraph{Pareto exposes many more admissible trade-offs than scalarization.}
+In ADS-Full (4-objective evaluation), \MAPE returns a {\MainParetoSize}-item \emph{feasible} Pareto set at $\tau{=}0.25$. By contrast, weighted-sum and random scalarization recover only {\BaselineOptima} unique optima (Fig.~\ref{fig:scalarization}). This gap indicates that scalarization hides large portions of the admissible trade-off surface.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.9\linewidth]{figures/F3_scalarization_vs_pareto_bar.png}
+  \caption{Pareto vs. scalarization baselines (ADS-Full, 4 objectives). \MAPE discovers \MainParetoSize feasible Pareto options, while weighted-sum and random scalarization recover \BaselineOptima unique optima.}
+  \label{fig:scalarization}
+\end{figure}
+
+\paragraph{The market - mission slice reveals qualitatively distinct trade-offs (ADS-2D).}
+To make the frontier interpretable, we visualize the 2-objective market - mission projection (ADS-2D) and highlight representative edge cases (Fig.~\ref{fig:scatter2d}). Even in this simple slice, the Pareto set includes distinct ``max-market'', ``max-mission'', and balanced options. This supports the claim that \MAPE surfaces non-trivial trade-offs rather than near-duplicates.
+
+\begin{figure}[t]
+  \centering
+  \maybeincludegraphics[width=0.95\linewidth]{figures/F1_scatter_market_mission_edge_cases.png}
+  \caption{Market--mission trade-offs in ADS-2D ({\NumUniversities} universities, {\NumCountries} countries). Highlighted points correspond to the edge cases in Supplementary Table~S8.}
+  \label{fig:scatter2d}
+\end{figure}
+
+
+\paragraph{The dominance threshold $\tau$ provides governance control.}
+We select $\tau{=}0.25$ as the default because it balances governance strictness with frontier coverage: it retains {\TauDefaultCoverage} of the unconstrained Pareto set while filtering out the most market-dominant options. Sweeping $\tau$ then controls the size of the feasible Pareto set from {\TauTightPareto} options (tight constraint, $\tau{=}0.05$) to {\TauLoosePareto} options (no constraint, $\tau\to\infty$) (Table~\ref{tab:tau-sweep}).
+
+\input{tables/T2_tau_sweep.tex}
+
+\paragraph{Representation and lenses matter, but are not arbitrary.}
+Encoder choice changes which options are exposed, but results are deterministic across seeds (Table~\ref{tab:encoder-ablation}): MiniLM yields {\MiniLMParetoSize} feasible Pareto options, MPNet yields {\MPNetParetoSize}, and the stub encoder yields $3$.
+
+\input{tables/T3_encoder_ablation.tex}
+
+Learned diagonal lenses substantially change the surfaced trade-offs: a learned lens yields {245} Pareto options with low overlap to the identity/diagonal frontier (Jaccard $=0.21$; Supplementary Table~S4).
+
+\paragraph{Robustness, transfer, and efficiency.}
+Under score perturbations, full Pareto membership can be sensitive (e.g., Jaccard $\approx 0.06$ at $\varepsilon{=}0.02$), but a robust core emerges: cross-seed Jaccard is {\SeedStabilityJaccard} (deterministic), and a target bootstrap preserves 82\% of Pareto options (Supplementary Table~S7). Cross-university evaluation reveals that all {\NumUnisContributing} universities contribute unique options to the joint Pareto front, with pairwise Jaccard $=0$ between single-university frontiers (Supplementary Table~S5). {Market time travel} across four historical O*NET releases (2022 - 2025) shows {\MarketDriftTurnover} Pareto turnover (Jaccard {\MarketDriftJaccard}), validating \ADS's design for \emph{updatable target corpora} (Supplementary). With cached embeddings, the pipeline runs in {\MainRuntimeSec}s for {\HeadlineCourses}+ options and scales as $\mathcal{O}(n^{\ScalingExponent})$ (Supplementary Table~S6).
+
+\paragraph{Cross-national market alignment.}
+A surprising finding emerges from the international dataset: KTH (Sweden) contributes the most Pareto options ({\ParetoKTH}/{\MainParetoSize}) despite lower market alignment ({\AlignKTH} vs. US mean {\AlignUSMean}). International universities show an alignment gap of {\AlignGap} to the US O*NET labor market centroid (Table~\ref{tab:market-alignment}), yet contribute qualitatively distinct frontier options.
+
+\input{tables/T_market_alignment.tex}
+
+\paragraph{Cross-national objective specialization.}
+Analysis of the 158 Pareto-optimal courses reveals distinct optimization profiles by region (Table~\ref{tab:objective-specialization}). US universities score higher on market and mission objectives, consistent with career-focused and institutionally-aligned curricula. International universities achieve significantly higher \emph{learner} scores (+17.8\% relative gain), suggesting more student-centered pedagogical designs. KTH alone contributes 18 courses to the top decile on learner objective---more than any US university. This explains why KTH leads Pareto contributions despite lower market alignment: Swedish technical education occupies a \emph{complementary niche} in the 4D objective space, optimizing for stakeholders that US institutions do not dominate. This validates the multi-stakeholder framing: different educational traditions optimize for different stakeholder combinations, and \MAPE surfaces these diverse trade-offs.
+
+\input{tables/T_objective_specialization.tex}
+
+
+
+\section{Limitations, Ethics, and Reproducibility}
+\label{sec:ethics}
+\paragraph{Limitations.}
+\ADS inherits limitations of embedding-based representations: scores depend on corpus coverage, suffer under domain shift, and can reflect representational bias. More fundamentally, lenses and target corpora encode value judgements. If we mis-specify them, the resulting trade-off surface can be misleading even if the optimization is correct. In this paper we evaluate option-level pathways; multi-step planning adds prerequisite constraints and compounds error across steps. Our pilot results also indicate that the framework may not reduce cognitive load; instead, it can increase \emph{productive cognitive engagement} by making trade-offs explicit and requiring interpretation.
+
+We report a practitioner validation study ($n{=}13$) supporting trade-off transparency and perceived usefulness, but this is not evidence of improved learner outcomes. Establishing causal impact (e.g., retention, completion, downstream employment) requires longitudinal deployment and remains future work.
+
+\paragraph{Ethical considerations.}
+We use public/open artifacts and avoid PII. A key risk is over-optimizing for market alignment at the expense of learner autonomy or mission commitments. \MAPE addresses this by (i) making objectives explicit and inspectable, (ii) exposing trade-offs via Pareto sets, and (iii) enforcing a tunable dominance constraint. Nevertheless, any deployment should include human oversight and mechanisms for contestation.
+
+\paragraph{Failure modes and governance.}
+Important failure modes include: (i) {embedding bias} or domain shift that changes similarity scores; (ii) {target mis-specification} (e.g., incomplete or biased market/mission corpora); (iii) {objective gaming} where users optimize for a visible objective at the expense of latent goals; and (iv) {stakeholder capture} where a single objective is treated as the ``true'' goal. Because target corpora are explicit inputs, they are also a potential misuse surface: a malicious or careless actor could manipulate outputs by substituting, poisoning, or cherry-picking the target corpora. \ADS/\MAPE mitigates these risks by making objectives and targets explicit (auditable corpora + lenses), returning a \emph{set} of trade-off options rather than a single ranking, and logging provenance so that disputed outputs can be traced to a concrete dataset snapshot. We treat the dominance threshold $\tau$ as a governance parameter selected with stakeholder input, not as a purely technical hyperparameter.
+
+\paragraph{Reproducibility.}
+We aim to provide deterministic experiment scripts with fixed random seeds, dataset manifests, and generated paper artifacts (figures/tables). \draftonly{\todo{Add concrete commands + seeds once repo is frozen.}}
+
+
+
+\section{Conclusion}
+We introduced \ADS, a representation layer for multi-stakeholder educational pathway evaluation, and \MAPE, a feasible Pareto evaluation engine with an explicit dominance guardrail, retrieval-grounded explanations, and robustness tests. The core idea is simple: instead of hiding value judgements inside a single score, we expose stakeholder plurality and make the trade-offs contestable.
+
+
+\bibliographystyle{named}
+\bibliography{references}
+
+\end{document}

@@ -1,0 +1,157 @@
+% Shared constants and counts for ADS KDD paper
+% Version 3: Updated 2026-02-06 with 7-university international dataset (unified_v4)
+% Keep these in one place to avoid drifting numbers across main/supp.
+
+% =============================================================================
+% DATASET COMPOSITION
+% =============================================================================
+
+% --- Primary text artifacts ---
+\newcommand{\NumCourses}{27,636}          % courses from 7 universities (3 countries)
+\newcommand{\NumOccupations}{1,016}       % O*NET occupation profiles
+\newcommand{\NumMissions}{62}             % university mission statements
+\newcommand{\NumScorecardPrograms}{217}   % College Scorecard program outcomes
+\newcommand{\NumArtifacts}{28,046}        % total text artifacts
+
+% --- Aliases for paper consistency ---
+\newcommand{\NumPrograms}{217}            % alias: program descriptors = Scorecard programs
+\newcommand{\NumPrimaryArtifacts}{28,046} % alias: primary text artifacts
+\newcommand{\NumMissionsMain}{7}          % one mission per university (main eval)
+\newcommand{\NumMissionsExpanded}{62}     % expanded mission corpus
+\newcommand{\NumArtifactsMission}{28,714} % courses + occupations + expanded missions (27,636+1,016+62)
+
+% --- Universities ---
+\newcommand{\NumUniversities}{7}          % MIT, UCB, Stanford, UIUC, Cornell (US) + KTH (SE) + Edinburgh (UK)
+\newcommand{\NumCountries}{3}             % USA, Sweden, UK
+\newcommand{\NumMIT}{6,944}               % MIT OCW courses
+\newcommand{\NumUCB}{11,113}              % UC Berkeley courses
+\newcommand{\NumStanford}{2,663}          % Stanford ExploreCourses
+\newcommand{\NumUIUC}{860}                % UIUC CIS courses
+\newcommand{\NumCornell}{842}             % Cornell Class Roster
+\newcommand{\NumKTH}{4,768}               % KTH KOPPS API (Sweden)
+\newcommand{\NumEdinburgh}{446}           % Edinburgh DRPS (UK)
+
+% --- Structured data ---
+\newcommand{\NumAttributeRecords}{140,449}  % O*NET skills/tasks/tech + links
+\newcommand{\NumProcessedRows}{174,346}     % total processed CSV rows
+
+% =============================================================================
+% MAIN EXPERIMENT RESULTS (MiniLM, seed=0, unified_v4)
+% =============================================================================
+
+\newcommand{\MainParetoSize}{85}
+\newcommand{\MainParetoRatio}{0.32\%}     % 85 / 26,968 feasible
+\newcommand{\MainHypervolume}{0.122}
+\newcommand{\MainSpacing}{0.036}
+\newcommand{\MainSpread}{0.012}
+\newcommand{\MainFeasibleCount}{22,414}
+\newcommand{\MainFeasibleRatio}{81.1\%}   % 22,414 / 27,636
+\newcommand{\TauTightPareto}{15}             % Pareto at tau=0.05 (tight)
+\newcommand{\TauLoosePareto}{95}             % Pareto at tau=inf (no constraint)
+\newcommand{\TauDefaultCoverage}{94.5\%}     % fraction of unconstrained Pareto kept at tau=0.25
+
+% --- Per-objective statistics ---
+\newcommand{\MarketScoreMax}{0.501}
+\newcommand{\MarketScoreMean}{0.185}
+\newcommand{\MissionScoreMax}{0.687}
+\newcommand{\MissionScoreMean}{0.282}
+\newcommand{\UniversityScoreMax}{0.721}
+\newcommand{\UniversityScoreMean}{0.445}
+\newcommand{\LearnerScoreMax}{0.611}
+\newcommand{\LearnerScoreMean}{0.216}
+
+% =============================================================================
+% BASELINE COMPARISON
+% =============================================================================
+
+\newcommand{\BestBaselineMethod}{weighted\_sum\_equal}
+\newcommand{\BestBaselineOverlap}{10}        % out of 85 Pareto
+\newcommand{\BestBaselineJaccard}{0.118}
+\newcommand{\ParetoVsBaselineRatio}{8.5}     % 85 / 10 = 8.5x more options
+\newcommand{\BaselineOptima}{10}             % alias: number of unique optima from baselines
+
+% --- Runtime and scaling ---
+\newcommand{\MainRuntimeSec}{14}             % seconds with cached embeddings (28K options)
+\newcommand{\ScalingExponent}{1.2}           % empirical O(n^x) scaling
+
+% --- All baselines (unified_v4) ---
+% weighted_sum_equal: overlap=10, Jaccard=0.118
+% random_scalarization: overlap=10, Jaccard=0.118
+% lexicographic_market: overlap=7, Jaccard=0.080
+% lexicographic_mission: overlap=7, Jaccard=0.080
+% lexicographic_learner: overlap=7, Jaccard=0.080
+% weighted_sum_grid: overlap=4, Jaccard=0.044
+% lexicographic_university: overlap=4, Jaccard=0.044
+
+% =============================================================================
+% ENCODER COMPARISON
+% =============================================================================
+
+\newcommand{\MiniLMParetoSize}{85}
+\newcommand{\MiniLMHypervolume}{0.122}
+\newcommand{\MiniLMDimension}{384}
+
+\newcommand{\MPNetParetoSize}{32}
+\newcommand{\MPNetHypervolume}{0.131}
+\newcommand{\MPNetDimension}{768}
+
+\newcommand{\CrossEncoderJaccard}{0.047}     % MiniLM vs MPNet Pareto overlap
+\newcommand{\EncoderParetoRatio}{2.7}        % 85 / 32 = 2.7x difference
+
+% =============================================================================
+% SEED STABILITY
+% =============================================================================
+
+\newcommand{\SeedStabilityJaccard}{1.000}    % identical across seeds 0,1,2
+\newcommand{\NumSeedsEvaluated}{3}
+
+% =============================================================================
+% CROSS-UNIVERSITY ANALYSIS
+% =============================================================================
+
+\newcommand{\CrossUniversityJaccard}{0.000}  % pairwise Pareto overlap = zero
+\newcommand{\NumUnisContributing}{5}         % 5/7 contribute to full Pareto
+
+% Best per objective comes from different universities:
+% market: MIT (course:MIT:95e54bcd8f37, score=0.501)
+% mission: Stanford (course:Stanford:3a43f1d66c41, score=0.687)
+% university: UC Berkeley (course:UC Berkeley:f474539b4cfd, score=0.721)
+% learner: MIT (course:MIT:8ae198c50ff1, score=0.611)
+
+% =============================================================================
+% O*NET TIME-TRAVEL (market drift 2022→2025)
+% =============================================================================
+
+\newcommand{\MarketDriftJaccard}{0.967}
+\newcommand{\MarketDriftTurnover}{3\%}
+\newcommand{\MarketDriftCentroid}{0.0018}
+\newcommand{\MarketDriftParetoMin}{29}
+\newcommand{\MarketDriftParetoMax}{30}
+\newcommand{\MarketDriftNewTech}{51}
+\newcommand{\MarketDriftRemovedTech}{364}
+
+% =============================================================================
+% GOAL SENSITIVITY ANALYSIS
+% =============================================================================
+
+\newcommand{\GoalCareerPareto}{82}
+\newcommand{\GoalResearchPareto}{58}
+\newcommand{\GoalBalancedPareto}{64}
+\newcommand{\GoalSocialPareto}{62}
+\newcommand{\GoalMinJaccard}{0.43}           % career vs social_impact
+\newcommand{\GoalMaxJaccard}{0.62}           % balanced vs social_impact
+\newcommand{\GoalMeanJaccard}{0.52}          % average cross-persona
+
+% =============================================================================
+% DATA SOURCES & LICENSES
+% =============================================================================
+
+% MIT OCW: CC BY-NC-SA 4.0
+% UC Berkeley: public catalog
+% Stanford ExploreCourses: public API
+% UIUC CIS: public API
+% Cornell Class Roster: public API
+% KTH KOPPS: public API (Sweden)
+% Edinburgh DRPS: public catalog (UK)
+% O*NET: public domain (US DOL)
+% College Scorecard: ODC-By (US DOE)

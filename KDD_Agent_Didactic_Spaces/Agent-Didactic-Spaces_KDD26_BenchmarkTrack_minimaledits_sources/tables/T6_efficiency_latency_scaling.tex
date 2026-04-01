@@ -1,0 +1,30 @@
+\begin{table}[htbp]
+\centering
+\caption{Computational Efficiency on unified\_v3 (18K options)}
+\label{tab:efficiency}
+\adjustbox{width=.95\linewidth}{
+\begin{tabular}{lrl}
+\toprule
+\textbf{Phase} & \textbf{Time (s)} & \textbf{\% Total} \\
+\midrule
+Load Embeddings & 0.14 & 2.2\% \\
+Load Artifacts & 1.79 & 28.0\% \\
+Compute Centroids & 0.55 & 8.6\% \\
+Compute Scores & 0.84 & 13.2\% \\
+Compute Pareto & 3.06 & 47.9\% \\
+\midrule
+\textbf{Total} & \textbf{6.39} & 100\% \\
+\bottomrule
+\end{tabular}
+\noindent
+\begin{tabular}{lr}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Throughput & 2,826 ops/sec \\
+Scaling & $O(n^{1.2})$ \\
+Projected 50K & 9.2 s \\
+Projected 100K & 21.1 s \\
+\bottomrule
+\end{tabular}}
+\end{table}

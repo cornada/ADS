@@ -1,0 +1,52 @@
+% table_dataset_comparison.tex
+% Dataset comparison for ACM MM 2026 Dataset Track
+
+\begin{table*}[t]
+\centering
+\footnotesize
+\caption{Comparison with educational datasets. \ADSMM uniquely combines cross-national course text, structured multimodal resource annotations, and labor-market data with cross-modal evaluation tasks. MOOCCubeX has richer video content but covers a single platform; Course-Skill Atlas has greater scale but no multimedia annotations.}
+\label{tab:dataset-comparison}
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}lcrccccccc@{}}
+\toprule
+\textbf{Dataset} &
+\textbf{Year} &
+\textbf{Scale} &
+\textbf{Primary Unit} &
+\rotatebox{60}{\textbf{Multi-inst.}} &
+\rotatebox{60}{\textbf{Multi-nat.}} &
+\rotatebox{60}{\textbf{Multimodal}} &
+\rotatebox{60}{\textbf{Labor mkt.}} &
+\rotatebox{60}{\textbf{Cross-modal tasks}} &
+\rotatebox{60}{\textbf{Open}} \\
+\midrule
+\multicolumn{10}{@{}l}{\textit{Learner interaction}} \\[2pt]
+KDD Cup 2010~\cite{stamper2010kddcup}
+  & 2010 & 809K interactions & student--step & -- & -- & -- & -- & -- & \checkmark \\
+EdNet~\cite{choi2020ednet}
+  & 2020 & 131M actions & learner actions & -- & -- & -- & -- & -- & \checkmark \\
+\midrule
+\multicolumn{10}{@{}l}{\textit{MOOC / course-catalog}} \\[2pt]
+MOOCCubeX~\cite{yu2023mooccubex}
+  & 2023 & 230K videos & courses + video & \checkmark & -- & \checkmark & -- & -- & Partial \\
+Course-Skill Atlas~\cite{courseskillatlas2024}
+  & 2024 & 3M syllabi & courses + skills & \checkmark\,(3K) & -- & -- & \checkmark & -- & \checkmark \\
+\midrule
+\multicolumn{10}{@{}l}{\textit{Lecture-level multimodal}} \\[2pt]
+M3AV~\cite{m3av2024}
+  & 2024 & 367 hours & lectures & -- & -- & \checkmark & -- & \checkmark & \checkmark \\
+\midrule
+\multicolumn{10}{@{}l}{\textit{Cross-national multimodal}} \\[2pt]
+\textbf{ADS-MM (ours)}
+  & \textbf{2026}
+  & \textbf{30K courses}
+  & \textbf{courses + resources}
+  & \textbf{\checkmark\,(8)}
+  & \textbf{\checkmark\,(4)}
+  & \textbf{\checkmark}
+  & \textbf{\checkmark}
+  & \textbf{\checkmark\,(2)}
+  & \textbf{\checkmark} \\
+\bottomrule
+\end{tabular}
+\end{table*}

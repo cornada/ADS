@@ -1,0 +1,216 @@
+% Shared constants and counts for ADS KDD paper
+% Version: unified_v4 CORRECTED (7 universities, 3 countries)
+% Updated: 2026-02-07 after deduplication fix and full re-run
+% Keep these in one place to avoid drifting numbers across main/supp.
+
+% =============================================================================
+% HEADLINE NUMBERS (use these in abstract/intro for impact)
+% =============================================================================
+
+\newcommand{\HeadlineRecords}{169,000}       % ~169K total processed records
+\newcommand{\HeadlineCourses}{27,500}        % ~28K courses (rounded for prose)
+\newcommand{\HeadlineArtifacts}{28,600}      % ~29K text artifacts
+
+% =============================================================================
+% DATASET COMPOSITION (exact numbers for tables)
+% =============================================================================
+
+% --- Primary text artifacts ---
+\newcommand{\NumCourses}{27,555}             % courses from 7 universities (3 countries)
+\newcommand{\NumOccupations}{1,016}          % O*NET occupation profiles
+\newcommand{\NumMissions}{62}                % university mission statements (MIT:14+UCB:20+ASU:22+Stan:2+UIUC:2+Cornell:2)
+\newcommand{\NumScorecardPrograms}{217}      % College Scorecard program outcomes
+\newcommand{\NumArtifacts}{28,633}           % total text artifacts (27555+1016+62)
+
+% --- Structured data (attribute/link records) ---
+\newcommand{\NumAttributeRecords}{140,449}   % O*NET skills/tasks/tech + CIP-SOC + links
+\newcommand{\NumProcessedRows}{169,082}      % total processed rows across all tables
+\newcommand{\NumArtifactsMission}{28,633}    % text artifacts incl. expanded mission corpus
+
+% --- Combined totals ---
+\newcommand{\NumTotalRecords}{169,082}       % headline: all processed data
+
+% --- Aliases for paper consistency ---
+\newcommand{\NumPrograms}{217}               % alias: program descriptors = Scorecard programs
+\newcommand{\NumPrimaryArtifacts}{28,633}    % alias: primary text artifacts (27555+1016+62)
+\newcommand{\NumMissionsMain}{7}             % one mission per university (main eval)
+\newcommand{\NumMissionsExpanded}{62}        % expanded mission corpus (MIT:14+UCB:20+ASU:22+Stan:2+UIUC:2+Cornell:2)
+
+% =============================================================================
+% UNIVERSITIES AND GEOGRAPHY
+% =============================================================================
+
+\newcommand{\NumUniversities}{7}
+\newcommand{\NumCountries}{3}                % USA, Sweden, UK
+
+% Per-university course counts
+\newcommand{\NumMIT}{6,941}                  % MIT OCW courses
+\newcommand{\NumUCB}{11,076}                 % UC Berkeley courses
+\newcommand{\NumStanford}{2,663}             % Stanford ExploreCourses
+\newcommand{\NumUIUC}{860}                   % UIUC CIS courses
+\newcommand{\NumCornell}{842}                % Cornell Class Roster
+\newcommand{\NumKTH}{4,728}                  % KTH KOPPS API (Sweden)
+\newcommand{\NumEdinburgh}{445}              % Edinburgh DRPS (UK)
+
+% US vs International
+\newcommand{\NumUSCourses}{22,382}           % 5 US universities
+\newcommand{\NumIntlCourses}{5,173}          % KTH + Edinburgh
+
+% =============================================================================
+% MAIN EXPERIMENT RESULTS (MiniLM, seed=0, unified_v4 international, tau=0.25)
+% =============================================================================
+
+\newcommand{\MainParetoSize}{141}
+\newcommand{\MainParetoRatio}{0.51\%}        % 141 / 27,555
+\newcommand{\MainHypervolume}{0.112}
+\newcommand{\MainFeasibleRatio}{99.9\%}
+
+% Pareto contribution by university
+\newcommand{\ParetoUCB}{54}                  % UC Berkeley leads
+\newcommand{\ParetoMIT}{37}
+\newcommand{\ParetoKTH}{22}
+\newcommand{\ParetoStanford}{19}
+\newcommand{\ParetoCornell}{5}
+\newcommand{\ParetoUIUC}{3}
+\newcommand{\ParetoEdinburgh}{1}
+
+% Tau sweep results
+\newcommand{\TauTightPareto}{45}             % Pareto at tau=0.05 (tight)
+\newcommand{\TauLoosePareto}{141}            % Pareto at tau=inf (no constraint)
+\newcommand{\TauDefaultCoverage}{100\%}      % fraction of unconstrained Pareto kept
+
+% =============================================================================
+% MARKET ALIGNMENT (cross-national analysis)
+% =============================================================================
+
+\newcommand{\AlignUIUC}{0.212}
+\newcommand{\AlignCornell}{0.202}
+\newcommand{\AlignStanford}{0.195}
+\newcommand{\AlignMIT}{0.183}
+\newcommand{\AlignUCB}{0.167}
+\newcommand{\AlignKTH}{0.144}
+\newcommand{\AlignEdinburgh}{0.124}
+
+\newcommand{\AlignUSMean}{0.178}
+\newcommand{\AlignIntlMean}{0.143}
+\newcommand{\AlignGap}{0.036}                % US - International gap
+
+% =============================================================================
+% BASELINE COMPARISON
+% =============================================================================
+
+\newcommand{\BestBaselineMethod}{random\_scalarization}
+\newcommand{\BaselineOptima}{100}            % unique optima recovered by best baseline
+\newcommand{\BestBaselineOverlap}{100}       % out of 141 Pareto
+\newcommand{\BestBaselineJaccard}{0.550}
+\newcommand{\BestBaselineHVRatio}{0.989}     % best baseline HV / Pareto HV
+\newcommand{\WorstBaselineHVRatio}{0.670}    % lexicographic_university
+\newcommand{\BaselineSpacing}{0.024}         % mean baseline spacing vs 0.031 Pareto
+
+% Pareto vs baseline ratio
+\newcommand{\ParetoVsBaselineRatio}{1.4}     % 141 / 100 = 1.41x rounded
+
+% Runtime and scaling
+\newcommand{\MainRuntimeSec}{18}             % seconds with cached embeddings (28K options)
+\newcommand{\ScalingExponent}{1.2}           % empirical O(n^x) scaling
+
+% =============================================================================
+% ENCODER COMPARISON
+% =============================================================================
+
+\newcommand{\MiniLMParetoSize}{141}
+\newcommand{\MiniLMHypervolume}{0.112}
+\newcommand{\MiniLMDimension}{384}
+
+\newcommand{\MPNetParetoSize}{77}
+\newcommand{\MPNetHypervolume}{0.135}
+\newcommand{\MPNetDimension}{768}
+
+\newcommand{\CrossEncoderJaccard}{0.068}     % MiniLM vs MPNet Pareto overlap
+\newcommand{\EncoderParetoRatio}{1.8}        % 141 / 77 = 1.8x difference
+
+% =============================================================================
+% SEED STABILITY
+% =============================================================================
+
+\newcommand{\SeedStabilityJaccard}{1.000}    % identical across seeds 0,1,2
+\newcommand{\NumSeedsEvaluated}{3}
+
+% =============================================================================
+% CROSS-UNIVERSITY ANALYSIS
+% =============================================================================
+
+\newcommand{\CrossUniversityJaccard}{0.000}  % pairwise Pareto overlap = zero
+\newcommand{\NumUnisContributing}{7}         % all 7 contribute to Pareto!
+
+% =============================================================================
+% O*NET TIME-TRAVEL (market drift 2022->2025)
+% =============================================================================
+
+\newcommand{\MarketDriftJaccard}{0.967}
+\newcommand{\MarketDriftTurnover}{3\%}
+\newcommand{\MarketDriftCentroid}{0.0018}
+\newcommand{\MarketDriftParetoMin}{29}
+\newcommand{\MarketDriftParetoMax}{30}
+\newcommand{\MarketDriftNewTech}{51}
+\newcommand{\MarketDriftRemovedTech}{364}
+
+% =============================================================================
+% GOAL SENSITIVITY ANALYSIS
+% =============================================================================
+
+\newcommand{\GoalCareerPareto}{107}
+\newcommand{\GoalResearchPareto}{131}
+\newcommand{\GoalBalancedPareto}{141}
+\newcommand{\GoalSocialPareto}{79}
+\newcommand{\GoalMinJaccard}{0.38}
+\newcommand{\GoalMaxJaccard}{0.64}
+\newcommand{\GoalMeanJaccard}{0.49}
+
+% =============================================================================
+% OBJECTIVE SPECIALIZATION (cross-national analysis)
+% =============================================================================
+
+\newcommand{\USParetoCount}{118}
+\newcommand{\IntlParetoCount}{23}
+
+% Per-objective means for Pareto courses
+\newcommand{\USMarketMean}{0.362}
+\newcommand{\USMissionMean}{0.454}
+\newcommand{\USUniversityMean}{0.587}
+\newcommand{\USLearnerMean}{0.435}
+\newcommand{\IntlMarketMean}{0.344}
+\newcommand{\IntlMissionMean}{0.400}
+\newcommand{\IntlUniversityMean}{0.573}
+\newcommand{\IntlLearnerMean}{0.535}
+
+% Differences (Intl - US)
+\newcommand{\DiffMarket}{$-$0.018}
+\newcommand{\DiffMission}{$-$0.054}
+\newcommand{\DiffUniversity}{$-$0.014}
+\newcommand{\DiffLearner}{+0.100}
+
+\newcommand{\LearnerGap}{0.100}               % +23% relative gain for international
+\newcommand{\LearnerGapPercent}{23\%}
+\newcommand{\KTHLearnerTopDecile}{503}        % KTH courses in top 10% on learner
+
+% =============================================================================
+% LENS ABLATION
+% =============================================================================
+
+\newcommand{\LearnedLensParetoSize}{209}
+\newcommand{\LearnedLensHypervolume}{0.116}
+
+% =============================================================================
+% DATA SOURCES & LICENSES
+% =============================================================================
+
+% MIT OCW: CC BY-NC-SA 4.0
+% UC Berkeley: public catalog
+% Stanford ExploreCourses: public API
+% UIUC CIS: public API
+% Cornell Class Roster: public API
+% KTH KOPPS: public API (Sweden)
+% Edinburgh DRPS: public catalog (UK)
+% O*NET: public domain (US DOL)
+% College Scorecard: ODC-By (US DOE)

@@ -1,0 +1,95 @@
+% Task-agnostic benchmark protocol paragraph (main body, 4-6 sentences)
+% Insert in Section 6 / Benchmark task specification
+
+\paragraph{Task-agnostic evaluation protocol.}
+To ensure the benchmark admits methods beyond \ADS, we define three
+formalism-independent tasks with standardized JSON input/output formats.
+\textbf{Task~A} (\emph{Multi-Stakeholder Course Ranking}) asks any method to
+produce a ranked course set given course texts and stakeholder corpora; we
+evaluate coverage, diversity, objective balance, and alignment with a
+reference Pareto set (precision, recall, F1).
+\textbf{Task~B} (\emph{Stakeholder Trade-off Discovery}) asks for a set of
+courses representing distinct trade-offs; we evaluate hypervolume, spacing,
+spread, and the fraction of submitted courses on the true Pareto front
+(``Pareto precision'').
+\textbf{Task~C} (\emph{Robust Recommendation}) requires submissions under
+multiple perturbation conditions (encoder noise, weight jitter) and evaluates
+bootstrap Jaccard stability, hypervolume retention, and rank correlation across
+runs.
+A self-contained evaluation script
+(\texttt{benchmark\_eval.py}) accepts any method's output---including non-ADS
+baselines such as TF-IDF + weighted sum or LLM-based rankers---and computes all
+metrics against the released ground-truth scores without requiring access to ADS
+internals.
+
+% ---------- Appendix-length version ----------
+% Uncomment for supplementary material:
+%
+% \subsection{Task-Agnostic Benchmark Protocol (Extended)}
+% \label{sec:supp-benchmark-protocol}
+%
+% \paragraph{Motivation.}
+% A benchmark coupled to a single formalism limits external
+% participation and reproducibility. We decouple the evaluation from
+% \ADS by specifying three tasks purely in terms of observable
+% inputs (course text artifacts, stakeholder target corpora) and
+% outputs (ranked course IDs with optional per-course score vectors).
+% Any method---embedding-based, feature-engineered, or
+% LLM-based---can produce a conforming submission without importing
+% ADS code.
+%
+% \paragraph{Task A: Multi-Stakeholder Course Ranking.}
+% \textit{Input:} Course text corpus $\mathcal{C}$, stakeholder target
+% corpora $\{T_k\}_{k=1}^{m}$ (e.g., O*NET occupations for market,
+% mission statements for mission).
+% \textit{Output:} Ordered list of course IDs
+% $[c_1, c_2, \ldots, c_K]$ with optional per-course score vectors.
+% \textit{Metrics:}
+% (1)~\emph{Coverage}: fraction of objective-space grid cells occupied
+% by the selected set;
+% (2)~\emph{Diversity}: mean pairwise Euclidean distance in objective
+% space;
+% (3)~\emph{Objective balance}: normalized Shannon entropy of mean
+% objective proportions;
+% (4)~\emph{External alignment}: precision, recall, F1, and Jaccard
+% against the reference Pareto set.
+%
+% \paragraph{Task B: Stakeholder Trade-off Discovery.}
+% \textit{Input:} Same as Task~A.
+% \textit{Output:} Set of course IDs representing distinct
+% stakeholder trade-offs.
+% \textit{Metrics:}
+% (1)~\emph{Hypervolume} (HV): volume of objective space dominated by
+% the submitted set, reference point $\mathbf{r} = \mathbf{0}$;
+% (2)~\emph{Spacing}: standard deviation of nearest-neighbor distances
+% (lower = more uniform);
+% (3)~\emph{Spread}: bounding-box volume;
+% (4)~\emph{Pareto precision}: fraction of submitted courses on the
+% true Pareto front;
+% (5)~\emph{Dominance resistance}: fraction of submitted points that
+% are non-dominated within the submission.
+%
+% \paragraph{Task C: Robust Recommendation.}
+% \textit{Input:} Same as Task~A, plus a perturbation protocol
+% (encoder noise $\sigma$, weight jitter scale).
+% \textit{Output:} Primary submission plus $\geq 2$ perturbation-run
+% submissions.
+% \textit{Metrics:}
+% (1)~\emph{Bootstrap Jaccard}: mean pairwise Jaccard similarity of
+% course sets across perturbation runs;
+% (2)~\emph{HV retention}: $\min(\text{HV}) / \max(\text{HV})$ across
+% runs;
+% (3)~\emph{Rank stability}: mean pairwise Spearman correlation of
+% rankings;
+% (4)~\emph{Core stable fraction}: fraction of courses appearing in
+% $\geq 80\%$ of runs.
+%
+% \paragraph{Submission format.}
+% Submissions are JSON files with fields:
+% \texttt{method\_name} (string), \texttt{task} (``A''/``B''/``C''/``all''),
+% \texttt{ranked\_courses} (list of course IDs),
+% \texttt{scores} (optional dict of course ID $\to$ objective vector),
+% and \texttt{perturbation\_runs} (required for Task~C, list of
+% per-run ranked course lists).
+% The evaluation script (\texttt{benchmark\_eval.py}) depends only on
+% NumPy, SciPy, and the Python standard library.

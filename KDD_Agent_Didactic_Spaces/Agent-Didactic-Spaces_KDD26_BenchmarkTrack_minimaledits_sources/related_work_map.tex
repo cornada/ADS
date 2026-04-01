@@ -1,0 +1,133 @@
+% Extended related work map (supplementary)
+
+\section{Extended related work map}
+\label{sec:rw-extended}
+
+This section provides an expanded map of related work for Agent--Didactic Spaces (ADS).
+The main paper includes a compact related-work section; here we add more context to help reviewers assess where ADS sits relative to existing literature.
+We organize the works into six groups: (i) LLM-based educational assistants and agentic tutoring, (ii) educational recommender systems and learning paths, (iii) student modelling and knowledge tracing, (iv) multi-stakeholder recommendation and fairness-aware evaluation, (v) multi-objective optimization and multi-objective RL, and (vi) contestable AI and counterfactual recourse.
+
+\subsection{LLM-based educational assistants and agentic tutoring}
+\label{sec:rw-llm-edu}
+
+Recent surveys describe the rapidly expanding design space for large language models (LLMs) in education \cite{wang2024llmedu,chu2024llmeduSurvey} and discuss their role in ``Education 4.0'' settings \cite{caccavale2024education4}.
+In parallel, there is active work on pedagogically grounded evaluation criteria and taxonomies for AI-based tutors and educational agents \cite{maurya2025taxonomy,maurya2025pedagogy}.
+These lines of work are complementary to ADS: they primarily study \emph{interaction-time} tutoring quality and learning outcomes, whereas ADS targets \emph{pre-deployment} evaluation and governance of candidate educational pathways/resources under multiple stakeholder objectives.
+
+A representative set of agentic education systems includes:
+\begin{itemize}
+    \item {Student simulation and personalized tutoring.} \emph{CoderAgent} simulates student behaviour to support personalized programming instruction \cite{coderagent2025}.
+    \item {Multi-agent pedagogical interaction.} LLM-based collaborative agents with pedagogy-guided interaction modelling have been explored for educational dialogue and group learning settings \cite{collabAgents2025}.
+    \item {Teachable agents and debugging tutors.} Teachable-agent paradigms for teaching programming in the LLM era \cite{teachProg2025} and LLM-based tutoring for hypothesis construction in debugging \cite{ma2023hypocompass} focus on interactive instruction and formative feedback.
+    \item {Assessment and feedback.} LLM-powered automated grading \cite{llmGrading2025} and multimodal tutoring with structured feedback \cite{handByHand2025} demonstrate how LLMs can support assessment and practice.
+    \item {Domain-specific learning experiences.} \emph{LivePoem} illustrates LLM-based support in culturally specific domains (e.g., classical Chinese poetry) \cite{livepoem2025}.
+    \item {Goal-oriented tutoring pipelines.} \emph{GenMentor} proposes a goal-oriented, skill-mapping tutoring pipeline built around an LLM-powered multi-agent framework \cite{wang2025genmentor}.
+    \item {Classroom-level simulation.} \emph{SimClass} explores simulating classroom teaching/learning dynamics with LLM-empowered agents \cite{zhang2024simclass}.
+    \item {Collaborative multimodal student support.} \emph{MultiTutor} studies collaborative LLM agents for multimodal student support \cite{sun2025multitutor}.
+\end{itemize}
+
+\paragraph{Connection to ADS.}
+All the above systems require decisions about \emph{what} to recommend/teach and \emph{how} to trade off stakeholder priorities (learner goals, institutional requirements, labour-market alignment, policy constraints).
+ADS is positioned as an evaluation layer that can take candidate options produced by such systems and score them transparently across multiple objectives, with explicit stakeholder ``lenses'' and a tunable governance parameter $\tau$.
+
+\subsection{Educational recommender systems and learning paths}
+\label{sec:rw-ers}
+
+Educational recommender systems (ERS) have a long history of recommending courses, resources, and learning pathways, with surveys highlighting both promise and recurring limitations \cite{shi2020,dasilva2022slrERS,aucancela2023ersslr}.
+A key challenge is that pathway decisions are rarely single-objective: practical deployments must balance learner-centric objectives with institutional and regulatory constraints, and with external signals such as employability.
+
+Within ERS, several directions connect directly to how ADS constructs and evaluates candidate pathways:
+\begin{itemize}
+    \item {Course representation and semantic modelling.} Course embedding approaches study how to represent course content and transaction data for downstream recommendation \cite{jiang2020multifactorCourse2vec,xu2023courseEmbeddings}.
+    \item {Sequence/trajectory recommendation.} Recent models use hierarchical reinforcement learning and structured prerequisite representations to recommend course sequences \cite{hhcor2024} and exploit feedback signals to refine resource recommendations \cite{dfrp2024}.
+    \item {Outcome-aware optimization.} Online Bayesian educational recommenders aim to optimize learning outcomes under uncertainty \cite{ober2025}.
+    \item {Systems-level and agent-based perspectives.} Viewing education as a complex system via computational and agent-based modelling \cite{vulic2024complexEdu,reardon2016abm-education} motivates explicit multi-actor modeling of goals and incentives.
+    \item {Curriculum design constraints.} Engineering education frameworks such as CDIO \cite{crawley2011cdio} and NEET-style reform efforts \cite{crawley2018neet} highlight that curricula are governed by institutional missions and constraints beyond individual preference.
+\end{itemize}
+
+\paragraph{Connection to ADS.}
+ADS is intentionally agnostic to the specific ERS algorithm used to generate candidate pathways.
+Instead, ADS provides a transparent evaluation space where pathways can be compared under multiple objectives and feasibility/constraint requirements (including autonomy constraints via $\tau$), and where trade-offs can be reported as a Pareto set rather than a single scalar score.
+
+\subsection{Student modelling and knowledge tracing}
+\label{sec:rw-kt}
+
+A large body of work in educational data mining focuses on modelling learner knowledge state, predicting performance, and providing interpretable signals for intervention.
+Recent IJCAI contributions illustrate several relevant advances:
+\begin{itemize}
+    \item {Explainable knowledge tracing.} Priority-guided explanations for knowledge tracing aim to provide more faithful rationales for predicted mastery \cite{li2025pgexplainkt}.
+    \item {Transfer across courses.} Cross-course knowledge transfer with concept-graph guidance addresses transfer and cold-start issues in knowledge tracing \cite{han2025transkt}.
+    \item {Representation denoising.} Denoised attention and question-augmented representations improve robustness of attention-based knowledge tracing \cite{deng2025denoisekt}.
+    \item {Length generalization.} Linear-bias mechanisms to enhance length generalization in attention-based knowledge tracing \cite{li2024stablekt} address practical deployment where sequences vary.
+    \item {Forgetting and time.} Continuous time-aware neural approaches reconcile cognitive modelling with knowledge forgetting \cite{ma2022ctncm}.
+    \item {Action selection under multi-skill tasks.} Fast action selection formulations combine skill modelling with sequential decision-making \cite{salomons2021bktpomdp}.
+    \item {Performance prediction.} Graph and hypergraph-based contrastive learning approaches predict student performance from structured educational interactions \cite{song2025mhmgcl}.
+\end{itemize}
+
+\paragraph{Connection to ADS.}
+ADS does not replace knowledge tracing or performance prediction.
+Instead, these models can be viewed as \emph{providers of signals}---e.g., predicted mastery gain, risk of dropout, or robustness under long sequences---that can be integrated into ADS as additional objectives or as features used by stakeholder lenses.
+This separation is deliberate: ADS targets contestable, multi-stakeholder evaluation of pathway options, while leaving the choice of learner-state modelling technique open.
+
+\subsection{Multi-stakeholder recommendation and fairness-aware evaluation}
+\label{sec:rw-ms}
+
+Multi-stakeholder recommendation explicitly models the preferences and utilities of multiple parties.
+Surveys and evaluation frameworks highlight that multi-stakeholder settings require evaluation beyond standard user-centric metrics \cite{abdollahpouri2020multistakeholder,burke2025mseval} and are increasingly discussed under the broader umbrella of trustworthy recommender systems \cite{ge2024trustworthyRS}.
+Explainable recommendation surveys further stress the need for transparency and user understanding in recommendation pipelines \cite{zhang2020explainableRS}.
+
+Fairness and discrimination issues are central in high-stakes recommendation and retrieval, including tutorial-style syntheses for the recsys community \cite{ekstrand2019fairness}.
+Formal fairness notions such as fairness through awareness \cite{dwork2012fairness} and equality of opportunity \cite{hardt2016equality} motivate explicit constraint handling and audits.
+In education-specific contexts, work on fairness stability in disentangling educational inequality highlights temporal and structural pitfalls \cite{fairdas2024}.
+Rank aggregation under fairness constraints provides algorithmic tools for combining stakeholder views \cite{fairRankAgg2025}.
+Preference-based fairness certification \cite{prefFairCert2023} and learning-when-to-advise setups \cite{advise2023} motivate evaluation protocols that account for downstream human decision-makers.
+
+Several domains illustrate why multi-stakeholder and fairness-aware evaluation matters:
+\begin{itemize}
+    \item {Job and skill recommendation.} Skills-aware job recommendation and skill extraction/representation methods \cite{giabelli2021skills2job,kara2022skillEmbeddings,leon2024transversalSkills} provide concrete examples of labour-market alignment pipelines.
+    \item {Fairness in job recommendation.} ``Job recommendation for all'' highlights inequity risks and mitigation in employment-facing recommenders \cite{bied2023jobrecforall}.
+    \item {Democracy and robustness.} Robustness of recommendation-like systems in voting advice applications highlights adversarial concerns in civic contexts \cite{berdoz2025democracy}.
+\end{itemize}
+
+\paragraph{Connection to ADS.}
+ADS operationalizes multi-stakeholder evaluation in education by treating stakeholder-specific corpora and constraints as first-class objects in the evaluation loop.
+It emphasizes \emph{contestability}: stakeholders should be able to inspect why an option is judged favourable and what alternatives would satisfy constraints.
+The autonomy threshold $\tau$ is designed as a governance knob that can encode policy-level limits on how far a system may push a learner away from their own goals in order to satisfy other stakeholders.
+
+\subsection{Multi-objective optimization and multi-objective RL}
+\label{sec:rw-moo}
+
+ADS relies on multi-objective reasoning to avoid collapsing educational pathway evaluation into a single scalar score.
+Foundational discussions of multi-objective sequential decision-making \cite{roijers2013survey_mosdm} and algorithmic tools for faster Pareto-coverage computations \cite{roijers2015convex} motivate representing the output as a \emph{set} of trade-off solutions.
+Classical evolutionary approaches such as NSGA-II \cite{deb2002nsga2} and standard references on nonlinear multi-objective optimization \cite{miettinen1999nonlinearMOO} provide algorithmic background.
+
+Recent work continues to expand the toolset:
+\begin{itemize}
+    \item {Bandit-based Pareto discovery.} Multi-objective neural bandits explore efficient Pareto-front approximation under uncertainty \cite{monb2025}.
+    \item {Equity as a multi-agent, multi-objective problem.} Equity-aware formulations in multi-agent multi-objective RL illustrate how welfare and distributional concerns can be encoded as objectives \cite{equityMAMORL2025}.
+    \item {Normative constraints.} ``Restraining bolts''-style normative constraints in MORL motivate explicit governance parameters for acceptable behaviour \cite{restrainingBolts2025}.
+    \item {Normative multi-agent alignment via evolutionary strategies.} Multi-objective evolutionary strategies for normative multi-agent systems provide another example of multi-value alignment under constraints \cite{riad2025nova}.
+\end{itemize}
+
+\paragraph{Connection to ADS.}
+ADS uses these ideas as methodological scaffolding: it constructs a didactic space where each stakeholder objective is explicit, then returns a feasible Pareto set after enforcing constraints and an autonomy threshold $\tau$.
+The novelty is the combination of these multi-objective tools with education-specific stakeholder modelling and contestability requirements.
+
+\subsection{Contestable AI, counterfactual explanations, and recourse}
+\label{sec:rw-contestable}
+
+ADS explicitly targets contestability: decisions should be challengeable by affected parties.
+General frameworks for contestable and contesting AI decisions motivate this stance \cite{aler2020contestable,alfrink2023contestable,dignum2025contesting}.
+Counterfactual explanations are one practical mechanism for contestability \cite{wachter2017counterfactual}, while algorithmic recourse formalizes actionable changes to obtain a desired outcome \cite{ustun2019recourse}.
+Robust counterfactual methods address instability under perturbations \cite{robustx2025}.
+For sequential decision-making, counterfactual strategies for MDPs illustrate how ``what-if'' reasoning extends to policies \cite{cfmdp2025}.
+Finally, efficiency-focused methods such as policy-gradient-optimized explainers aim to make explanations computationally feasible \cite{pan2025fex}.
+
+\paragraph{Connection to ADS.}
+ADS does not assume access to a single monolithic black box.
+Instead, it exposes stakeholder objectives and constraints directly, making disagreements explicit (and therefore contestable).
+Where counterfactual/recourse methods typically focus on changing an individual input to flip a prediction, ADS focuses on generating and evaluating alternative pathway options that respect multi-stakeholder constraints, and on reporting the feasible trade-off set in a way that supports oversight.
+
+\paragraph{Summary.}
+Across these areas, ADS can be viewed as a bridge between (a) education-specific recommenders and learner models, and (b) the broader literature on multi-objective evaluation, fairness, and contestable decision-making.
+The unifying theme is to make stakeholder trade-offs explicit and auditable, rather than implicitly encoded in a single optimization target.

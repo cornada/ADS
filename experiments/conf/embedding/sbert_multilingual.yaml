@@ -1,0 +1,6 @@
+kind: sbert
+model_name: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+device: null  # auto-detect (mps/cuda/cpu)
+# Multilingual MiniLM: 384-dimensional embeddings
+# 118M params — 5x faster than e5-large while supporting 50+ languages (including Russian)
+# Good for quick validation; use sbert_me5_large for final paper numbers

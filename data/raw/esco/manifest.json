@@ -1,0 +1,25 @@
+{
+  "source": "ESCO (European Commission)",
+  "api_base": "https://ec.europa.eu/esco/api",
+  "fetched_at": "2026-02-10T03:17:29.592217+00:00",
+  "queries": [
+    "software developer",
+    "data scientist",
+    "materials engineer",
+    "metallurgist",
+    "mining engineer",
+    "electronics engineer",
+    "nanotechnology",
+    "energy engineer",
+    "environmental engineer",
+    "machine learning",
+    "DevOps engineer",
+    "systems administrator",
+    "quality engineer",
+    "research scientist",
+    "cybersecurity"
+  ],
+  "occupation_count": 162,
+  "unique_skills": 2352,
+  "content_hash": "ec11158ea4e2239c3510e0b09534df2690cd0fcbe798b4f2a110345c360cea24"
+}

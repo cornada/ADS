@@ -1,0 +1,22 @@
+\begin{table}[!th]
+\centering
+\caption{Cross-University Analysis (\NumUniversities{} universities, ADS-Full 4-objective mode). Each university contributes unique Pareto-optimal options; pairwise overlap is zero (Jaccard=\CrossUniversityJaccard). Best-scoring option for each objective comes from a different university.}
+\label{tab:cross-university}
+\adjustbox{width=.95\linewidth}{
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{University} & \textbf{Courses} & \textbf{In Pareto} & \textbf{Best Objective} \\
+\midrule
+Full (pooled) & \NumCourses & \MainParetoSize & --- \\
+\midrule
+MIT & \NumMIT & 12 & Market \\
+UC Berkeley & \NumUCB & 38 & University \\
+Stanford & \NumStanford & 18 & Mission \\
+UIUC & \NumUIUC & 11 & Learner \\
+Cornell & \NumCornell & 0 & --- \\
+\midrule
+\multicolumn{4}{l}{\small Pairwise university Pareto overlap: Jaccard=\CrossUniversityJaccard} \\
+\multicolumn{4}{l}{\small Universities contributing to full Pareto: \NumUnisContributing/\NumUniversities} \\
+\bottomrule
+\end{tabular}}
+\end{table}

@@ -1,0 +1,19 @@
+\begin{table}[htbp]
+\centering
+\caption{Effect of dominance threshold $\tau$ on feasible Pareto set size (unified\_v4)}
+\label{tab:tau-sweep}
+\adjustbox{width=.95\linewidth}{{\small
+\begin{tabular}{lrr|lrr}
+\toprule
+\textbf{$\tau$} & \textbf{Pareto} & \textbf{\% of Max} & \textbf{$\tau$} & \textbf{Pareto} & \textbf{\% of Max} \\
+\midrule
+0.05 (tight) & \TauTightPareto & 15.8\% & \textbf{0.25 (default)} & \textbf{\MainParetoSize} & \textbf{\TauDefaultCoverage} \\
+0.10 & 38 & 40.0\% & 0.30 & 89 & 93.7\% \\
+0.15 & 56 & 58.9\% & 0.50 & 93 & 97.9\% \\
+0.20 & 72 & 75.8\% & $\infty$ (none) & \TauLoosePareto & 100.0\% \\
+\bottomrule
+\end{tabular}
+}}
+\vspace{1mm}
+{\footnotesize Default $\tau{=}0.25$ retains {\TauDefaultCoverage} of frontier while filtering extreme market-capture options.}
+\end{table}

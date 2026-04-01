@@ -1,0 +1,22 @@
+{
+  "source": "HeadHunter (hh.ru) Public API",
+  "api_base": "https://api.hh.ru",
+  "fetched_at": "2026-02-10T04:09:58.120199+00:00",
+  "queries": [
+    "материаловедение",
+    "металлургия",
+    "нанотехнологии",
+    "горное дело",
+    "информатика и вычислительная техника",
+    "электроника",
+    "энергетика",
+    "экология промышленная",
+    "аддитивные технологии",
+    "DevOps",
+    "machine learning инженер",
+    "data scientist"
+  ],
+  "vacancy_count": 2879,
+  "unique_skills": 1992,
+  "content_hash": "3e611dcace1045c8f8f1b19679691e3d711bd413f7c7128f4825f7d2e4c445fb"
+}

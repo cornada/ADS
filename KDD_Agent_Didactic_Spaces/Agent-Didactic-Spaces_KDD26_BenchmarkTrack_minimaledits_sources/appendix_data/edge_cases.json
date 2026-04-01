@@ -1,0 +1,31 @@
+{
+  "max_market": {
+    "id": "course:MIT:1286086e7beb",
+    "market": 0.50078284740448,
+    "mission": 0.3559781610965729,
+    "university": "MIT",
+    "title": "Common Experience in Operations Research. University: MIT. Department: 15. Level: G. Units: 0. Descr",
+    "text_preview": "Common Experience in Operations Research. University: MIT. Department: 15. Level: G. Units: 0. Description: Provides students with experience working in teams on a data-driven ML project. After a week of classes that cover a range of tools (Keras, Google Collab, etc.) and deep learning technologies,..."
+  },
+  "max_mission": {
+    "id": "course:UC Berkeley:475eaf030c76",
+    "market": 0.2583285868167877,
+    "mission": 0.6479877233505249,
+    "university": "UC Berkeley",
+    "title": "Leadership. University: UC Berkeley. Department: MBA. Level: nan. Units: 1.0-3.0. Description: This ",
+    "text_preview": "Leadership. University: UC Berkeley. Department: MBA. Level: nan. Units: 1.0-3.0. Description: This course will increase your awareness of your own strengths and opportunities for improvement while gaining an understanding of the qualities essential to being an extraordinary leader. By the end of th..."
+  },
+  "balanced": {
+    "id": "course:UC Berkeley:f4ae8b127112",
+    "market": 0.4661567509174347,
+    "mission": 0.5291619300842285,
+    "university": "UC Berkeley",
+    "title": "Engineering Your Life: Skills for Leadership, Discovery and Service. University: UC Berkeley. Depart",
+    "text_preview": "Engineering Your Life: Skills for Leadership, Discovery and Service. University: UC Berkeley. Department: ENGIN. Level: nan. Units: 1.0-1.0. Description: This course provides the framework for engineering an empowered life through leadership, discovery and service. The class focuses on development o..."
+  },
+  "closest_job_to_max_market": {
+    "id": "onet:15-2031.00",
+    "similarity": 0.6090379953384399,
+    "preview": "Operations Research Analysts: Formulate and apply mathematical modeling and other optimizing methods to develop and interpret information that assists management with decisionmaking, policy formulatio"
+  }
+}

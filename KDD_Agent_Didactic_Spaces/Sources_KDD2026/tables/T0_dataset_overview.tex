@@ -1,0 +1,32 @@
+\begin{table}[t]
+\centering
+\small
+\caption{Benchmark scale and composition. We release \textbf{\NumPrimaryArtifacts} primary text artifacts from \textbf{\NumUniversities} universities across \textbf{\NumCountries} countries, enriched with \textbf{\NumAttributeRecords} structured attribute/link records, totalling \textbf{\NumProcessedRows} processed rows. Mission targets use {\NumMissionsMain} institution-level statements (one per university) in the main evaluation; the Supplement reports robustness with the full {\NumMissionsExpanded}-text corpus.}
+\label{tab:dataset_overview}
+\adjustbox{width=\linewidth}{
+\begin{tabular}{@{}lrrl@{}}
+\toprule
+{\bf Component} & {\bf Count} & {\bf Type} & {\bf Sources}\\
+\midrule
+\multicolumn{4}{@{}l}{\textit{Courses by university}}\\
+\quad MIT OCW & \NumMIT & text & USA\\
+\quad UC Berkeley & \NumUCB & text & USA\\
+\quad Stanford & \NumStanford & text & USA\\
+\quad UIUC & \NumUIUC & text & USA\\
+\quad Cornell & \NumCornell & text & USA\\
+\quad KTH & \NumKTH & text & Sweden\\
+\quad Edinburgh & \NumEdinburgh & text & UK\\
+\midrule
+Total courses & \NumCourses & text & 7 universities\\
+Occupations (O*NET) & \NumOccupations & text & US DOL\\
+Programs (College Scorecard) & \NumPrograms & text & US DOE\\
+Mission corpus & \NumMissionsExpanded & text & ---\\
+\midrule
+\textbf{Primary text artifacts} & \textbf{\NumPrimaryArtifacts} & --- & ---\\
+\midrule
+Attribute/link records & \NumAttributeRecords & structured & O*NET+CIP-SOC\\
+\textbf{Total processed rows} & \textbf{\NumProcessedRows} & --- & ---\\
+\bottomrule
+\end{tabular}
+}
+\end{table}

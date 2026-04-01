@@ -1,0 +1,4 @@
+Encoder,Dim,Seed 0,Seed 1,Seed 2,Mean,Std
+MiniLM,384,81,81,81,81,0
+MPNet,768,30,30,30,30,0
+Stub (random),384,2,-,-,2,0

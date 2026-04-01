@@ -1,0 +1,52 @@
+% table_dataset_stats.tex
+% Per-university dataset statistics for KDD 2026 Datasets & Benchmarks track
+% Standalone fragment: \input{table_dataset_stats} in main.tex
+
+\begin{table}[t]
+\centering
+\small
+\caption{Per-source dataset statistics with Pareto contribution
+  (ADS-Full, $\tau{=}0.25$, MiniLM encoder).
+  All \NumUniversities{} universities across \NumCountries{} countries
+  contribute unique Pareto-optimal options (zero pairwise overlap).
+  Market alignment is mean cosine similarity to O*NET target corpus.}
+\label{tab:dataset-stats}
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}llrllrr@{}}
+\toprule
+\textbf{University} &
+\textbf{Country} &
+\textbf{Courses} &
+\textbf{Source} &
+\textbf{License} &
+\textbf{Pareto} &
+\textbf{Mkt.\ Align.} \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{US universities (\NumUSCourses{} courses)}} \\[2pt]
+MIT            & USA    & \NumMIT       & OCW catalog     & CC BY-NC-SA & \ParetoMIT      & \AlignMIT \\
+UC Berkeley    & USA    & \NumUCB       & Public catalog  & Public      & \ParetoUCB      & \AlignUCB \\
+Stanford       & USA    & \NumStanford  & ExploreCourses  & Public      & \ParetoStanford  & \AlignStanford \\
+UIUC           & USA    & \NumUIUC      & Course catalog  & Public      & \ParetoUIUC      & \AlignUIUC \\
+Cornell        & USA    & \NumCornell   & Class Roster    & Public      & \ParetoCornell   & \AlignCornell \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{International universities (\NumIntlCourses{} courses)}} \\[2pt]
+KTH            & Sweden & \NumKTH       & KOPPS API       & Public      & \ParetoKTH       & \AlignKTH \\
+Edinburgh      & UK     & \NumEdinburgh & DRPS catalog    & Public      & \ParetoEdinburgh & \AlignEdinburgh \\
+\midrule
+\textbf{Total courses}
+  & \textbf{\NumCountries{} countries}
+  & \textbf{\NumCourses}
+  & \multicolumn{2}{l}{\textbf{\NumUniversities{} universities}}
+  & \textbf{\MainParetoSize}
+  & --- \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{Supplementary data sources}} \\[2pt]
+O*NET occupations & USA & \NumOccupations & US DOL & Public domain & \multicolumn{2}{l}{\NumAttributeRecords{} attribute records} \\
+College Scorecard & USA & \NumScorecardPrograms & US DOE & ODC-By & \multicolumn{2}{l}{program outcome descriptors} \\
+Mission corpus    & --- & \NumMissionsExpanded  & institutional & --- & \multicolumn{2}{l}{university mission texts} \\
+\midrule
+\multicolumn{3}{@{}l}{\textbf{Total processed rows}}
+  & \multicolumn{4}{r}{\textbf{\NumProcessedRows}} \\
+\bottomrule
+\end{tabular}
+\end{table}

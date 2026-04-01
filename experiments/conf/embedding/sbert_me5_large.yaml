@@ -1,0 +1,7 @@
+kind: sbert
+model_name: intfloat/multilingual-e5-large-instruct
+device: cpu  # MPS deadlocks on large models; CPU is reliable
+# Multilingual E5-large-instruct: 1024-dimensional embeddings
+# Supports 100+ languages including Russian and English
+# Required for MISIS bilingual program embeddings
+# Requires: pip install -e ".[embed]"

@@ -1,0 +1,63 @@
+{
+  "generated_at": "2026-03-31T18:41:46.690084+00:00",
+  "description": "ADS-MM canonical dataset with stable IDs and unified data layers",
+  "total_records": 36192,
+  "type_counts": {
+    "MISSION": 62,
+    "COURSE": 29797,
+    "JOB_ROLE": 5752,
+    "COMPETENCY": 581
+  },
+  "institution_counts": {
+    "UC Berkeley": 11122,
+    "MIT": 6955,
+    "KTH": 4768,
+    "MARKET_RU": 4574,
+    "MISIS": 2756,
+    "Stanford": 2665,
+    "MARKET": 1016,
+    "UIUC": 862,
+    "Cornell": 844,
+    "Edinburgh": 446,
+    "MARKET_EU": 162,
+    "ASU": 22
+  },
+  "layers": {
+    "text": {
+      "count": 36192,
+      "description": "Course/job/mission text descriptions"
+    },
+    "multimodal": {
+      "count": 816,
+      "description": "MIT OCW resource type annotations"
+    },
+    "activity": {
+      "count": 2061,
+      "description": "MISIS instructional hours breakdown"
+    },
+    "competencies": {
+      "count": 2027,
+      "description": "FGOS competency codes"
+    },
+    "prerequisites": {
+      "count": 1472,
+      "description": "Course prerequisite links"
+    },
+    "transcripts": {
+      "count": 103,
+      "description": "OCW lecture titles + syllabi"
+    },
+    "images": {
+      "count": 816,
+      "description": "Course cover images"
+    }
+  },
+  "join_stats": {
+    "multimodal_matched": 989,
+    "multimodal_total": 1689,
+    "misis_matched": 2061,
+    "transcript_matched": 103,
+    "image_matched": 816
+  },
+  "output_path": "/Volumes/CORNADA_D/ADS/data/canonical/ads_mm_canonical.jsonl"
+}

@@ -79,7 +79,7 @@ def main(cfg: DictConfig) -> None:
             print("[OK] Ethics report:", outputs.ethics_json)
         if outputs.stability_json:
             print("[OK] Stability report:", outputs.stability_json)
-    elif cfg.dataset.id in ("mit", "ucb", "asu", "unified_v3", "unified_v4"):
+    elif cfg.dataset.id in ("mit", "ucb", "asu", "unified_v3", "unified_v4", "unified_v5", "misis"):
         # Use generic dataset pipeline for real datasets
         data_dir = Path(cfg.dataset.get("data_dir", ".")) if cfg.dataset.get("data_dir") else None
 
@@ -103,7 +103,7 @@ def main(cfg: DictConfig) -> None:
         if outputs.is_synthetic:
             print("[WARNING] Data is SYNTHETIC (from fixtures). Use +profile=paper for real data.")
     else:
-        raise NotImplementedError(f"Unknown dataset: {cfg.dataset.id}. Supported: toy, mit, ucb, asu, unified_v3, unified_v4")
+        raise NotImplementedError(f"Unknown dataset: {cfg.dataset.id}. Supported: toy, mit, ucb, asu, unified_v3, unified_v4, unified_v5, misis")
 
 
 if __name__ == "__main__":
