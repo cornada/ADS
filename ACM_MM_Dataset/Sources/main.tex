@@ -438,14 +438,36 @@ Most strikingly, PCA on the MIT OCW subset reveals that the first principal comp
 MISIS provides complementary evidence: courses with laboratory work occupy a different latent region than lecture-only courses (shift\,=\,0.09), and MISIS forms the tightest cluster (intra-distance 0.54 vs.\ MIT's 0.90), consistent with centralized FGOS standards producing more homogeneous curricula than decentralized US departments. The course--occupation centroid distance is 0.60, while the course--mission distance is only 0.40, suggesting that universities successfully encode their institutional missions into curriculum content.
 
 
+\section{Discussion}
+\label{sec:discussion}
+
+The latent space findings suggest that the didactic space is not merely a convenient representation but reflects genuine structure in educational content.
+Three observations deserve further discussion.
+
+First, the fact that PC1 correlates with multimedia richness ($r{=}0.41$) from text-only embeddings implies that \emph{course descriptions implicitly signal instructional modality}.
+Courses with video tend to use different vocabulary, structure, and framing than text-only courses---possibly because video-rich courses describe demonstrations, visualizations, and interactive elements in their catalog text.
+This has practical implications: institutions planning multimedia investments could use text-based richness prediction to prioritize courses most likely to benefit from additional modalities.
+
+Second, the unified space finding (separation ratio 0.70) challenges the assumption that curricula from different educational traditions are incommensurable.
+While MISIS (Russia, FGOS-regulated) forms the tightest cluster (intra-distance 0.54) and is furthest from US institutions (distance 0.85--0.94), it is not disconnected: the prerequisite structure~\cite{shi2020} and competency codes provide complementary structural modalities that text embeddings alone cannot capture.
+Future work could integrate these structural features into the embedding space directly, creating a truly multimodal educational representation that combines text, resource annotations, competency graphs, and instructional activity profiles.
+
+Third, the asymmetry between course--mission distance (0.40) and course--occupation distance (0.60) suggests that universities are better at encoding their own missions into curricula than at aligning with external labor market needs~\cite{wef2023futureofwork}.
+This gap---which varies across institutions (KTH closest to labor market at 0.64, Stanford furthest at 0.68)---could serve as a quantitative indicator for curriculum--market alignment at institutional scale.
+
+
 \section{Limitations, Ethics, and Availability}
 \label{sec:limitations}
 
 \ADSMM's multimodal annotations cover MIT OCW only; extending to other institutions requires equivalent open metadata, which most universities do not provide.
 Resource type annotations capture \emph{availability}, not content quality or usage---a course marked as having video may have 2 or 40 lectures.
-The dataset spans {\NumCountries} countries but remains US-heavy (73\% of courses); O*NET~\cite{onet2025} reflects US labor market structure~\cite{wef2023futureofwork}; MISIS includes Russian-language descriptions alongside English competency codes.
+The dataset spans {\NumCountries} countries but remains US-heavy (73\% of courses); O*NET~\cite{onet2025} reflects US labor market structure; MISIS includes Russian-language descriptions alongside English competency codes.
+The latent space analysis uses a single encoder (MiniLM, 384d); different encoders produce different geometries, and we do not claim that the specific separation ratio or PC correlations are encoder-invariant.
+Our cross-modal baselines use linear classifiers; transformer-based models~\cite{devlin2019bert} would likely improve results but are not necessary to establish the dataset's research value.
+Annotation quality depends on OCW's own metadata; we do not independently verify resource availability.
 
-All data is from public sources under open licenses (MIT OCW: CC BY-NC-SA 4.0; O*NET: public domain). No personally identifiable information is included.
+All data is from public sources under open licenses~\cite{gebru2021datasheets} (MIT OCW: CC BY-NC-SA 4.0; O*NET: public domain).
+No personally identifiable information is included.
 The complete dataset, collection scripts, and evaluation code are available at \url{https://doi.org/10.5281/zenodo.19363580}, with annual updates planned as OCW releases new content.
 
 
@@ -455,7 +477,9 @@ We presented \ADSMM, a cross-national educational resource dataset with multimod
 Three findings emerge.
 First, course text descriptions encode multimedia instructional design: SBERT embeddings predict video availability ($F_1{=}{\SBERTVideoF}$) and resource richness ($\rho{=}{\SBERTRichnessRho}$).
 Second, the primary axis of the educational embedding space correlates with multimedia richness ($r{=}0.41$)---text-only embeddings capture modality as a geometric property.
-Third, courses from 8 universities form a \emph{unified didactic space} (separation ratio 0.70) where 36\% of nearest neighbors cross institutional boundaries, suggesting that curricular content transcends institutional and national context~\cite{marginson2022global}.
+Third, courses from 8 universities form a \emph{unified didactic space} (separation ratio 0.70) where 36\% of nearest neighbors cross institutional boundaries, suggesting that curricular content transcends institutional and national context~\cite{marginson2022global,oecd2023education}.
+
+These findings open several directions: integrating structural features (prerequisites, competency codes) into multimodal embeddings; extending resource annotations to other open courseware platforms; and using richness prediction for targeted OER investment~\cite{wiley2014oerdefinition,unesco2019oer}.
 We release all data, images, code, and baselines to enable research at the intersection of multimedia and education.
 
 
