@@ -148,7 +148,7 @@
 %% Abstract
 \begin{abstract}
 Course text descriptions implicitly encode multimedia instructional design: a sentence-embedding model predicts whether a course includes video lectures ($F_1{=}{\SBERTVideoF}$), and the primary axis of a cross-national educational embedding space correlates with multimedia resource richness ($r{=}0.41$).
-We demonstrate this with \ADSMM, a multimodal educational resource dataset spanning {\NumCourses} courses from {\NumUniversities} universities across {\NumCountries} countries (USA, Sweden, UK, Russia), augmented with structured multimedia annotations from MIT OpenCourseWare ({\NumResourceTypes} resource types, {\NumOCWVideo} with video, {\NumImages} cover images) and instructional activity metadata from MISIS ({\NumMISIS} courses with hours breakdowns and competency codes).
+We demonstrate this with \ADSMM, a multimodal educational resource dataset spanning {\NumCourses} courses from {\NumUniversities} universities across {\NumCountries} countries (USA, Sweden, UK, Russia), augmented with structured multimedia annotations from MIT OpenCourseWare (OCW; {\NumResourceTypes} resource types, {\NumOCWVideo} with video, {\NumImages} cover images) and instructional activity metadata from MISIS (National University of Science and Technology, Russia; {\NumMISIS} courses with hours breakdowns and competency codes).
 Latent space analysis on 36{,}192 records reveals a \emph{unified didactic space}: courses from all institutions overlap in embedding space (separation ratio 0.70) and 36\% of nearest neighbors cross institutional boundaries.
 We define cross-modal evaluation tasks with baselines (Spearman $\rho{=}{\SBERTRichnessRho}$ for richness prediction, macro $F_1{=}{\SBERTMacroF}$ for resource type classification) and release all data, images, code, and baselines.
 \end{abstract}
@@ -169,7 +169,7 @@ This text-only view obscures a fundamental question: \emph{how does the multimed
 Understanding this relationship matters for several reasons.
 First, multimedia resource availability varies dramatically across institutions and disciplines---a computer science course at MIT may include 40 hours of lecture video, while an equivalent course at another university provides only a syllabus.
 Second, the presence or absence of multimedia components reflects pedagogical choices that are not captured in text descriptions alone.
-Third, cross-modal analysis---predicting what kinds of multimedia resources a course offers from its textual description---can inform resource allocation, curriculum planning, and open educational resource (OER) development~\cite{aucancela2023ersslr}.
+Third, cross-modal analysis---predicting what kinds of multimedia resources a course offers from its textual description---can inform resource allocation, curriculum planning, and Open Educational Resource (OER) development~\cite{aucancela2023ersslr}.
 
 We address this gap with \ADSMM, a multimodal extension of the Agent-Didactic Spaces educational benchmark.
 Our contributions:
@@ -186,7 +186,7 @@ Our contributions:
 \end{itemize}
 
 \paragraph{What makes this a multimedia dataset?}
-Unlike MOOC platforms that host video content directly, university course catalogs describe courses as text but \emph{link to} multimedia resources hosted elsewhere.
+Unlike Massive Open Online Course (MOOC) platforms that host video content directly, university course catalogs describe courses as text but \emph{link to} multimedia resources hosted elsewhere.
 \ADSMM bridges this gap by collecting structured multimodal annotations for each course---not the raw media files, but a standardized description of what media types exist, enabling large-scale cross-modal analysis without requiring petabytes of video storage.
 This metadata-centric approach enables research on \emph{multimedia resource structure} rather than \emph{multimedia content analysis}, complementing content-focused datasets such as MultiHateClip~\cite{multihateclip2024} at ACM~MM.
 
@@ -198,7 +198,7 @@ This metadata-centric approach enables research on \emph{multimedia resource str
 Existing educational benchmarks fall into several categories.
 \emph{Learner interaction} datasets (KDD Cup 2010~\cite{stamper2010kddcup}, EdNet~\cite{choi2020ednet}, OULAD~\cite{kuzilek2017oulad}) track student behavior at single institutions; they measure what learners \emph{do} but not what resources are \emph{available}.
 \emph{MOOC catalog} datasets aggregate course metadata: MOOCCubeX~\cite{yu2023mooccubex} provides 230K video subtitles and 358K exercises from XuetangX---the largest multimodal educational dataset---but covers a single Chinese platform without cross-national scope or labor-market integration. The MOOC literature more broadly has grown rapidly~\cite{zawackirichter2019mooc}, yet large-scale cross-institutional resource metadata remains scarce.
-\emph{Skill mapping} datasets like the Course-Skill Atlas~\cite{courseskillatlas2024} (3M syllabi, 3K US institutions) link curricula to O*NET skills at scale, but contain no multimedia annotations; related work on skill extraction~\cite{zhang2022skillspan,decorte2023skillextraction} and labor-market forecasting~\cite{wef2023futureofwork,shi2020} focuses on job postings rather than educational resources.
+\emph{Skill mapping} datasets like the Course-Skill Atlas~\cite{courseskillatlas2024} (3M syllabi, 3K US institutions) link curricula to O*NET (Occupational Information Network) skills at scale, but contain no multimedia annotations; related work on skill extraction~\cite{zhang2022skillspan,decorte2023skillextraction} and labor-market forecasting~\cite{wef2023futureofwork,shi2020} focuses on job postings rather than educational resources.
 \emph{Lecture-level} datasets like M3AV~\cite{m3av2024} (367 hours, audio+video+slides) and Lecture Presentations~\cite{lee2023lecture} provide dense multimodal annotations for individual lectures but do not address cross-institutional curriculum structure.
 \ADSMM occupies a distinct niche: cross-national course-level resource structure with multimedia annotations and labor-market data.
 
@@ -321,7 +321,7 @@ Of these, {\NumOCWMatched} ({\OCWMatchRate}) match courses in the ADS text corpu
 \label{subsec:cross-national}
 
 A key feature of \ADSMM is the cross-national dimension spanning {\NumCountries} countries with complementary modalities.
-MIT OCW provides multimedia resource annotations; MISIS (Russia) contributes a distinct \emph{instructional activity modality}: each of {\NumMISIS} courses includes structured hours across lectures (83\%), practical sessions (91\%), and laboratory work (22\%), plus {\MISISCompetencies} FGOS competency codes and a prerequisite graph with {\MISISPrereqLinks} links across {\MISISPrograms} programs over {\MISISYears} years.
+MIT OCW provides multimedia resource annotations; MISIS (Russia) contributes a distinct \emph{instructional activity modality}: each of {\NumMISIS} courses includes structured hours across lectures (83\%), practical sessions (91\%), and laboratory work (22\%), plus {\MISISCompetencies} FGOS (Federal State Educational Standards, Russia) competency codes and a prerequisite graph with {\MISISPrereqLinks} links across {\MISISPrograms} programs over {\MISISYears} years.
 This creates a testbed for \emph{cross-institutional transfer}: can models trained on MIT's multimedia structure predict resource availability at universities with different educational traditions?
 The five US universities share a curricular tradition; KTH (Sweden), Edinburgh (UK), and MISIS (Russia) provide out-of-distribution test cases.
 
@@ -372,7 +372,7 @@ This asymmetry creates a structured prediction challenge: textual features may p
 
 \subsection{Cross-Modal Baselines}
 
-We evaluate three baselines on {\JoinedCourses} courses with both text descriptions and multimodal annotations (80/20 split, seed=42): (i)~a \emph{department prior} (per-department mean for richness, majority class for classification), (ii)~\emph{TF-IDF + linear models} (5{,}000-term TF-IDF with ridge regression and per-label logistic regression), and (iii)~\emph{Sentence-BERT + balanced classifiers} (MiniLM 384d embeddings~\cite{reimers2019sentencebert} with class-weight-balanced logistic regression).
+We evaluate three baselines on {\JoinedCourses} courses with both text descriptions and multimodal annotations (80/20 split, seed=42): (i)~a \emph{department prior} (per-department mean for richness, majority class for classification), (ii)~\emph{TF-IDF + linear models} (5{,}000-term Term Frequency--Inverse Document Frequency (TF-IDF) features with ridge regression and per-label logistic regression), and (iii)~\emph{Sentence-BERT (SBERT) + balanced classifiers} (MiniLM 384-dimensional embeddings~\cite{reimers2019sentencebert} with class-weight-balanced logistic regression).
 
 %%% Results table — richness
 \begin{table}[t]
@@ -415,7 +415,7 @@ We embed all 36{,}192 canonical records with Sentence-BERT~\cite{reimers2019sent
 
 The separation ratio (mean inter-institution distance / mean intra-institution distance) is 0.70, well below the threshold of 2.0, confirming that institutions \emph{overlap} rather than form isolated clusters. The closest pair is MIT--Stanford (0.20); the most distant is MISIS--ASU (0.94), reflecting language and curricular tradition differences. For 200 randomly sampled MIT courses, 36.4\% of nearest neighbors ($k{=}10$) come from other institutions---UC Berkeley (21.5\%), KTH (5.5\%), Stanford (5.3\%)---demonstrating that semantic similarity crosses institutional and national boundaries.
 
-Most strikingly, PCA on the MIT OCW subset reveals that the first principal component correlates with multimedia resource richness ($r{=}0.41$, $p{<}0.001$; Figure~\ref{fig:pc-richness}), and a second independent axis (PC3) also correlates ($r{=}{-}0.23$). Courses with video are displaced from non-video courses (centroid shift\,=\,0.17). The embedding space---learned from text alone, using contrastive pre-training~\cite{chen2020simclr,li2024multimodaledu} principles---captures multimedia structure as a geometric property. Figure~\ref{fig:latent-pca} shows the full PCA projection colored by institution.
+Most strikingly, Principal Component Analysis (PCA) on the MIT OCW subset reveals that the first principal component correlates with multimedia resource richness ($r{=}0.41$, $p{<}0.001$; Figure~\ref{fig:pc-richness}), and a second independent axis (PC3) also correlates ($r{=}{-}0.23$). Courses with video are displaced from non-video courses (centroid shift\,=\,0.17). The embedding space---learned from text alone, using contrastive pre-training~\cite{chen2020simclr,li2024multimodaledu} principles---captures multimedia structure as a geometric property. Figure~\ref{fig:latent-pca} shows the full PCA projection colored by institution.
 
 \begin{figure}[t]
   \centering
