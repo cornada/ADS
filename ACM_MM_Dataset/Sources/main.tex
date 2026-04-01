@@ -232,16 +232,9 @@ ACM MM dataset papers~\cite{multihateclip2024,synopground2024,dfbench2025,emoart
 \subsection{Text Layer: Cross-National Educational Artifacts}
 \label{subsec:text-layer}
 
-The text layer contains {\NumArtifacts} primary text artifacts from {\NumUniversities} universities across {\NumCountries} countries:
-
-\begin{itemize}
-  \item \textbf{Courses} ({\NumCourses}): course descriptions from MIT OCW ({\NumMIT}), UC Berkeley ({\NumUCB}), Stanford ({\NumStanford}), UIUC ({\NumUIUC}), Cornell ({\NumCornell}), KTH Sweden ({\NumKTH}), University of Edinburgh ({\NumEdinburgh}), and MISIS Russia ({\NumMISIS}).
-  \item \textbf{O*NET occupations} ({\NumOccupations}): occupation profiles with required skills, tasks, and technologies from the US Department of Labor~\cite{onet2025,giabelli2021skills2job}.
-  \item \textbf{Mission statements} ({\NumMissions}): university mission and vision texts.
-\end{itemize}
-
-All sources are publicly available with full provenance tracking (source URLs, content hashes, collection timestamps).
-Table~\ref{tab:dataset_overview} summarizes the dataset composition.
+The text layer contains {\NumArtifacts} primary text artifacts from {\NumUniversities} universities across {\NumCountries} countries: {\NumCourses} course descriptions from MIT OCW ({\NumMIT}), UC Berkeley ({\NumUCB}), Stanford ({\NumStanford}), UIUC ({\NumUIUC}), Cornell ({\NumCornell}), KTH Sweden ({\NumKTH}), Edinburgh ({\NumEdinburgh}), and MISIS Russia ({\NumMISIS}); {\NumOccupations} O*NET occupation profiles with required skills, tasks, and technologies~\cite{onet2025,giabelli2021skills2job}; and {\NumMissions} university mission statements.
+All sources are publicly available with full provenance tracking.
+Table~\ref{tab:dataset_overview} summarizes the composition.
 
 %%% Dataset overview table
 \begin{table}[t]
@@ -282,16 +275,9 @@ Missions & \NumMissions & text & text only & ---\\
 \label{subsec:multimodal}
 
 For the MIT OCW subset, we collect structured multimodal resource annotations by querying the official OCW course metadata (JSON endpoints) for each of {\NumOCWTotal} courses listed in the MIT OCW sitemap.
-Each course record includes:
-
-\begin{itemize}
-  \item \textbf{Resource type flags}: binary indicators for video lectures, lecture notes/slides, interactive simulations, and assessments (problem sets, exams).
-  \item \textbf{Resource richness score} (0--6): count of distinct resource categories present (video, audio, notes, visual, interactive, assessment).
-  \item \textbf{Topic hierarchy}: multi-level subject classification from OCW's taxonomy.
-  \item \textbf{Course images}: cover images for all {\NumImages} courses (mean 82~KB, total 134~MB), providing a visual modality.
-  \item \textbf{Lecture content} (video courses): for {\NumOCWVideo} video courses, we extract structured lecture titles (median 26 per course), syllabi, and calendar text (median 13,679 characters), enriching text representations beyond catalog descriptions.
-  \item \textbf{Temporal metadata}: semester, year, and course level.
-\end{itemize}
+Each course record includes binary resource type flags (video, notes, interactive, assessment), a resource richness score (0--6, counting distinct categories), a multi-level topic hierarchy from OCW's taxonomy, and temporal metadata (semester, year, level).
+For the visual modality, we collect cover images for all {\NumImages} courses (mean 82~KB, 134~MB total).
+For {\NumOCWVideo} video courses, we additionally extract structured lecture titles (median 26 per course), syllabi, and calendar text (median 13,679 characters), enriching text representations beyond catalog descriptions.
 
 \paragraph{Collection process.}
 We parse the MIT OCW sitemap (\texttt{sitemap.xml}) to extract all course slugs, then fetch structured metadata (\texttt{data.json}) for each course.
