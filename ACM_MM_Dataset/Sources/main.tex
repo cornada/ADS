@@ -224,6 +224,30 @@ ACM MM dataset papers~\cite{multihateclip2024,synopground2024,dfbench2025,emoart
 \input{table_dataset_comparison}
 
 
+\section{Didactic Space: Formalism}
+\label{sec:formalism}
+
+The core idea behind \ADSMM is that educational artifacts---courses, occupations, mission statements---can be meaningfully compared in a shared latent space.
+We formalize this notion.
+
+Let $\mathcal{X}$ be a set of educational options (courses, modules) and $\mathcal{A} = \{a_1, \dots, a_m\}$ a set of stakeholder perspectives (learner, institution, labor market, mission).
+A representation map $r: \mathcal{T} \to \mathbb{R}^d$ embeds text artifacts into a shared space.
+For an option $x$ with text artifacts $\mathcal{T}_x$, we form an option profile by mean-pooling and L2-normalization:
+\begin{equation}
+  v_x = \frac{\bar{v}_x}{\|\bar{v}_x\|}, \quad \bar{v}_x = \frac{1}{|\mathcal{T}_x|}\sum_{t \in \mathcal{T}_x} r(t).
+\end{equation}
+Each stakeholder $a$ has a target corpus $\mathcal{T}_a$ (e.g., O*NET occupations for the market perspective) and a target centroid $\mu_a$, computed analogously.
+Per-stakeholder scores are z-score-calibrated cosine similarities:
+\begin{equation}
+  s_a(x) = \frac{\cos(v_x, \mu_a) - \hat{\mu}_a}{\hat{\sigma}_a},
+\end{equation}
+where $\hat{\mu}_a$ and $\hat{\sigma}_a$ are the empirical mean and standard deviation across all options.
+This calibration ensures cross-stakeholder comparability: a score of $s_a(x) = 1$ means ``one standard deviation above mean alignment for stakeholder $a$.''
+
+This formalization motivates our latent space analysis (Section~\ref{subsec:latent}): if the representation $r$ captures meaningful educational structure, then artifacts from different institutions should form a \emph{unified} space rather than disconnected clusters, and multimodal properties (e.g., whether a course offers video) should have a geometric signature in this space.
+The cross-modal prediction tasks (Section~\ref{sec:experiments}) test this empirically.
+
+
 \section{The ADS-MM Dataset}
 \label{sec:dataset}
 
