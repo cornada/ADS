@@ -162,14 +162,14 @@ We define cross-modal evaluation tasks with baselines (Spearman $\rho{=}{\SBERTR
 \section{Introduction}
 \label{sec:intro}
 
-Educational resources are inherently multimodal: a university course may combine textual descriptions, video lectures, interactive simulations, problem sets, and visual materials into a coherent learning experience~\cite{mayer2009multimedia}.
-Yet existing educational datasets and benchmarks overwhelmingly treat courses as text-only artifacts---a course title and description, perhaps with metadata about prerequisites and credit hours~\cite{morsy2019course2vec,yu2023mooccubex}.
+Educational resources are inherently multimodal: a university course may combine textual descriptions, video lectures, interactive simulations, problem sets, and visual materials into a coherent learning experience~\cite{mayer2009multimedia,wang2024llmedu}.
+Yet existing educational datasets and benchmarks overwhelmingly treat courses as text-only artifacts---a course title and description, perhaps with metadata about prerequisites and credit hours~\cite{morsy2019course2vec,yu2023mooccubex,dasilva2022slrERS}.
 This text-only view obscures a fundamental question: \emph{how does the multimedia structure of educational resources relate to their content, pedagogy, and institutional context?}
 
 Understanding this relationship matters for several reasons.
 First, multimedia resource availability varies dramatically across institutions and disciplines---a computer science course at MIT may include 40 hours of lecture video, while an equivalent course at another university provides only a syllabus.
 Second, the presence or absence of multimedia components reflects pedagogical choices that are not captured in text descriptions alone.
-Third, cross-modal analysis---predicting what kinds of multimedia resources a course offers from its textual description---can inform resource allocation, curriculum planning, and open educational resource (OER) development.
+Third, cross-modal analysis---predicting what kinds of multimedia resources a course offers from its textual description---can inform resource allocation, curriculum planning, and open educational resource (OER) development~\cite{aucancela2023ersslr}.
 
 We address this gap with \ADSMM, a multimodal extension of the Agent-Didactic Spaces educational benchmark.
 Our contributions:
@@ -196,24 +196,30 @@ This metadata-centric approach enables research on \emph{multimedia resource str
 
 \paragraph{Educational datasets.}
 Existing educational benchmarks fall into several categories.
-\emph{Learner interaction} datasets (KDD Cup 2010~\cite{stamper2010kddcup}, EdNet~\cite{choi2020ednet}, OULAD~\cite{kuzilek2017oulad}) track student behavior at a single institution.
-\emph{MOOC catalog} datasets aggregate course metadata: MOOCCubeX~\cite{yu2023mooccubex} provides 230K video subtitles and 358K exercises from XuetangX---the largest multimodal educational dataset---but covers a single Chinese platform without cross-national scope or labor-market integration.
-\emph{Skill mapping} datasets like the Course-Skill Atlas~\cite{courseskillatlas2024} (3M syllabi, 3K US institutions) link curricula to O*NET skills at scale, but contain no multimedia annotations.
-\emph{Lecture-level} datasets like M3AV~\cite{m3av2024} (367 hours, audio+video+slides) provide dense multimodal annotations but for individual lectures, not cross-institutional curricula.
+\emph{Learner interaction} datasets (KDD Cup 2010~\cite{stamper2010kddcup}, EdNet~\cite{choi2020ednet}, OULAD~\cite{kuzilek2017oulad}) track student behavior at single institutions; they measure what learners \emph{do} but not what resources are \emph{available}.
+\emph{MOOC catalog} datasets aggregate course metadata: MOOCCubeX~\cite{yu2023mooccubex} provides 230K video subtitles and 358K exercises from XuetangX---the largest multimodal educational dataset---but covers a single Chinese platform without cross-national scope or labor-market integration. The MOOC literature more broadly has grown rapidly~\cite{zawackirichter2019mooc}, yet large-scale cross-institutional resource metadata remains scarce.
+\emph{Skill mapping} datasets like the Course-Skill Atlas~\cite{courseskillatlas2024} (3M syllabi, 3K US institutions) link curricula to O*NET skills at scale, but contain no multimedia annotations; related work on skill extraction~\cite{zhang2022skillspan,decorte2023skillextraction} and labor-market forecasting~\cite{wef2023futureofwork,shi2020} focuses on job postings rather than educational resources.
+\emph{Lecture-level} datasets like M3AV~\cite{m3av2024} (367 hours, audio+video+slides) and Lecture Presentations~\cite{lee2023lecture} provide dense multimodal annotations for individual lectures but do not address cross-institutional curriculum structure.
 \ADSMM occupies a distinct niche: cross-national course-level resource structure with multimedia annotations and labor-market data.
 
-\paragraph{Multimodal learning analytics.}
-Research on multimodal learning analytics uses sensor data (gaze, gesture, speech) during learning activities~\cite{sharma2020mmla_survey} but focuses on \emph{learner behavior}, not \emph{resource structure}.
+\paragraph{Multimodal learning.}
+Mayer's cognitive theory of multimedia learning~\cite{mayer2009multimedia,mayer2014multimedia} establishes that combining text with visual and auditory channels improves learning outcomes---but research on \emph{which} courses offer \emph{which} media types at institutional scale is limited.
+Multimodal learning analytics~\cite{sharma2020mmla_survey,ifenthaler2020learning} use sensor data (gaze, gesture, speech) to study learner behavior, not resource structure.
 Video lecture analysis~\cite{bhat2023lecturevideosurvey} processes existing video content but does not address the availability or distribution of video resources across curricula.
+Recent multimodal foundation models~\cite{xu2023mplug2,bommasani2022foundation} enable cross-modal understanding, but lack educational benchmarks to evaluate their application in curriculum analysis.
 
-\paragraph{Cross-modal educational retrieval.}
-Cross-modal retrieval in education---e.g., finding relevant video segments given a text query---is well-studied~\cite{clip2tf2024}.
-\ADSMM complements this by providing a dataset-level view: \emph{which courses have video at all}, enabling analysis of multimedia resource distribution rather than within-resource retrieval.
+\paragraph{Cross-modal retrieval and representation.}
+CLIP~\cite{radford2021clip} and its descendants~\cite{luo2022clip4clip,clip2tf2024} enable cross-modal retrieval (text$\leftrightarrow$video), while sentence embeddings~\cite{reimers2019sentencebert,wang2020minilm,devlin2019bert} provide text-only representations.
+\ADSMM complements within-resource retrieval by providing a dataset-level view: \emph{which courses have video at all}, enabling analysis of multimedia resource distribution rather than within-resource search.
 
-\paragraph{Open educational resources (OER).}
-MIT OCW~\cite{mitocw2001} pioneered open course materials.
-Studies of OER adoption~\cite{tlili2023oerreview} analyze policy and access but lack structured, machine-readable annotations of resource types across institutions.
-\ADSMM provides this: a standardized, cross-national view of multimedia resource availability.
+\paragraph{Open educational resources.}
+MIT OCW~\cite{mitocw2001} pioneered open course materials; UNESCO~\cite{unesco2019oer} and OER researchers~\cite{wiley2014oerdefinition,tlili2023oerreview} analyze policy and adoption but lack structured, machine-readable resource type annotations across institutions.
+Dataset documentation practices~\cite{gebru2021datasheets,bender2018datasheets} inform our release, which follows the Datasheets for Datasets template.
+
+\paragraph{Multi-stakeholder evaluation and cross-national education.}
+Multi-stakeholder recommendation~\cite{abdollahpouri2020multistakeholder,burke2017multistakeholder} argues that evaluation quality cannot be assessed from a single perspective; fairness in educational recommendation~\cite{ekstrand2019fairness,baker2019challenges} adds urgency to this concern.
+Cross-national curriculum comparison~\cite{oecd2023education,marginson2022global} is well-studied in policy research but lacks computational tools at scale.
+ACM MM dataset papers~\cite{multihateclip2024,synopground2024,dfbench2025,emoart2025} typically focus on content analysis; \ADSMM extends the scope to educational resource structure.
 
 \input{table_dataset_comparison}
 
@@ -230,7 +236,7 @@ The text layer contains {\NumArtifacts} primary text artifacts from {\NumUnivers
 
 \begin{itemize}
   \item \textbf{Courses} ({\NumCourses}): course descriptions from MIT OCW ({\NumMIT}), UC Berkeley ({\NumUCB}), Stanford ({\NumStanford}), UIUC ({\NumUIUC}), Cornell ({\NumCornell}), KTH Sweden ({\NumKTH}), University of Edinburgh ({\NumEdinburgh}), and MISIS Russia ({\NumMISIS}).
-  \item \textbf{O*NET occupations} ({\NumOccupations}): occupation profiles with required skills, tasks, and technologies from the US Department of Labor~\cite{onet2025}.
+  \item \textbf{O*NET occupations} ({\NumOccupations}): occupation profiles with required skills, tasks, and technologies from the US Department of Labor~\cite{onet2025,giabelli2021skills2job}.
   \item \textbf{Mission statements} ({\NumMissions}): university mission and vision texts.
 \end{itemize}
 
@@ -316,7 +322,7 @@ The five US universities share a curricular tradition; KTH (Sweden), Edinburgh (
 We define two cross-modal evaluation tasks and evaluate baselines on each.
 \emph{Task~1 (Richness Prediction)}: given a course text description, predict the resource richness score (0--6); evaluated with MAE and Spearman~$\rho$.
 \emph{Task~2 (Resource Type Classification)}: predict which resource types a course provides (video, notes, assessment) as a multi-label classification problem; evaluated with per-type and macro~$F_1$.
-The cross-national structure also enables a transfer task (train on MIT, predict other universities), which we analyze qualitatively via latent space geometry in Section~\ref{subsec:latent}.
+The cross-national structure also enables a transfer task (train on MIT, predict other universities), which we analyze qualitatively via latent space geometry~\cite{shi2024mllmedu} in Section~\ref{subsec:latent}.
 
 \subsection{Dataset Statistics}
 
@@ -399,7 +405,25 @@ We embed all 36{,}192 canonical records with Sentence-BERT~\cite{reimers2019sent
 
 The separation ratio (mean inter-institution distance / mean intra-institution distance) is 0.70, well below the threshold of 2.0, confirming that institutions \emph{overlap} rather than form isolated clusters. The closest pair is MIT--Stanford (0.20); the most distant is MISIS--ASU (0.94), reflecting language and curricular tradition differences. For 200 randomly sampled MIT courses, 36.4\% of nearest neighbors ($k{=}10$) come from other institutions---UC Berkeley (21.5\%), KTH (5.5\%), Stanford (5.3\%)---demonstrating that semantic similarity crosses institutional and national boundaries.
 
-Most strikingly, PCA on the MIT OCW subset reveals that the first principal component correlates with multimedia resource richness ($r{=}0.41$, $p{<}0.001$), and a second independent axis (PC3) also correlates ($r{=}{-}0.23$). Courses with video are displaced from non-video courses (centroid shift\,=\,0.17). The embedding space---learned from text alone---captures multimedia structure as a geometric property.
+Most strikingly, PCA on the MIT OCW subset reveals that the first principal component correlates with multimedia resource richness ($r{=}0.41$, $p{<}0.001$; Figure~\ref{fig:pc-richness}), and a second independent axis (PC3) also correlates ($r{=}{-}0.23$). Courses with video are displaced from non-video courses (centroid shift\,=\,0.17). The embedding space---learned from text alone, using contrastive pre-training~\cite{chen2020simclr,li2024multimodaledu} principles---captures multimedia structure as a geometric property. Figure~\ref{fig:latent-pca} shows the full PCA projection colored by institution.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/fig6_latent_pca.pdf}
+  \vspace{-2mm}
+  \caption{PCA projection of 36{,}192 records (SBERT 384d) colored by institution. Courses from all 8 universities overlap in a unified embedding space (separation ratio\,=\,0.70).}
+  \label{fig:latent-pca}
+  \vspace{-2mm}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/fig7_pc_richness.pdf}
+  \vspace{-2mm}
+  \caption{Correlation between principal components and multimedia resource richness. PC1 ($r{=}0.41$) encodes the primary modality axis; the latent space captures multimedia structure from text alone.}
+  \label{fig:pc-richness}
+  \vspace{-2mm}
+\end{figure}
 
 MISIS provides complementary evidence: courses with laboratory work occupy a different latent region than lecture-only courses (shift\,=\,0.09), and MISIS forms the tightest cluster (intra-distance 0.54 vs.\ MIT's 0.90), consistent with centralized FGOS standards producing more homogeneous curricula than decentralized US departments. The course--occupation centroid distance is 0.60, while the course--mission distance is only 0.40, suggesting that universities successfully encode their institutional missions into curriculum content.
 
@@ -409,7 +433,7 @@ MISIS provides complementary evidence: courses with laboratory work occupy a dif
 
 \ADSMM's multimodal annotations cover MIT OCW only; extending to other institutions requires equivalent open metadata, which most universities do not provide.
 Resource type annotations capture \emph{availability}, not content quality or usage---a course marked as having video may have 2 or 40 lectures.
-The dataset spans {\NumCountries} countries but remains US-heavy (73\% of courses); O*NET reflects US labor market structure; MISIS includes Russian-language descriptions alongside English competency codes.
+The dataset spans {\NumCountries} countries but remains US-heavy (73\% of courses); O*NET~\cite{onet2025} reflects US labor market structure~\cite{wef2023futureofwork}; MISIS includes Russian-language descriptions alongside English competency codes.
 
 All data is from public sources under open licenses (MIT OCW: CC BY-NC-SA 4.0; O*NET: public domain). No personally identifiable information is included.
 The complete dataset, collection scripts, and evaluation code are available at \url{https://doi.org/10.5281/zenodo.19363580}, with annual updates planned as OCW releases new content.
@@ -421,7 +445,7 @@ We presented \ADSMM, a cross-national educational resource dataset with multimod
 Three findings emerge.
 First, course text descriptions encode multimedia instructional design: SBERT embeddings predict video availability ($F_1{=}{\SBERTVideoF}$) and resource richness ($\rho{=}{\SBERTRichnessRho}$).
 Second, the primary axis of the educational embedding space correlates with multimedia richness ($r{=}0.41$)---text-only embeddings capture modality as a geometric property.
-Third, courses from 8 universities form a \emph{unified didactic space} (separation ratio 0.70) where 36\% of nearest neighbors cross institutional boundaries, suggesting that curricular content transcends institutional and national context.
+Third, courses from 8 universities form a \emph{unified didactic space} (separation ratio 0.70) where 36\% of nearest neighbors cross institutional boundaries, suggesting that curricular content transcends institutional and national context~\cite{marginson2022global}.
 We release all data, images, code, and baselines to enable research at the intersection of multimedia and education.
 
 
