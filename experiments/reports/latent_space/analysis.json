@@ -1,52 +1,52 @@
 {
   "institution_clustering": {
-    "mean_intra_distance": 0.8005,
-    "mean_inter_distance": 0.5893,
-    "separation_ratio": 0.7362,
+    "mean_intra_distance": 0.8103,
+    "mean_inter_distance": 0.5656,
+    "separation_ratio": 0.698,
     "interpretation": "UNIFIED SPACE (courses overlap across institutions)",
     "intra_distances": {
-      "ASU": 0.7166810035705566,
-      "Cornell": 0.8704075813293457,
-      "Edinburgh": 0.7989281415939331,
-      "KTH": 0.8237314224243164,
-      "MARKET": 0.8878892064094543,
-      "MARKET_EU": 0.7662179470062256,
-      "MARKET_RU": 0.6357396841049194,
-      "MISIS": 0.5394636988639832,
-      "MIT": 0.9009261727333069,
-      "Stanford": 0.90879887342453,
-      "UC Berkeley": 0.9043188095092773,
-      "UIUC": 0.8527136445045471
+      "ASU": 0.8131135702133179,
+      "Cornell": 0.8769921064376831,
+      "Edinburgh": 0.8081765174865723,
+      "KTH": 0.8253628611564636,
+      "MARKET": 0.8885624408721924,
+      "MARKET_EU": 0.7702990770339966,
+      "MARKET_RU": 0.6347758769989014,
+      "MISIS": 0.542060375213623,
+      "MIT": 0.9000086784362793,
+      "Stanford": 0.9078179001808167,
+      "UC Berkeley": 0.9046589732170105,
+      "UIUC": 0.8519212007522583
     },
     "top_inter_distances": {
-      "MIT↔Stanford": 0.19747363030910492,
-      "Cornell↔Stanford": 0.21563388407230377,
-      "Cornell↔MIT": 0.24196027219295502,
-      "MIT↔UC Berkeley": 0.24820469319820404,
-      "Stanford↔UC Berkeley": 0.2506610155105591
+      "MIT↔Stanford": 0.19879762828350067,
+      "Cornell↔Stanford": 0.20428302884101868,
+      "Cornell↔MIT": 0.23743563890457153,
+      "MIT↔UC Berkeley": 0.2466801106929779,
+      "Cornell↔UIUC": 0.2545834481716156
     },
     "bottom_inter_distances": {
-      "ASU↔MISIS": 0.9763014316558838,
-      "MARKET_EU↔MISIS": 0.9424217343330383,
-      "ASU↔MARKET_RU": 0.938542366027832,
-      "MARKET↔MISIS": 0.8948749303817749,
-      "Edinburgh↔MISIS": 0.8689913749694824
+      "ASU↔MISIS": 0.9359658360481262,
+      "MARKET_EU↔MISIS": 0.9338724613189697,
+      "MARKET↔MISIS": 0.8896809220314026,
+      "ASU↔MARKET_RU": 0.8872237801551819,
+      "Edinburgh↔MISIS": 0.854119062423706
     }
   },
   "type_clustering": {
     "intra": {
-      "COMPETENCY": 0.4025701880455017,
-      "COURSE": 0.9110450744628906,
-      "JOB_ROLE": 0.7414149045944214,
-      "MISSION": 0.8266627788543701
+      "COMPETENCY": 0.4057888090610504,
+      "COURSE": 0.9108840823173523,
+      "JOB_ROLE": 0.7409961819648743,
+      "MISSION": 0.8469921946525574
     },
     "inter": {
-      "COMPETENCY↔COURSE": 0.8475647568702698,
-      "COMPETENCY↔JOB_ROLE": 0.755639910697937,
-      "COMPETENCY↔MISSION": 0.9919188618659973,
-      "COURSE↔JOB_ROLE": 0.5944572687149048,
-      "COURSE↔MISSION": 0.43648871779441833,
-      "JOB_ROLE↔MISSION": 0.7819746732711792
+      "COMPETENCY↔COURSE": 0.8454893827438354,
+      "COMPETENCY↔JOB_ROLE": 0.7587910890579224,
+      "COMPETENCY↔MISSION": 0.97840815782547,
+      "COURSE↔JOB_ROLE": 0.595188319683075,
+      "COURSE↔MISSION": 0.40284812450408936,
+      "JOB_ROLE↔MISSION": 0.7571669220924377
     },
     "interpretation": "How separated are courses, jobs, and missions in latent space?"
   },
@@ -54,47 +54,46 @@
     "sample_size": 200,
     "k": 10,
     "nn_institution_distribution": {
-      "MIT": 0.574,
-      "UC Berkeley": 0.246,
-      "KTH": 0.076,
-      "Stanford": 0.066,
-      "UIUC": 0.017,
-      "Cornell": 0.013,
-      "Edinburgh": 0.005,
-      "MARKET": 0.002,
+      "MIT": 0.636,
+      "UC Berkeley": 0.215,
+      "KTH": 0.055,
+      "Stanford": 0.053,
+      "Cornell": 0.018,
+      "UIUC": 0.015,
+      "Edinburgh": 0.006,
       "MISIS": 0.001
     },
     "interpretation": "What fraction of MIT's nearest neighbors come from other institutions?"
   },
   "course_job_alignment": {
-    "overall_course_job_distance": 0.5945,
+    "overall_course_job_distance": 0.5952,
     "per_institution": {
-      "KTH": 0.6351,
-      "UC Berkeley": 0.6523,
-      "MIT": 0.6575,
-      "UIUC": 0.6769,
-      "Stanford": 0.6783,
-      "Cornell": 0.6905,
-      "MISIS": 0.6985,
-      "Edinburgh": 0.7568
+      "KTH": 0.6373,
+      "UC Berkeley": 0.6538,
+      "MIT": 0.6585,
+      "UIUC": 0.6719,
+      "Stanford": 0.6749,
+      "Cornell": 0.6847,
+      "MISIS": 0.693,
+      "Edinburgh": 0.7426
     },
     "interpretation": "Distance between course and job centroids in latent space"
   },
   "multimodal_correlation": {
-    "n_courses_with_multimodal": 206,
+    "n_courses_with_multimodal": 816,
     "pc_richness_correlation": {
-      "PC1": 0.4051,
-      "PC2": -0.057,
-      "PC3": -0.4295,
-      "PC4": -0.1854,
-      "PC5": -0.0571
+      "PC1": 0.4121,
+      "PC2": 0.2123,
+      "PC3": -0.2264,
+      "PC4": 0.2238,
+      "PC5": -0.014
     },
-    "video_centroid_shift": 0.2544,
+    "video_centroid_shift": 0.1662,
     "interpretation": "Does latent position predict multimedia availability?"
   },
   "misis_activity": {
-    "n_courses_with_activity": 567,
-    "lab_centroid_shift": 0.1051,
+    "n_courses_with_activity": 2061,
+    "lab_centroid_shift": 0.0854,
     "interpretation": "Do courses with labs occupy different regions than lecture-only?"
   }
 }
